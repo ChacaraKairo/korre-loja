@@ -23,6 +23,8 @@
 16. [Economia unitária, KPIs e ranking editorial](15-economia-unitaria-kpis-e-ranking.md)
 17. [PRD do MVP](16-prd-mvp-korre-loja.md)
 18. [Backend e Admin: dados, métricas e gestão](17-backend-admin-dados-e-gestao.md)
+19. [Admin: vitrine, imagens e relatórios de cliques](18-admin-vitrine-imagens-e-relatorios-de-cliques.md)
+20. [Funcionalidades para gestão eficiente](19-funcionalidades-gestao-eficiente.md)
 
 ## Visão de alto nível
 
@@ -31,8 +33,8 @@ A KORRE Loja será um ecommerce afiliado para motoristas e entregadores, integra
 A plataforma terá três partes:
 
 - **Site público**: vitrine de produtos, guias, comparativos e redirecionamento para links de marketplaces parceiros.
-- **Backend**: cadastro de produtos, ofertas, links, categorias, tracking de cliques, campanhas, métricas e auditoria.
-- **Admin desktop**: gestão interna de produtos, cliques, campanhas, relatórios, rankings e revisões de conformidade.
+- **Backend**: cadastro de produtos, ofertas, links, categorias, tracking de cliques, campanhas, métricas, vitrine configurável, referências de imagens e auditoria.
+- **Admin desktop**: gestão interna de produtos, imagens, vitrine, cliques, campanhas, relatórios, rankings, conformidade e saúde do catálogo.
 
 ## Princípios do projeto
 
@@ -48,6 +50,9 @@ A plataforma terá três partes:
 - Priorizar produtos úteis, seguros e adequados para motoristas e entregadores.
 - Exibir aviso de afiliado de forma clara.
 - Não ordenar produtos apenas por comissão.
+- Permitir configurar pelo admin como os produtos aparecem no site.
+- Versionar imagens no GitHub e salvar no backend apenas referências.
+- Medir cliques por produto, vitrine, imagem, CTA, badge, campanha e origem.
 
 ## Decisão de produto
 
@@ -67,6 +72,24 @@ Clica para conferir preço no marketplace
 Backend registra clique
 ↓
 Compra, pagamento, frete e pós-venda acontecem no marketplace parceiro
+```
+
+Fluxo de gestão:
+
+```txt
+Admin cadastra produto
+↓
+Admin cadastra oferta afiliada
+↓
+Admin referencia imagens versionadas no GitHub
+↓
+Admin configura posição, destaque, badge e CTA na vitrine
+↓
+Site exibe a configuração pública
+↓
+Backend mede impressões e cliques
+↓
+Admin avalia relatórios e otimiza a vitrine
 ```
 
 A evolução para estoque próprio, fulfillment, clube de benefícios ou marketplace híbrido só deve acontecer depois que os dados comprovarem demanda recorrente, baixa devolução, margem suficiente e necessidade real de controle de entrega.
