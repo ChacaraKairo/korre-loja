@@ -22,6 +22,7 @@
 15. [Conformidade: afiliados, LGPD, cookies e publicidade](14-conformidade-afiliados-lgpd-conar.md)
 16. [Economia unitária, KPIs e ranking editorial](15-economia-unitaria-kpis-e-ranking.md)
 17. [PRD do MVP](16-prd-mvp-korre-loja.md)
+18. [Backend e Admin: dados, métricas e gestão](17-backend-admin-dados-e-gestao.md)
 
 ## Visão de alto nível
 
