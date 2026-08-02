@@ -20,8 +20,17 @@ const fallbackCatalog: PublicCatalog = {
 function App() {
   const [vehicle, setVehicle] = useState<VehicleType | "all">("all");
   const [query, setQuery] = useState("");
+  const [categorySlug, setCategorySlug] = useState("all");
+  const [path, setPath] = useState(window.location.pathname);
   const [catalog, setCatalog] = useState<PublicCatalog>(fallbackCatalog);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+
+  useEffect(() => {
+    const syncPath = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", syncPath);
+
+    return () => window.removeEventListener("popstate", syncPath);
+  }, []);
 
   useEffect(() => {
     setStatus("loading");
@@ -41,12 +50,31 @@ function App() {
       });
   }, []);
 
+  const productSlug = path.startsWith("/produto/") ? path.replace("/produto/", "") : "";
+  const selectedProduct = catalog.products.find((product) => product.slug === productSlug);
+
+  useEffect(() => {
+    const title = selectedProduct ? `${selectedProduct.name} | KORRE Loja` : "KORRE Loja | Curadoria para quem trabalha na rua";
+    const description = selectedProduct?.shortDescription ?? "Produtos curados para motoristas, motoboys e entregadores comprarem com mais criterio.";
+    document.title = title;
+    document.querySelector("meta[name='description']")?.setAttribute("content", description);
+    document.querySelector("meta[property='og:title']")?.setAttribute("content", title);
+    document.querySelector("meta[property='og:description']")?.setAttribute("content", description);
+  }, [selectedProduct]);
+
   const filteredProducts = catalog.products.filter((product) => {
     const matchesVehicle = vehicle === "all" || product.vehicleType === vehicle || product.vehicleType === "both";
+    const matchesCategory = categorySlug === "all" || product.categorySlug === categorySlug;
     const text = `${product.name} ${product.shortDescription} ${product.tags.join(" ")}`.toLowerCase();
 
-    return matchesVehicle && text.includes(query.toLowerCase());
+    return matchesVehicle && matchesCategory && text.includes(query.toLowerCase());
   });
+
+  function navigate(nextPath: string) {
+    window.history.pushState(null, "", nextPath);
+    setPath(nextPath);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function openOffer(product: Product) {
     if (!product.offer?.active) {
@@ -64,6 +92,52 @@ function App() {
     }).catch(() => undefined);
 
     window.open(product.offer.affiliateUrl, "_blank", "noopener,noreferrer");
+  }
+
+  if (selectedProduct) {
+    return (
+      <main>
+        <nav className="detail-topbar">
+          <button onClick={() => navigate("/")}>KORRE Loja</button>
+          <span>Compra fora da KORRE Loja, no marketplace parceiro</span>
+        </nav>
+
+        <section className="product-detail">
+          <img src={selectedProduct.imageUrl} alt={selectedProduct.name} />
+          <div>
+            <p className="eyebrow">{selectedProduct.categorySlug.replaceAll("-", " ")}</p>
+            <h1>{selectedProduct.name}</h1>
+            <p className="hero-copy">{selectedProduct.shortDescription}</p>
+            <div className="detail-price">{formatPrice(selectedProduct.referencePriceCents)}</div>
+            <div className="detail-grid">
+              <article>
+                <strong>Veredito KORRE</strong>
+                <p>{selectedProduct.recommendationReason}</p>
+              </article>
+              <article>
+                <strong>Melhor para</strong>
+                <p>{selectedProduct.bestFor}</p>
+              </article>
+              <article>
+                <strong>Quando evitar</strong>
+                <p>{selectedProduct.avoidWhen}</p>
+              </article>
+              <article>
+                <strong>Tags</strong>
+                <p>{selectedProduct.tags.join(", ") || "Curadoria geral"}</p>
+              </article>
+            </div>
+            <div className="detail-actions">
+              <button disabled={!selectedProduct.offer?.active} onClick={() => openOffer(selectedProduct)}>
+                Ver preco no Mercado Livre <ExternalLink size={16} />
+              </button>
+              <button className="secondary-action" onClick={() => navigate("/")}>Voltar para vitrine</button>
+            </div>
+            <p className="legal-copy">{affiliateDisclosure}</p>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -102,11 +176,15 @@ function App() {
       {status === "error" && <p className="notice">Nao foi possivel carregar a API agora. Exibindo catalogo local de partida.</p>}
 
       <section className="category-strip" aria-label="Categorias">
+        <button className={categorySlug === "all" ? "active" : ""} onClick={() => setCategorySlug("all")}>
+          <ShieldCheck size={16} />
+          Todas
+        </button>
         {catalog.categories.map((category) => (
-          <a key={category.id} href={`#${category.slug}`}>
+          <button className={categorySlug === category.slug ? "active" : ""} key={category.id} onClick={() => setCategorySlug(category.slug)}>
             <ShieldCheck size={16} />
             {category.name}
-          </a>
+          </button>
         ))}
       </section>
 
@@ -142,9 +220,12 @@ function App() {
                 </dl>
                 <div className="card-footer">
                   <strong>{formatPrice(product.referencePriceCents)}</strong>
-                  <button disabled={!product.offer?.active} onClick={() => openOffer(product)}>
-                    Ver no Mercado Livre <ExternalLink size={16} />
-                  </button>
+                  <div className="card-actions">
+                    <button className="secondary-action" onClick={() => navigate(`/produto/${product.slug}`)}>Detalhes</button>
+                    <button disabled={!product.offer?.active} onClick={() => openOffer(product)}>
+                      Mercado Livre <ExternalLink size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>
@@ -155,6 +236,23 @@ function App() {
       <section className="affiliate">
         <BatteryCharging size={22} />
         <p>{affiliateDisclosure}</p>
+      </section>
+
+      <section className="legal-section">
+        <article>
+          <h2>Privacidade e cookies</h2>
+          <p>
+            No MVP, a KORRE Loja registra cliques de saida e dados tecnicos minimos para medir interesse nos produtos.
+            Nao processamos pagamento, entrega ou dados sensiveis de compra.
+          </p>
+        </article>
+        <article>
+          <h2>Marketplace parceiro</h2>
+          <p>
+            A compra acontece fora da KORRE Loja. Preco, estoque, entrega, garantia e pos-venda sao responsabilidade
+            do marketplace e do vendedor do anuncio.
+          </p>
+        </article>
       </section>
     </main>
   );

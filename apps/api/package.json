@@ -7,8 +7,10 @@
     "build": "npm run build -w @korre/shared && nest build",
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:generate": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} prisma generate",
+    "prisma:migrate": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} prisma migrate dev",
+    "prisma:push": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} tsx prisma/init.ts",
+    "seed": "DATABASE_URL=${DATABASE_URL:-file:./dev.db} tsx prisma/seed.ts"
   },
   "dependencies": {
     "@korre/shared": "*",
@@ -17,16 +19,21 @@
     "@nestjs/platform-express": "^11.1.5",
     "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.13.0",
+    "bcryptjs": "^3.0.2",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.7",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.1.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.1.0",
     "prisma": "^6.13.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   }
 }

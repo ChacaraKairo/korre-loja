@@ -1,13 +1,16 @@
 import { StrictMode, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, Link2, Settings, Tags, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, Link2, LogOut, Settings, Tags, type LucideIcon } from "lucide-react";
 import type { AdminDashboard, Category, ClickEvent, Product, ProductInput, VehicleType } from "@korre/shared";
 import "./styles.css";
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
+const tokenStorageKey = "korre-loja-admin-token";
 
 function App() {
+  const [token, setToken] = useState(() => localStorage.getItem(tokenStorageKey) ?? "");
+  const [login, setLogin] = useState({ email: "admin@korre.local", password: "change-me" });
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -26,12 +29,31 @@ function App() {
     tags: []
   });
 
+  async function adminFetch(path: string, init?: RequestInit) {
+    const response = await fetch(`${apiUrl}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...init?.headers
+      }
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem(tokenStorageKey);
+      setToken("");
+      throw new Error("Sessao expirada");
+    }
+
+    return response;
+  }
+
   async function loadAdminData() {
     return Promise.all([
-      fetch(`${apiUrl}/admin/dashboard`).then((response) => response.json()),
-      fetch(`${apiUrl}/admin/products`).then((response) => response.json()),
-      fetch(`${apiUrl}/admin/categories`).then((response) => response.json()),
-      fetch(`${apiUrl}/admin/clicks`).then((response) => response.json())
+      adminFetch("/admin/dashboard").then((response) => response.json()),
+      adminFetch("/admin/products").then((response) => response.json()),
+      adminFetch("/admin/categories").then((response) => response.json()),
+      adminFetch("/admin/clicks").then((response) => response.json())
     ])
       .then(([dashboardData, productData, categoryData, clickData]) => {
         setDashboard(dashboardData);
@@ -58,8 +80,40 @@ function App() {
   }
 
   useEffect(() => {
-    void loadAdminData();
-  }, []);
+    if (token) {
+      void loadAdminData();
+    }
+  }, [token]);
+
+  async function submitLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFeedback("Entrando...");
+
+    const response = await fetch(`${apiUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(login)
+    });
+
+    if (!response.ok) {
+      setFeedback("Credenciais invalidas ou API indisponivel.");
+      return;
+    }
+
+    const data = await response.json() as { token: string };
+    localStorage.setItem(tokenStorageKey, data.token);
+    setToken(data.token);
+    setFeedback("");
+  }
+
+  function logout() {
+    localStorage.removeItem(tokenStorageKey);
+    setToken("");
+    setDashboard(null);
+    setProducts([]);
+    setCategories([]);
+    setClicks([]);
+  }
 
   async function createProduct(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,9 +125,8 @@ function App() {
       tags: Array.isArray(form.tags) ? form.tags : String(form.tags).split(",").map((tag) => tag.trim()).filter(Boolean)
     };
 
-    const response = await fetch(`${apiUrl}/admin/products`, {
+    const response = await adminFetch("/admin/products", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
@@ -98,12 +151,51 @@ function App() {
     await loadAdminData();
   }
 
+  async function archiveProduct(product: Product) {
+    setFeedback(`Arquivando ${product.name}...`);
+    const response = await adminFetch(`/admin/products/${product.id}`, {
+      method: "DELETE"
+    });
+
+    if (!response.ok) {
+      setFeedback("Nao foi possivel arquivar o produto.");
+      return;
+    }
+
+    setFeedback("Produto arquivado.");
+    await loadAdminData();
+  }
+
   const stats: Array<{ label: string; value: number; Icon: LucideIcon }> = [
     { label: "Produtos ativos", value: dashboard?.activeProducts ?? 0, Icon: Boxes },
     { label: "Categorias", value: dashboard?.activeCategories ?? 0, Icon: Tags },
     { label: "Cliques hoje", value: dashboard?.clicksToday ?? 0, Icon: BarChart3 },
     { label: "Sem link valido", value: dashboard?.productsWithoutOffer ?? 0, Icon: Link2 }
   ];
+
+  if (!token) {
+    return (
+      <main className="login-screen">
+        <form className="login-panel" onSubmit={submitLogin}>
+          <strong>KORRE Loja</strong>
+          <div>
+            <p>Admin desktop</p>
+            <h1>Acesse a gestao da vitrine</h1>
+          </div>
+          <label>
+            E-mail
+            <input type="email" required value={login.email} onChange={(event) => setLogin({ ...login, email: event.target.value })} />
+          </label>
+          <label>
+            Senha
+            <input type="password" required value={login.password} onChange={(event) => setLogin({ ...login, password: event.target.value })} />
+          </label>
+          <button type="submit">Entrar</button>
+          {feedback && <span className="feedback">{feedback}</span>}
+        </form>
+      </main>
+    );
+  }
 
   return (
     <main className="shell">
@@ -124,7 +216,7 @@ function App() {
             <p>Admin desktop MVP</p>
             <h1>Gestao da vitrine afiliada</h1>
           </div>
-          <button>Nova curadoria</button>
+          <button onClick={logout}><LogOut size={16} /> Sair</button>
         </header>
 
         <div className="stats">
@@ -153,6 +245,7 @@ function App() {
                 <th>Categoria</th>
                 <th>Status</th>
                 <th>Oferta</th>
+                <th>Acoes</th>
               </tr>
             </thead>
             <tbody>
@@ -162,6 +255,11 @@ function App() {
                   <td>{product.categorySlug}</td>
                   <td>{product.status}</td>
                   <td>{product.offer?.active ? "Ativa" : "Revisar"}</td>
+                  <td>
+                    {product.status !== "archived" && (
+                      <button className="table-action" onClick={() => archiveProduct(product)}>Arquivar</button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

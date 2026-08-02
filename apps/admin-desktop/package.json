@@ -12,7 +12,7 @@
   "dependencies": {
     "@korre/shared": "*",
     "@vitejs/plugin-react": "^4.7.0",
-    "electron": "^37.2.5",
+    "electron": "^43.2.0",
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

@@ -4,6 +4,9 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
 
+process.env.DATABASE_URL ??= "file:./dev.db";
+process.env.JWT_SECRET ??= "change-me";
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = Number(process.env.PORT ?? 3333);

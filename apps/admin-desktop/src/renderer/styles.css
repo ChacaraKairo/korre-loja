@@ -104,6 +104,10 @@ h1 {
 }
 
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-height: 42px;
   padding: 0 16px;
   border: 0;
@@ -111,6 +115,35 @@ button {
   color: #071107;
   background: var(--primary);
   cursor: pointer;
+}
+
+.login-screen {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.96), rgba(10, 10, 10, 0.8)),
+    url("https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1800&q=80") center/cover;
+}
+
+.login-panel {
+  display: grid;
+  width: min(440px, 100%);
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(17, 17, 17, 0.94);
+}
+
+.login-panel strong {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.login-panel h1 {
+  font-size: 1.7rem;
 }
 
 .stats {
@@ -174,6 +207,13 @@ th {
   color: var(--muted);
   font-size: 0.8rem;
   text-transform: uppercase;
+}
+
+.table-action {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--surface-3);
 }
 
 .grid-panels {

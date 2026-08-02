@@ -117,6 +117,9 @@ A interface visual segue a paleta do site KORRE principal:
 
 ```bash
 npm install
+npm run db:generate
+npm run db:push
+npm run db:seed
 npm run dev:api
 npm run dev:web
 ```
@@ -132,13 +135,45 @@ URLs padrao:
 - Site publico: `http://localhost:5173`
 - API: `http://localhost:3333`
 - Swagger da API: `http://localhost:3333/docs`
+- Admin desktop: janela Electron aberta por `npm run dev:desktop`
+
+Credenciais seed do admin:
+
+- E-mail: `admin@korre.local`
+- Senha: `change-me`
 
 ## Comandos uteis
 
 ```bash
 npm run typecheck
 npm run build
-npm run prisma:generate
+npm run db:generate
+npm run db:push
+npm run db:seed
 ```
 
-Copie `.env.example` para `.env` quando for ligar o PostgreSQL real.
+Copie `.env.example` para `.env` quando for configurar segredos reais. O banco local padrao usa SQLite em `apps/api/dev.db`, que nao deve ser commitado.
+
+## Status funcional
+
+O projeto agora possui:
+
+- API persistente com Prisma Client e SQLite local.
+- Seed de admin, categorias, produtos, ofertas e campanha inicial.
+- Autenticacao admin com JWT.
+- Rotas admin protegidas.
+- Registro persistente de cliques.
+- Site publico com vitrine, filtros por veiculo/categoria, detalhe de produto, aviso afiliado e textos legais.
+- Admin desktop com login, dashboard, cadastro de produto, listagem, arquivamento e cliques recentes.
+- CI no GitHub Actions com install, banco, seed, typecheck e build.
+
+## Pendencias externas para producao
+
+Para publicar em producao ainda e necessario fornecer:
+
+- URL do banco gerenciado, se preferir PostgreSQL em vez de SQLite.
+- `JWT_SECRET` forte.
+- URLs finais de deploy da API e do site.
+- Dominio/subdominio.
+- Links afiliados reais do Mercado Livre.
+- Imagens finais dos produtos ou processo operacional de cadastro.

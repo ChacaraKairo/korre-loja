@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import type { CategoryInput, ProductInput } from "@korre/shared";
+import { AuthGuard } from "../common/auth.guard";
 import { CatalogService } from "../services/catalog.service";
 
 @Controller("admin")
+@UseGuards(AuthGuard)
 export class AdminController {
   constructor(private readonly catalog: CatalogService) {}
 

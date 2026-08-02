@@ -15,10 +15,17 @@
     "build": "npm run build --workspaces",
     "typecheck": "npm run build -w @korre/shared && npm run typecheck --workspaces",
     "lint": "npm run lint --workspaces --if-present",
-    "prisma:generate": "npm run prisma:generate -w @korre/api"
+    "db:generate": "npm run prisma:generate -w @korre/api",
+    "db:push": "npm run prisma:push -w @korre/api",
+    "db:seed": "npm run seed -w @korre/api"
   },
   "engines": {
     "node": ">=20.11.0",
     "npm": ">=10.0.0"
+  },
+  "overrides": {
+    "@nestjs/swagger": {
+      "js-yaml": "5.2.3"
+    }
   }
 }

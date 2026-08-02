@@ -1,229 +1,530 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { randomUUID } from "node:crypto";
-import type { CategoryInput, ClickEvent, ClickPayload, Product, ProductInput } from "@korre/shared";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import type { AffiliateLink, Category as DbCategory, Product as DbProduct } from "@prisma/client";
+import type { Category, CategoryInput, ClickPayload, Product, ProductInput, ProductStatus, VehicleType } from "@korre/shared";
 import { slugify } from "@korre/shared";
-import { categories as seedCategories, products as seedProducts } from "../seed-data";
+import { z } from "zod";
+import { PrismaService } from "./prisma.service";
+
+const vehicleTypes = ["car", "motorcycle", "bicycle", "both"] as const;
+const audiences = ["driver", "motoboy", "delivery", "general"] as const;
+const productStatuses = ["draft", "active", "inactive", "archived"] as const;
+
+const productSchema = z.object({
+  categoryId: z.string().min(1),
+  name: z.string().min(3),
+  shortDescription: z.string().min(3),
+  recommendationReason: z.string().min(3),
+  vehicleType: z.enum(vehicleTypes),
+  audience: z.enum(audiences),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+  referencePriceCents: z.coerce.number().int().positive().optional(),
+  featured: z.coerce.boolean().optional(),
+  tags: z.array(z.string()).optional(),
+  bestFor: z.string().min(3),
+  avoidWhen: z.string().min(3),
+  affiliateUrl: z.string().url().optional().or(z.literal(""))
+});
+
+const categorySchema = z.object({
+  name: z.string().min(2),
+  slug: z.string().optional(),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+  sortOrder: z.coerce.number().int().optional(),
+  active: z.coerce.boolean().optional()
+});
+
+const clickSchema = z.object({
+  productId: z.string().min(1),
+  categoryId: z.string().optional(),
+  campaignSlug: z.string().optional(),
+  source: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional()
+});
 
 @Injectable()
 export class CatalogService {
-  private categories = [...seedCategories];
-  private products = [...seedProducts];
-  private clickEvents: ClickEvent[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  getPublicCatalog() {
-    const activeProducts = this.getProducts({});
+  async getPublicCatalog() {
+    const [categories, products] = await Promise.all([this.getCategories(), this.getProducts({})]);
 
     return {
-      categories: this.getCategories(),
-      featuredProducts: activeProducts.filter((product) => product.featured),
-      products: activeProducts
+      categories,
+      featuredProducts: products.filter((product) => product.featured),
+      products
     };
   }
 
-  getCategories() {
-    return this.categories.filter((category) => category.active).sort((a, b) => a.sortOrder - b.sortOrder);
+  async getCategories() {
+    const categories = await this.prisma.category.findMany({
+      where: { active: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
+    });
+
+    return categories.map(this.mapCategory);
   }
 
-  getProducts(filters: { vehicle?: string; category?: string }) {
-    return this.products
-      .filter((product) => product.status === "active")
-      .filter((product) => !filters.category || product.categorySlug === filters.category)
-      .filter((product) => {
-        if (!filters.vehicle || filters.vehicle === "all") {
-          return true;
+  async getProducts(filters: { vehicle?: string; category?: string }) {
+    const products = await this.prisma.product.findMany({
+      where: {
+        status: "active",
+        category: filters.category ? { slug: filters.category } : undefined,
+        OR:
+          filters.vehicle && filters.vehicle !== "all"
+            ? [{ vehicleType: filters.vehicle }, { vehicleType: "both" }]
+            : undefined
+      },
+      include: {
+        category: true,
+        affiliateLinks: {
+          where: { active: true },
+          orderBy: { updatedAt: "desc" },
+          take: 1
         }
+      },
+      orderBy: [{ featured: "desc" }, { updatedAt: "desc" }]
+    });
 
-        return product.vehicleType === filters.vehicle || product.vehicleType === "both";
-      });
+    return products.map(this.mapProduct);
   }
 
-  getAllProducts() {
-    return this.products;
+  async getAllProducts() {
+    const products = await this.prisma.product.findMany({
+      include: {
+        category: true,
+        affiliateLinks: {
+          orderBy: { updatedAt: "desc" },
+          take: 1
+        }
+      },
+      orderBy: { updatedAt: "desc" }
+    });
+
+    return products.map(this.mapProduct);
   }
 
-  getProductBySlug(slug: string): Product {
-    const product = this.getProducts({}).find((item) => item.slug === slug);
+  async getProductBySlug(slug: string): Promise<Product> {
+    const product = await this.prisma.product.findFirst({
+      where: { slug, status: "active" },
+      include: {
+        category: true,
+        affiliateLinks: {
+          where: { active: true },
+          orderBy: { updatedAt: "desc" },
+          take: 1
+        }
+      }
+    });
 
     if (!product) {
       throw new NotFoundException("Produto nao encontrado");
     }
 
-    return product;
+    return this.mapProduct(product);
   }
 
-  registerClick(payload: ClickPayload) {
-    const product = this.products.find((item) => item.id === payload.productId);
-    const category = this.categories.find((item) => item.id === payload.categoryId);
+  async registerClick(payload: ClickPayload) {
+    const input = this.parse(clickSchema, payload);
+    const product = await this.prisma.product.findUnique({
+      where: { id: input.productId },
+      include: {
+        category: true,
+        affiliateLinks: {
+          where: { active: true },
+          orderBy: { updatedAt: "desc" },
+          take: 1
+        }
+      }
+    });
 
     if (!product) {
       throw new NotFoundException("Produto nao encontrado");
     }
 
-    const event = {
-      ...payload,
-      id: randomUUID(),
-      productName: product.name,
-      categoryName: category?.name,
-      createdAt: new Date().toISOString()
-    };
+    const campaign = input.campaignSlug
+      ? await this.prisma.campaign.findUnique({ where: { slug: input.campaignSlug } })
+      : null;
 
-    this.clickEvents.push(event);
+    const click = await this.prisma.productClick.create({
+      data: {
+        productId: product.id,
+        categoryId: input.categoryId ?? product.categoryId,
+        campaignId: campaign?.id,
+        source: input.source,
+        utmSource: input.utmSource,
+        utmMedium: input.utmMedium,
+        utmCampaign: input.utmCampaign
+      }
+    });
 
     return {
       ok: true,
-      clickId: event.id,
-      redirectUrl: product.offer?.affiliateUrl
+      clickId: click.id,
+      redirectUrl: product.affiliateLinks[0]?.affiliateUrl
     };
   }
 
-  getAdminDashboard() {
-    const activeProducts = this.products.filter((product) => product.status === "active");
-    const productsWithoutOffer = activeProducts.filter((product) => !product.offer?.active).length;
-    const topProduct = this.getTopProducts().sort((a, b) => b.clicks - a.clicks)[0];
+  async getAdminDashboard() {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 7);
+
+    const [activeProducts, activeCategories, clicksToday, clicksLastSevenDays, allProducts, topProducts] =
+      await Promise.all([
+        this.prisma.product.count({ where: { status: "active" } }),
+        this.prisma.category.count({ where: { active: true } }),
+        this.prisma.productClick.count({ where: { createdAt: { gte: startOfToday } } }),
+        this.prisma.productClick.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+        this.prisma.product.findMany({
+          where: { status: "active" },
+          include: { affiliateLinks: { where: { active: true }, take: 1 } }
+        }),
+        this.getTopProducts()
+      ]);
 
     return {
-      activeProducts: activeProducts.length,
-      activeCategories: this.getCategories().length,
-      clicksToday: this.clickEvents.length,
-      clicksLastSevenDays: this.clickEvents.length,
-      topProductName: topProduct?.clicks ? topProduct.product.name : "Sem cliques ainda",
-      topCategoryName: this.categories[0]?.name ?? "Sem categoria",
-      activeCampaigns: 1,
-      productsWithoutOffer
+      activeProducts,
+      activeCategories,
+      clicksToday,
+      clicksLastSevenDays,
+      topProductName: topProducts[0]?.clicks ? topProducts[0].product.name : "Sem cliques ainda",
+      topCategoryName: await this.getTopCategoryName(),
+      activeCampaigns: await this.prisma.campaign.count({ where: { active: true } }),
+      productsWithoutOffer: allProducts.filter((product) => product.affiliateLinks.length === 0).length
     };
   }
 
-  createProduct(payload: ProductInput) {
-    const category = this.categories.find((item) => item.id === payload.categoryId);
+  async createProduct(payload: ProductInput) {
+    const input = this.parse(productSchema, payload);
+    const category = await this.prisma.category.findUnique({ where: { id: input.categoryId } });
 
     if (!category) {
       throw new NotFoundException("Categoria nao encontrada");
     }
 
-    const product: Product = {
-      id: randomUUID(),
-      categoryId: category.id,
-      categorySlug: category.slug,
-      name: payload.name,
-      slug: slugify(payload.name),
-      shortDescription: payload.shortDescription,
-      recommendationReason: payload.recommendationReason,
-      vehicleType: payload.vehicleType,
-      audience: payload.audience,
-      imageUrl:
-        payload.imageUrl ||
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
-      referencePriceCents: payload.referencePriceCents,
-      currency: "BRL",
-      status: "active",
-      featured: Boolean(payload.featured),
-      tags: payload.tags ?? [],
-      bestFor: payload.bestFor,
-      avoidWhen: payload.avoidWhen,
-      offer: payload.affiliateUrl
-        ? {
-            id: randomUUID(),
-            provider: "mercado_livre",
-            affiliateUrl: payload.affiliateUrl,
-            active: true,
-            referencePriceCents: payload.referencePriceCents,
-            updatedAt: new Date().toISOString()
-          }
-        : undefined
-    };
+    const product = await this.prisma.product.create({
+      data: {
+        categoryId: category.id,
+        name: input.name,
+        slug: await this.uniqueProductSlug(input.name),
+        shortDescription: input.shortDescription,
+        recommendationReason: input.recommendationReason,
+        vehicleType: input.vehicleType,
+        audience: input.audience,
+        imageUrl:
+          input.imageUrl ||
+          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
+        referencePriceCents: input.referencePriceCents,
+        status: "active",
+        featured: Boolean(input.featured),
+        tagsJson: JSON.stringify(input.tags ?? []),
+        description: JSON.stringify({
+          bestFor: input.bestFor,
+          avoidWhen: input.avoidWhen
+        }),
+        affiliateLinks: input.affiliateUrl
+          ? {
+              create: {
+                provider: "mercado_livre",
+                originalUrl: input.affiliateUrl,
+                affiliateUrl: input.affiliateUrl,
+                active: true
+              }
+            }
+          : undefined
+      },
+      include: {
+        category: true,
+        affiliateLinks: { orderBy: { updatedAt: "desc" }, take: 1 }
+      }
+    });
 
-    this.products.unshift(product);
-    return product;
+    return this.mapProduct(product);
   }
 
-  updateProduct(id: string, payload: Partial<ProductInput> & { status?: string; featured?: boolean }) {
-    const index = this.products.findIndex((product) => product.id === id);
+  async updateProduct(id: string, payload: Partial<ProductInput> & { status?: string; featured?: boolean }) {
+    const current = await this.prisma.product.findUnique({
+      where: { id },
+      include: { affiliateLinks: { orderBy: { updatedAt: "desc" }, take: 1 } }
+    });
 
-    if (index < 0) {
+    if (!current) {
       throw new NotFoundException("Produto nao encontrado");
     }
 
-    const category = payload.categoryId ? this.categories.find((item) => item.id === payload.categoryId) : undefined;
-    const current = this.products[index];
-    const updated: Product = {
-      ...current,
-      ...payload,
-      status: (payload.status as Product["status"]) ?? current.status,
-      categoryId: category?.id ?? current.categoryId,
-      categorySlug: category?.slug ?? current.categorySlug,
-      slug: payload.name ? slugify(payload.name) : current.slug,
-      tags: payload.tags ?? current.tags,
-      imageUrl: payload.imageUrl ?? current.imageUrl,
-      referencePriceCents: payload.referencePriceCents ?? current.referencePriceCents,
-      offer: payload.affiliateUrl
-        ? {
-            id: current.offer?.id ?? randomUUID(),
-            provider: "mercado_livre",
-            affiliateUrl: payload.affiliateUrl,
-            active: true,
-            referencePriceCents: payload.referencePriceCents ?? current.referencePriceCents,
-            updatedAt: new Date().toISOString()
-          }
-        : current.offer
-    };
+    const product = await this.prisma.product.update({
+      where: { id },
+      data: {
+        categoryId: payload.categoryId,
+        name: payload.name,
+        slug: payload.name ? await this.uniqueProductSlug(payload.name, id) : undefined,
+        shortDescription: payload.shortDescription,
+        recommendationReason: payload.recommendationReason,
+        vehicleType: payload.vehicleType,
+        audience: payload.audience,
+        imageUrl: payload.imageUrl,
+        referencePriceCents: payload.referencePriceCents,
+        featured: payload.featured,
+        status: productStatuses.includes(payload.status as ProductStatus) ? payload.status : undefined,
+        tagsJson: payload.tags ? JSON.stringify(payload.tags) : undefined,
+        description:
+          payload.bestFor || payload.avoidWhen
+            ? JSON.stringify({
+                bestFor: payload.bestFor ?? this.readDescription(current.description).bestFor,
+                avoidWhen: payload.avoidWhen ?? this.readDescription(current.description).avoidWhen
+              })
+            : undefined,
+        affiliateLinks: payload.affiliateUrl
+          ? {
+              upsert: {
+                where: { id: current.affiliateLinks[0]?.id ?? "new-offer" },
+                update: {
+                  originalUrl: payload.affiliateUrl,
+                  affiliateUrl: payload.affiliateUrl,
+                  active: true
+                },
+                create: {
+                  provider: "mercado_livre",
+                  originalUrl: payload.affiliateUrl,
+                  affiliateUrl: payload.affiliateUrl,
+                  active: true
+                }
+              }
+            }
+          : undefined
+      },
+      include: {
+        category: true,
+        affiliateLinks: { orderBy: { updatedAt: "desc" }, take: 1 }
+      }
+    });
 
-    this.products[index] = updated;
-    return updated;
+    return this.mapProduct(product);
   }
 
-  archiveProduct(id: string) {
+  async archiveProduct(id: string) {
     return this.updateProduct(id, { status: "archived" });
   }
 
-  createCategory(payload: CategoryInput) {
-    const category = {
-      id: randomUUID(),
-      name: payload.name,
-      slug: payload.slug ? slugify(payload.slug) : slugify(payload.name),
-      description: payload.description,
-      icon: payload.icon,
-      sortOrder: payload.sortOrder ?? this.categories.length + 1,
-      active: payload.active ?? true
-    };
+  async createCategory(payload: CategoryInput) {
+    const input = this.parse(categorySchema, payload);
+    const category = await this.prisma.category.create({
+      data: {
+        name: input.name,
+        slug: await this.uniqueCategorySlug(input.slug ?? input.name),
+        description: input.description,
+        icon: input.icon,
+        sortOrder: input.sortOrder ?? 0,
+        active: input.active ?? true
+      }
+    });
 
-    this.categories.push(category);
-    return category;
+    return this.mapCategory(category);
   }
 
-  updateCategory(id: string, payload: Partial<CategoryInput>) {
-    const index = this.categories.findIndex((category) => category.id === id);
+  async updateCategory(id: string, payload: Partial<CategoryInput>) {
+    const current = await this.prisma.category.findUnique({ where: { id } });
 
-    if (index < 0) {
+    if (!current) {
       throw new NotFoundException("Categoria nao encontrada");
     }
 
-    this.categories[index] = {
-      ...this.categories[index],
-      ...payload,
-      slug: payload.slug ? slugify(payload.slug) : this.categories[index].slug
-    };
+    const category = await this.prisma.category.update({
+      where: { id },
+      data: {
+        name: payload.name,
+        slug: payload.slug ? await this.uniqueCategorySlug(payload.slug, id) : undefined,
+        description: payload.description,
+        icon: payload.icon,
+        sortOrder: payload.sortOrder,
+        active: payload.active
+      }
+    });
 
-    return this.categories[index];
+    return this.mapCategory(category);
   }
 
-  disableCategory(id: string) {
+  async disableCategory(id: string) {
     return this.updateCategory(id, { active: false });
   }
 
-  getClicks() {
-    return [...this.clickEvents].reverse();
+  async getClicks() {
+    const clicks = await this.prisma.productClick.findMany({
+      include: {
+        product: true,
+        category: true
+      },
+      orderBy: { createdAt: "desc" },
+      take: 250
+    });
+
+    return clicks.map((click) => ({
+      id: click.id,
+      productId: click.productId,
+      categoryId: click.categoryId ?? undefined,
+      productName: click.product.name,
+      categoryName: click.category?.name,
+      source: click.source ?? undefined,
+      utmSource: click.utmSource ?? undefined,
+      utmMedium: click.utmMedium ?? undefined,
+      utmCampaign: click.utmCampaign ?? undefined,
+      createdAt: click.createdAt.toISOString()
+    }));
   }
 
-  getTopProducts() {
-    const counts = new Map<string, number>();
+  async getTopProducts() {
+    const clicks = await this.prisma.productClick.groupBy({
+      by: ["productId"],
+      _count: { productId: true },
+      orderBy: { _count: { productId: "desc" } },
+      take: 20
+    });
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: clicks.map((click) => click.productId) } },
+      include: {
+        category: true,
+        affiliateLinks: { orderBy: { updatedAt: "desc" }, take: 1 }
+      }
+    });
 
-    for (const click of this.clickEvents) {
-      counts.set(click.productId, (counts.get(click.productId) ?? 0) + 1);
+    return clicks.map((click) => ({
+      product: this.mapProduct(products.find((product) => product.id === click.productId)!),
+      clicks: click._count.productId
+    }));
+  }
+
+  private async getTopCategoryName() {
+    const topCategory = await this.prisma.productClick.groupBy({
+      by: ["categoryId"],
+      where: { categoryId: { not: null } },
+      _count: { categoryId: true },
+      orderBy: { _count: { categoryId: "desc" } },
+      take: 1
+    });
+    const id = topCategory[0]?.categoryId;
+
+    if (!id) {
+      return "Sem cliques ainda";
     }
 
-    return this.products.map((product) => ({
-      product,
-      clicks: counts.get(product.id) ?? 0
-    }));
+    return (await this.prisma.category.findUnique({ where: { id } }))?.name ?? "Sem cliques ainda";
+  }
+
+  private mapCategory(category: DbCategory): Category {
+    return {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description ?? undefined,
+      icon: category.icon ?? undefined,
+      sortOrder: category.sortOrder,
+      active: category.active
+    };
+  }
+
+  private mapProduct(
+    product: DbProduct & {
+      category: DbCategory;
+      affiliateLinks: AffiliateLink[];
+    }
+  ): Product {
+    const description = this.readDescription(product.description);
+    const offer = product.affiliateLinks[0];
+
+    return {
+      id: product.id,
+      categoryId: product.categoryId,
+      categorySlug: product.category.slug,
+      name: product.name,
+      slug: product.slug,
+      shortDescription: product.shortDescription ?? "",
+      recommendationReason: product.recommendationReason ?? "",
+      vehicleType: product.vehicleType as VehicleType,
+      audience: product.audience as Product["audience"],
+      imageUrl: product.imageUrl ?? "",
+      referencePriceCents: product.referencePriceCents ?? undefined,
+      currency: "BRL",
+      status: product.status as ProductStatus,
+      featured: product.featured,
+      tags: this.readTags(product.tagsJson),
+      bestFor: description.bestFor,
+      avoidWhen: description.avoidWhen,
+      offer: offer
+        ? {
+            id: offer.id,
+            provider: offer.provider === "mercado_livre" ? "mercado_livre" : "other",
+            affiliateUrl: offer.affiliateUrl,
+            active: offer.active,
+            referencePriceCents: product.referencePriceCents ?? undefined,
+            updatedAt: offer.updatedAt.toISOString()
+          }
+        : undefined
+    };
+  }
+
+  private readTags(tagsJson: string) {
+    try {
+      const tags = JSON.parse(tagsJson);
+      return Array.isArray(tags) ? tags.filter((tag): tag is string => typeof tag === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private readDescription(description?: string | null) {
+    try {
+      const parsed = description ? JSON.parse(description) : {};
+
+      return {
+        bestFor: typeof parsed.bestFor === "string" ? parsed.bestFor : "",
+        avoidWhen: typeof parsed.avoidWhen === "string" ? parsed.avoidWhen : ""
+      };
+    } catch {
+      return {
+        bestFor: "",
+        avoidWhen: ""
+      };
+    }
+  }
+
+  private async uniqueProductSlug(value: string, currentId?: string) {
+    return this.uniqueSlug(value, async (slug) => {
+      const product = await this.prisma.product.findUnique({ where: { slug } });
+      return !product || product.id === currentId;
+    });
+  }
+
+  private async uniqueCategorySlug(value: string, currentId?: string) {
+    return this.uniqueSlug(value, async (slug) => {
+      const category = await this.prisma.category.findUnique({ where: { slug } });
+      return !category || category.id === currentId;
+    });
+  }
+
+  private async uniqueSlug(value: string, isAvailable: (slug: string) => Promise<boolean>) {
+    const base = slugify(value);
+    let slug = base;
+    let suffix = 2;
+
+    while (!(await isAvailable(slug))) {
+      slug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+
+    return slug;
+  }
+
+  private parse<T extends z.ZodType>(schema: T, payload: unknown): z.infer<T> {
+    const result = schema.safeParse(payload);
+
+    if (!result.success) {
+      throw new BadRequestException(result.error.issues.map((issue) => issue.message).join("; "));
+    }
+
+    return result.data;
   }
 }
