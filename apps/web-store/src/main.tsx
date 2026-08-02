@@ -151,7 +151,7 @@ function App() {
     return (
       <main>
         <nav className="detail-topbar">
-          <button onClick={() => navigate("/")}><img src="/brand/korre-icon.png" alt="" /> Loja do Korre</button>
+          <button onClick={() => navigate("/")}><img src="/brand/logo-sem-escrita-sem-fundo.png" alt="" /> Loja do Korre</button>
           <span>Compra fora da Loja do Korre, no marketplace parceiro</span>
         </nav>
 
@@ -198,8 +198,7 @@ function App() {
       <header className="market-header">
         <div className="market-top">
           <button className="brand" onClick={() => navigate("/")}>
-            <img src="/brand/korre-icon.png" alt="KORRE" />
-            <span>Loja do Korre</span>
+            <img src="/brand/logo-completa-sem-fundo.png" alt="Loja do Korre" />
           </button>
           <div className="market-search">
             <Search size={20} />
@@ -226,7 +225,7 @@ function App() {
             com foco em itens uteis para a rotina na rua.
           </p>
         </div>
-        <img src="/brand/korre-logo.png" alt="KORRE" />
+        <img src="/brand/logo-completa-sem-fundo.png" alt="Loja do Korre" />
       </section>
 
       <section className="driver-section">
@@ -351,6 +350,7 @@ function App() {
       <section className="affiliate">
         <BatteryCharging size={22} />
         <p>{affiliateDisclosure}</p>
+        <img src="/brand/escrita-loja-do-korre-sem-fundo.png" alt="Loja do Korre" />
       </section>
 
       <section className="legal-section">
