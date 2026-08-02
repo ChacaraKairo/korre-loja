@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import {
   BatteryCharging,
   Bike,
+  ChevronDown,
   Car,
   ChevronRight,
   ExternalLink,
@@ -48,10 +49,16 @@ const subcategories = [
   { label: "Pecas de revisao", category: "pecas" }
 ];
 
+const subcategoriesByCategory = subcategories.reduce<Record<string, Array<{ label: string; category: string }>>>((acc, subcategory) => {
+  acc[subcategory.category] = [...(acc[subcategory.category] ?? []), subcategory];
+  return acc;
+}, {});
+
 function App() {
   const [vehicle, setVehicle] = useState<VehicleType | "all">("all");
   const [query, setQuery] = useState("");
   const [categorySlug, setCategorySlug] = useState("all");
+  const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [path, setPath] = useState(window.location.pathname);
   const [catalog, setCatalog] = useState<PublicCatalog>(fallbackCatalog);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -97,9 +104,22 @@ function App() {
     const matchesVehicle = vehicle === "all" || product.vehicleType === vehicle || product.vehicleType === "both";
     const matchesCategory = categorySlug === "all" || product.categorySlug === categorySlug;
     const text = `${product.name} ${product.shortDescription} ${product.tags.join(" ")}`.toLowerCase();
+    const matchesSubcategory = !selectedSubcategory || text.includes(selectedSubcategory.toLowerCase());
 
-    return matchesVehicle && matchesCategory && text.includes(query.toLowerCase());
+    return matchesVehicle && matchesCategory && matchesSubcategory && text.includes(query.toLowerCase());
   });
+
+  const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
+  const visibleSubcategories = categorySlug === "all" ? [] : subcategoriesByCategory[categorySlug] ?? [];
+
+  function selectCategory(slug: string) {
+    setCategorySlug(slug);
+    setSelectedSubcategory("");
+  }
+
+  function selectSubcategory(label: string) {
+    setSelectedSubcategory((current) => current === label ? "" : label);
+  }
 
   function navigate(nextPath: string) {
     window.history.pushState(null, "", nextPath);
@@ -188,10 +208,10 @@ function App() {
         </div>
         <nav className="market-nav">
           <button><Menu size={16} /> Categorias</button>
-          <button onClick={() => setCategorySlug("eletronicos")}>Eletronicos</button>
-          <button onClick={() => setCategorySlug("vestimentas")}>Vestimentas</button>
-          <button onClick={() => setCategorySlug("equipamentos")}>Equipamentos</button>
-          <button onClick={() => setCategorySlug("pecas")}>Pecas</button>
+          <button onClick={() => selectCategory("eletronicos")}>Eletronicos</button>
+          <button onClick={() => selectCategory("vestimentas")}>Vestimentas</button>
+          <button onClick={() => selectCategory("equipamentos")}>Equipamentos</button>
+          <button onClick={() => selectCategory("pecas")}>Pecas</button>
         </nav>
       </header>
 
@@ -232,25 +252,61 @@ function App() {
       <section className="marketplace-grid">
         <aside className="category-panel">
           <strong>Categorias</strong>
-          <button className={categorySlug === "all" ? "active" : ""} onClick={() => setCategorySlug("all")}>
+          <button className={categorySlug === "all" ? "active" : ""} onClick={() => selectCategory("all")}>
             Todas <ChevronRight size={16} />
           </button>
           {catalog.categories.map((category) => (
-            <button className={categorySlug === category.slug ? "active" : ""} key={category.id} onClick={() => setCategorySlug(category.slug)}>
-              {category.name} <ChevronRight size={16} />
-            </button>
+            <div className="category-group" key={category.id}>
+              <button className={categorySlug === category.slug ? "active" : ""} onClick={() => selectCategory(category.slug)}>
+                {category.name} {categorySlug === category.slug ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              </button>
+              {categorySlug === category.slug && (
+                <div className="nested-subcategories">
+                  {(subcategoriesByCategory[category.slug] ?? []).map((subcategory) => (
+                    <button
+                      className={selectedSubcategory === subcategory.label ? "active" : ""}
+                      key={subcategory.label}
+                      onClick={() => selectSubcategory(subcategory.label)}
+                    >
+                      {subcategory.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </aside>
 
-        <section className="subcategory-strip" aria-label="Subcategorias">
-          {subcategories.map((subcategory) => (
-            <button key={subcategory.label} onClick={() => {
-              setCategorySlug(subcategory.category);
-              setQuery(subcategory.label);
-            }}>
-              {subcategory.label}
-            </button>
-          ))}
+        <section className="subcategory-board" aria-label="Subcategorias">
+          <div className="subcategory-heading">
+            <div>
+              <p className="eyebrow">Subcategorias</p>
+              <h2>{activeCategory ? activeCategory.name : "Escolha uma categoria"}</h2>
+            </div>
+            {selectedSubcategory && <button onClick={() => setSelectedSubcategory("")}>Limpar subcategoria</button>}
+          </div>
+          {categorySlug === "all" ? (
+            <div className="category-cards">
+              {catalog.categories.map((category) => (
+                <button key={category.id} onClick={() => selectCategory(category.slug)}>
+                  <strong>{category.name}</strong>
+                  <span>{category.description ?? "Ver subcategorias"}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="subcategory-strip">
+              {visibleSubcategories.map((subcategory) => (
+                <button
+                  className={selectedSubcategory === subcategory.label ? "active" : ""}
+                  key={subcategory.label}
+                  onClick={() => selectSubcategory(subcategory.label)}
+                >
+                  {subcategory.label}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       </section>
 
@@ -258,7 +314,7 @@ function App() {
         <div className="section-heading">
           <div>
             <p className="eyebrow">Ofertas e recomendacoes</p>
-            <h2>Produtos para sua rotina</h2>
+            <h2>{selectedSubcategory || activeCategory?.name || "Produtos para sua rotina"}</h2>
           </div>
           <span>{filteredProducts.length} itens ativos</span>
         </div>
