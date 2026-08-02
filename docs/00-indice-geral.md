@@ -1,4 +1,4 @@
-# Índice geral — KORRE Loja
+# Índice geral — Loja do Korre
 
 ## Documentos principais
 
@@ -28,7 +28,7 @@
 
 ## Visão de alto nível
 
-A KORRE Loja será um ecommerce afiliado para motoristas e entregadores, integrado ao ecossistema KORRE, mas independente do app principal.
+A Loja do Korre será um ecommerce afiliado para motoristas e entregadores, integrado ao ecossistema KORRE, mas independente do app principal.
 
 A plataforma terá três partes:
 
@@ -40,7 +40,7 @@ A plataforma terá três partes:
 
 - Não vender produto próprio no MVP.
 - Não processar pagamento próprio no MVP.
-- Não simular checkout dentro da KORRE Loja.
+- Não simular checkout dentro da Loja do Korre.
 - Não coletar dados pessoais desnecessários.
 - Registrar cliques e métricas de forma responsável.
 - Separar métricas anônimas de dados pessoais.
@@ -56,7 +56,7 @@ A plataforma terá três partes:
 
 ## Decisão de produto
 
-O MVP da KORRE Loja será **affiliate-first**.
+O MVP da Loja do Korre será **affiliate-first**.
 
 Fluxo principal:
 

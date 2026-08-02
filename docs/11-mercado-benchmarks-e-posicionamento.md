@@ -1,10 +1,10 @@
-# Mercado, benchmarks e posicionamento — KORRE Loja
+# Mercado, benchmarks e posicionamento — Loja do Korre
 
 ## Objetivo
 
-Este documento consolida a visão estratégica extraída dos materiais de referência enviados para a KORRE Loja.
+Este documento consolida a visão estratégica extraída dos materiais de referência enviados para a Loja do Korre.
 
-A ideia central é que a KORRE Loja não deve ser apenas uma lista de acessórios automotivos. Ela deve ser um portal especializado no trabalho sobre rodas, organizado por veículo, rotina e problema real do usuário.
+A ideia central é que a Loja do Korre não deve ser apenas uma lista de acessórios automotivos. Ela deve ser um portal especializado no trabalho sobre rodas, organizado por veículo, rotina e problema real do usuário.
 
 ## Tese principal
 
@@ -18,7 +18,7 @@ A oportunidade mais defensável está em combinar:
 - conteúdo editorial útil;
 - rastreamento de cliques e desempenho.
 
-Os grandes marketplaces já vencem em variedade, preço, pagamento e logística. A KORRE Loja precisa vencer em recomendação, clareza e adequação ao uso real.
+Os grandes marketplaces já vencem em variedade, preço, pagamento e logística. A Loja do Korre precisa vencer em recomendação, clareza e adequação ao uso real.
 
 ## Público-alvo
 
@@ -143,7 +143,7 @@ Referência para:
 
 ## Lacuna de mercado
 
-A KORRE Loja deve responder perguntas que os marketplaces normalmente não respondem de forma direta:
+A Loja do Korre deve responder perguntas que os marketplaces normalmente não respondem de forma direta:
 
 - Serve no meu veículo?
 - Aguenta uso diário?
@@ -161,7 +161,7 @@ Frase-base:
 
 > Equipamentos para quem trabalha na rua decidir melhor, comprar com mais confiança e perder menos tempo com produto errado.
 
-A KORRE Loja deve se posicionar como:
+A Loja do Korre deve se posicionar como:
 
 - especialista no uso real;
 - curadora de produtos;
@@ -172,7 +172,7 @@ A KORRE Loja deve se posicionar como:
 ## O que não fazer
 
 - Não criar um checkout próprio no MVP.
-- Não fingir que a KORRE Loja é a vendedora do produto.
+- Não fingir que a Loja do Korre é a vendedora do produto.
 - Não copiar conteúdo de marketplaces sem autorização.
 - Não ordenar produtos apenas por comissão.
 - Não promover produto crítico de segurança sem certificação aplicável.
@@ -199,4 +199,4 @@ Checkout no marketplace
 Métricas para melhorar curadoria
 ```
 
-A KORRE Loja só deve considerar estoque próprio ou modelo híbrido quando os dados mostrarem procura recorrente, baixa devolução, margem suficiente, especificação estável e necessidade real de controlar entrega.
+A Loja do Korre só deve considerar estoque próprio ou modelo híbrido quando os dados mostrarem procura recorrente, baixa devolução, margem suficiente, especificação estável e necessidade real de controlar entrega.

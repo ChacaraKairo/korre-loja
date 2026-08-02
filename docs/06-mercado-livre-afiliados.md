@@ -1,13 +1,13 @@
-# Mercado Livre e afiliados — KORRE Loja
+# Mercado Livre e afiliados — Loja do Korre
 
 ## Objetivo
 
-Este documento define como a KORRE Loja deve trabalhar com produtos do Mercado Livre no modelo de afiliados.
+Este documento define como a Loja do Korre deve trabalhar com produtos do Mercado Livre no modelo de afiliados.
 
 A ideia inicial é simples:
 
 1. A equipe escolhe produtos relevantes para motoristas e entregadores.
-2. O produto é cadastrado no admin da KORRE Loja.
+2. O produto é cadastrado no admin da Loja do Korre.
 3. O produto recebe um link do Mercado Livre com identificação de afiliado, quando disponível.
 4. O site exibe o produto.
 5. O usuário clica em “Ver no Mercado Livre”.
@@ -65,7 +65,7 @@ Campos sugeridos:
 
 O site deve mostrar aviso transparente:
 
-> Alguns links da KORRE Loja podem ser links de afiliado. Podemos receber uma comissão se você comprar pelo link, sem custo extra para você.
+> Alguns links da Loja do Korre podem ser links de afiliado. Podemos receber uma comissão se você comprar pelo link, sem custo extra para você.
 
 ## O que evitar
 
@@ -125,9 +125,9 @@ Cuidado: Verificar compatibilidade com o guidão e fixação segura.
 - Ferramentas simples.
 - Organização e conforto.
 
-## Dados que a KORRE Loja deve controlar
+## Dados que a Loja do Korre deve controlar
 
-A KORRE Loja controla:
+A Loja do Korre controla:
 
 - produto cadastrado;
 - link de destino;
@@ -137,7 +137,7 @@ A KORRE Loja controla:
 - campanha;
 - data/hora.
 
-A KORRE Loja não controla no MVP:
+A Loja do Korre não controla no MVP:
 
 - pagamento;
 - entrega;

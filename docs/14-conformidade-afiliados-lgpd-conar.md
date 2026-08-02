@@ -1,14 +1,14 @@
-# Conformidade: afiliados, LGPD, cookies e publicidade — KORRE Loja
+# Conformidade: afiliados, LGPD, cookies e publicidade — Loja do Korre
 
 ## Objetivo
 
-Definir regras mínimas de conformidade para a operação da KORRE Loja como ecommerce afiliado.
+Definir regras mínimas de conformidade para a operação da Loja do Korre como ecommerce afiliado.
 
 Este documento não substitui revisão jurídica. Ele serve como guia operacional para evitar erros básicos de transparência, publicidade, privacidade e regras de programas de afiliados.
 
 ## Princípio central
 
-A KORRE Loja deve ser transparente: o usuário precisa entender quando está vendo uma recomendação afiliada, para onde será redirecionado e quem será responsável pela venda, pagamento, frete, entrega e pós-venda.
+A Loja do Korre deve ser transparente: o usuário precisa entender quando está vendo uma recomendação afiliada, para onde será redirecionado e quem será responsável pela venda, pagamento, frete, entrega e pós-venda.
 
 ## Aviso de afiliado
 
@@ -105,7 +105,7 @@ Regras:
 
 ## Cookies e consentimento
 
-A KORRE Loja deve implementar banner de cookies quando usar:
+A Loja do Korre deve implementar banner de cookies quando usar:
 
 - analytics;
 - pixels de rastreamento;
@@ -189,7 +189,7 @@ Antes de ativar qualquer programa, registrar no banco ou planilha:
 
 ## Marketplace não é vendedor próprio
 
-A KORRE Loja deve deixar claro:
+A Loja do Korre deve deixar claro:
 
 - a compra acontece no marketplace;
 - o pagamento acontece no marketplace;
@@ -204,7 +204,7 @@ Não confundir modelos.
 Afiliado:
 
 - a venda acontece no parceiro;
-- a KORRE Loja recebe comissão;
+- a Loja do Korre recebe comissão;
 - o parceiro processa pagamento, entrega e pós-venda.
 
 Dropshipping:
@@ -218,7 +218,7 @@ Dropshipping:
 Antes de publicar uma página de produto, guia ou comparativo:
 
 - [ ] Existe aviso de afiliado visível?
-- [ ] O CTA deixa claro que a compra será fora da KORRE Loja?
+- [ ] O CTA deixa claro que a compra será fora da Loja do Korre?
 - [ ] Links externos usam rel adequado?
 - [ ] Preço tem data de atualização ou aviso de alteração?
 - [ ] Produto de segurança tem alerta de certificação?

@@ -1,14 +1,14 @@
-# SEO, conteúdo e comunidade — KORRE Loja
+# SEO, conteúdo e comunidade — Loja do Korre
 
 ## Objetivo
 
-Definir a estratégia de aquisição orgânica, conteúdo editorial e canais de comunidade da KORRE Loja.
+Definir a estratégia de aquisição orgânica, conteúdo editorial e canais de comunidade da Loja do Korre.
 
 A loja afiliada não deve depender apenas de tráfego pago. Em afiliados de produtos físicos, comissões moderadas tornam anúncios pagos arriscados se não houver validação de EPC, conversão e taxa de aprovação.
 
 ## Estratégia central
 
-A KORRE Loja deve crescer por:
+A Loja do Korre deve crescer por:
 
 - SEO orgânico;
 - guias comparativos;

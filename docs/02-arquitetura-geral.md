@@ -1,8 +1,8 @@
-# Arquitetura geral — KORRE Loja
+# Arquitetura geral — Loja do Korre
 
 ## Visão geral
 
-A arquitetura da KORRE Loja será composta por três aplicações principais:
+A arquitetura da Loja do Korre será composta por três aplicações principais:
 
 ```txt
 korre-loja/
@@ -19,7 +19,7 @@ korre-loja/
 
 ```mermaid
 flowchart TD
-  User[Usuário / Motorista] --> Store[Site KORRE Loja]
+  User[Usuário / Motorista] --> Store[Site Loja do Korre]
   Store --> API[Backend API]
   API --> DB[(PostgreSQL)]
   API --> ML[Mercado Livre]

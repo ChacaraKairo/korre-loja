@@ -1,8 +1,8 @@
-# Backend — KORRE Loja
+# Backend — Loja do Korre
 
 ## Objetivo
 
-O backend será o núcleo administrativo e analítico da KORRE Loja.
+O backend será o núcleo administrativo e analítico da Loja do Korre.
 
 Ele deve fornecer APIs para:
 

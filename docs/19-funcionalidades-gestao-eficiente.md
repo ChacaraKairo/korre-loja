@@ -1,10 +1,10 @@
-# Funcionalidades para gestão eficiente — KORRE Loja
+# Funcionalidades para gestão eficiente — Loja do Korre
 
 ## Objetivo
 
-Definir as funcionalidades que o backend e o app desktop/admin da KORRE Loja devem ter para permitir uma operação eficiente, organizada e orientada a resultado.
+Definir as funcionalidades que o backend e o app desktop/admin da Loja do Korre devem ter para permitir uma operação eficiente, organizada e orientada a resultado.
 
-A KORRE Loja começa como ecommerce afiliado. Portanto, o sistema precisa ajudar a responder perguntas operacionais como:
+A Loja do Korre começa como ecommerce afiliado. Portanto, o sistema precisa ajudar a responder perguntas operacionais como:
 
 - quais produtos estão gerando mais interesse?
 - quais produtos aparecem no site e em qual ordem?
@@ -602,7 +602,7 @@ O sistema será considerado eficiente quando permitir:
 
 ## Visão final
 
-O app desktop deve ser o centro de comando da KORRE Loja.
+O app desktop deve ser o centro de comando da Loja do Korre.
 
 Ele deve permitir que a operação seja feita assim:
 
@@ -622,4 +622,4 @@ Correção e otimização
 Nova publicação
 ```
 
-A meta é transformar a KORRE Loja em uma operação de afiliados guiada por dados, mas ainda baseada em curadoria responsável e utilidade real para motoristas, motoboys, entregadores e ciclistas.
+A meta é transformar a Loja do Korre em uma operação de afiliados guiada por dados, mas ainda baseada em curadoria responsável e utilidade real para motoristas, motoboys, entregadores e ciclistas.

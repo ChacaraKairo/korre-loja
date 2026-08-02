@@ -1,8 +1,8 @@
-# Economia unitária, KPIs e ranking editorial — KORRE Loja
+# Economia unitária, KPIs e ranking editorial — Loja do Korre
 
 ## Objetivo
 
-Definir como a KORRE Loja deve medir desempenho, avaliar produtos e ordenar recomendações sem destruir confiança editorial.
+Definir como a Loja do Korre deve medir desempenho, avaliar produtos e ordenar recomendações sem destruir confiança editorial.
 
 Em ecommerce afiliado, tráfego sozinho não prova sucesso. O que importa é a combinação entre intenção de compra, clique qualificado, conversão no parceiro, comissão aprovada e recorrência.
 

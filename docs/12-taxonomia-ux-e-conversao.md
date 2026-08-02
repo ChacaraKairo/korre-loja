@@ -1,8 +1,8 @@
-# Taxonomia, UX e conversão — KORRE Loja
+# Taxonomia, UX e conversão — Loja do Korre
 
 ## Objetivo
 
-Definir como o site público da KORRE Loja deve organizar produtos, páginas, filtros e componentes para maximizar clareza, confiança e clique qualificado.
+Definir como o site público da Loja do Korre deve organizar produtos, páginas, filtros e componentes para maximizar clareza, confiança e clique qualificado.
 
 O usuário principal acessa pelo celular, em intervalos curtos de trabalho. A experiência precisa resolver rápido: qual produto serve, por que comprar, onde comprar e quais cuidados observar.
 

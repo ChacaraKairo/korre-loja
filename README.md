@@ -1,8 +1,8 @@
-# KORRE Loja
+# Loja do Korre
 
 Ecommerce afiliado do ecossistema KORRE para recomendar produtos úteis a motoristas de aplicativo, entregadores e profissionais que trabalham com veículo no dia a dia.
 
-A KORRE Loja não nasce como marketplace próprio. O primeiro modelo é uma vitrine curada de produtos do Mercado Livre por meio de links de afiliado, com gestão interna de cliques, categorias, destaques, campanhas e métricas.
+A Loja do Korre não nasce como marketplace próprio. O primeiro modelo é uma vitrine curada de produtos do Mercado Livre por meio de links de afiliado, com gestão interna de cliques, categorias, destaques, campanhas e métricas.
 
 ## Objetivo do projeto
 
@@ -59,7 +59,7 @@ Comece por:
 
 ## Decisão arquitetural inicial
 
-A KORRE Loja deve ser separada do app KORRE principal.
+A Loja do Korre deve ser separada do app KORRE principal.
 
 O app KORRE pode futuramente apontar para a loja, mas a loja deve ter:
 

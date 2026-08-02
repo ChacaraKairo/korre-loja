@@ -2,7 +2,7 @@
   "name": "korre-loja",
   "version": "0.1.0",
   "private": true,
-  "description": "Monorepo TypeScript da KORRE Loja: site, API e admin desktop.",
+  "description": "Monorepo TypeScript da Loja do Korre: site, API e admin desktop.",
   "workspaces": [
     "apps/*",
     "packages/*"

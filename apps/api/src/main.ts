@@ -18,8 +18,8 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle("KORRE Loja API")
-    .setDescription("API publica e administrativa da vitrine afiliada KORRE Loja.")
+    .setTitle("Loja do Korre API")
+    .setDescription("API publica e administrativa da vitrine afiliada Loja do Korre.")
     .setVersion("0.1.0")
     .addBearerAuth()
     .build();

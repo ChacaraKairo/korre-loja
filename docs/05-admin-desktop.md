@@ -1,8 +1,8 @@
-# Admin Desktop — KORRE Loja
+# Admin Desktop — Loja do Korre
 
 ## Objetivo
 
-O Admin Desktop será o aplicativo interno para gerenciar a KORRE Loja.
+O Admin Desktop será o aplicativo interno para gerenciar a Loja do Korre.
 
 Ele deve consumir o backend e permitir que a equipe cadastre produtos, edite links afiliados, veja cliques e acompanhe os produtos com melhor desempenho.
 

@@ -1,8 +1,8 @@
-# PRD do MVP — KORRE Loja
+# PRD do MVP — Loja do Korre
 
 ## Objetivo do MVP
 
-Criar a primeira versão funcional da KORRE Loja como uma vitrine afiliada especializada para motoristas, motoboys e entregadores.
+Criar a primeira versão funcional da Loja do Korre como uma vitrine afiliada especializada para motoristas, motoboys e entregadores.
 
 O MVP deve validar:
 
@@ -51,7 +51,7 @@ O MVP deve validar:
 
 ## Proposta de valor
 
-> A KORRE Loja ajuda quem trabalha na rua a encontrar equipamentos úteis, seguros e compatíveis com sua rotina, sem perder tempo pesquisando em dezenas de anúncios.
+> A Loja do Korre ajuda quem trabalha na rua a encontrar equipamentos úteis, seguros e compatíveis com sua rotina, sem perder tempo pesquisando em dezenas de anúncios.
 
 ## Jornada principal do usuário
 
@@ -305,7 +305,7 @@ O MVP estará pronto quando:
 
 ## Decisão final do MVP
 
-A KORRE Loja deve começar pequena, especializada e altamente curada.
+A Loja do Korre deve começar pequena, especializada e altamente curada.
 
 Prioridade:
 

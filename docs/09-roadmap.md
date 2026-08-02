@@ -1,4 +1,4 @@
-# Roadmap — KORRE Loja
+# Roadmap — Loja do Korre
 
 ## Fase 0 — Documentação e planejamento
 
@@ -91,7 +91,7 @@ Possíveis entregáveis:
 ## Fora de escopo inicial
 
 - checkout próprio;
-- pagamento dentro da KORRE Loja;
+- pagamento dentro da Loja do Korre;
 - estoque;
 - emissão de nota;
 - logística;

@@ -11,7 +11,7 @@ function createWindow() {
     height: 820,
     minWidth: 1024,
     minHeight: 700,
-    title: "KORRE Loja Admin",
+    title: "Loja do Korre Admin",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,

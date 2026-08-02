@@ -1,8 +1,8 @@
-# Site ecommerce — KORRE Loja
+# Site ecommerce — Loja do Korre
 
 ## Objetivo
 
-O site ecommerce será a vitrine pública da KORRE Loja.
+O site ecommerce será a vitrine pública da Loja do Korre.
 
 Ele deve apresentar produtos úteis para motoristas, entregadores e profissionais que usam veículo para trabalho, com redirecionamento para compra no Mercado Livre por link de afiliado.
 
@@ -75,7 +75,7 @@ Cada produto deve responder:
 
 O site deve informar de forma transparente:
 
-> Alguns links da KORRE Loja podem ser links de afiliado. Isso significa que podemos receber uma comissão se você comprar pelo link, sem custo extra para você.
+> Alguns links da Loja do Korre podem ser links de afiliado. Isso significa que podemos receber uma comissão se você comprar pelo link, sem custo extra para você.
 
 ## Tracking de clique
 

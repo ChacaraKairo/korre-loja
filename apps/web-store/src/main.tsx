@@ -85,7 +85,7 @@ function App() {
   const selectedProduct = catalog.products.find((product) => product.slug === productSlug);
 
   useEffect(() => {
-    const title = selectedProduct ? `${selectedProduct.name} | KORRE Loja` : "KORRE Loja | Curadoria para quem trabalha na rua";
+    const title = selectedProduct ? `${selectedProduct.name} | Loja do Korre` : "Loja do Korre | Curadoria para quem trabalha na rua";
     const description = selectedProduct?.shortDescription ?? "Produtos curados para motoristas, motoboys e entregadores comprarem com mais criterio.";
     document.title = title;
     document.querySelector("meta[name='description']")?.setAttribute("content", description);
@@ -129,8 +129,8 @@ function App() {
     return (
       <main>
         <nav className="detail-topbar">
-          <button onClick={() => navigate("/")}><img src="/brand/korre-icon.png" alt="" /> KORRE Loja</button>
-          <span>Compra fora da KORRE Loja, no marketplace parceiro</span>
+          <button onClick={() => navigate("/")}><img src="/brand/korre-icon.png" alt="" /> Loja do Korre</button>
+          <span>Compra fora da Loja do Korre, no marketplace parceiro</span>
         </nav>
 
         <section className="product-detail">
@@ -177,7 +177,7 @@ function App() {
         <div className="market-top">
           <button className="brand" onClick={() => navigate("/")}>
             <img src="/brand/korre-icon.png" alt="KORRE" />
-            <span>KORRE Loja</span>
+            <span>Loja do Korre</span>
           </button>
           <div className="market-search">
             <Search size={20} />
@@ -308,14 +308,14 @@ function App() {
         <article>
           <h2>Privacidade e cookies</h2>
           <p>
-            No MVP, a KORRE Loja registra cliques de saida e dados tecnicos minimos para medir interesse nos produtos.
+            No MVP, a Loja do Korre registra cliques de saida e dados tecnicos minimos para medir interesse nos produtos.
             Nao processamos pagamento, entrega ou dados sensiveis de compra.
           </p>
         </article>
         <article>
           <h2>Marketplace parceiro</h2>
           <p>
-            A compra acontece fora da KORRE Loja. Preco, estoque, entrega, garantia e pos-venda sao responsabilidade
+            A compra acontece fora da Loja do Korre. Preco, estoque, entrega, garantia e pos-venda sao responsabilidade
             do marketplace e do vendedor do anuncio.
           </p>
         </article>

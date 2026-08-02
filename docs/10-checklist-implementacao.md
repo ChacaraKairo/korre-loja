@@ -1,4 +1,4 @@
-# Checklist de implementação — KORRE Loja
+# Checklist de implementação — Loja do Korre
 
 ## Preparação
 

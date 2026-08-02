@@ -1,8 +1,8 @@
-# Backend e Admin: dados, métricas e gestão — KORRE Loja
+# Backend e Admin: dados, métricas e gestão — Loja do Korre
 
 ## Objetivo
 
-Definir quais dados o backend da KORRE Loja deve armazenar e quais informações o app desktop de gestão deve apresentar para permitir uma operação bem controlada do ecommerce afiliado.
+Definir quais dados o backend da Loja do Korre deve armazenar e quais informações o app desktop de gestão deve apresentar para permitir uma operação bem controlada do ecommerce afiliado.
 
 Este documento foca apenas em:
 
@@ -20,15 +20,15 @@ Não cobre implementação visual do site público, checkout próprio ou venda d
 
 ## Contexto do modelo de negócio
 
-A KORRE Loja começa como uma operação **affiliate-first**.
+A Loja do Korre começa como uma operação **affiliate-first**.
 
 Isso significa:
 
-- a KORRE Loja não processa pagamento no MVP;
-- a KORRE Loja não controla frete, entrega ou pós-venda;
+- a Loja do Korre não processa pagamento no MVP;
+- a Loja do Korre não controla frete, entrega ou pós-venda;
 - a compra final acontece no marketplace parceiro;
 - o botão principal deve levar o usuário para Mercado Livre, Amazon, Shopee ou outro parceiro;
-- o dado principal da KORRE Loja não é venda, mas sim **intenção de compra medida por cliques qualificados**.
+- o dado principal da Loja do Korre não é venda, mas sim **intenção de compra medida por cliques qualificados**.
 
 Como as vendas finais podem não estar disponíveis no detalhe por produto, a gestão precisa ser baseada em:
 
@@ -47,7 +47,7 @@ Como as vendas finais podem não estar disponíveis no detalhe por produto, a ge
 
 > Se não conseguimos ver toda venda final, precisamos medir intenção de compra melhor que uma loja genérica.
 
-A KORRE Loja deve medir:
+A Loja do Korre deve medir:
 
 ```txt
 Produto exibido
@@ -71,7 +71,7 @@ Saúde do link e da oferta
 
 ### 1. Produtos
 
-Produtos representam a curadoria da KORRE Loja.
+Produtos representam a curadoria da Loja do Korre.
 
 Campos recomendados:
 
@@ -453,7 +453,7 @@ buscas que levaram ao guia
 
 ## Qualidade editorial e ranking
 
-A KORRE Loja não deve ordenar produtos apenas por comissão.
+A Loja do Korre não deve ordenar produtos apenas por comissão.
 
 O ranking editorial deve preservar confiança.
 
@@ -882,7 +882,7 @@ dados de compra
 dados do pedido no marketplace
 ```
 
-Como a KORRE Loja não processa pagamento ou entrega, não há motivo para armazenar dados sensíveis de comprador no MVP.
+Como a Loja do Korre não processa pagamento ou entrega, não há motivo para armazenar dados sensíveis de comprador no MVP.
 
 ## MVP de dados
 
@@ -932,7 +932,7 @@ O backend/admin estará pronto para a primeira operação quando permitir:
 
 ## Resumo final
 
-O backend e o app de gestão da KORRE Loja devem transformar cliques em inteligência operacional.
+O backend e o app de gestão da Loja do Korre devem transformar cliques em inteligência operacional.
 
 A gestão não deve depender apenas de venda confirmada.
 

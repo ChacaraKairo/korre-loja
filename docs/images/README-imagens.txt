@@ -1,4 +1,4 @@
-Inventário de imagens — KORRE Loja
+Inventário de imagens — Loja do Korre
 
 [imagem-01-arquitetura-geral.png]
 Descrição: Diagrama mostrando usuário, site da loja, backend, PostgreSQL, Mercado Livre e admin desktop.

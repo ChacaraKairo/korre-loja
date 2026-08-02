@@ -132,7 +132,7 @@ async function main() {
     create: {
       name: "MVP Lancamento",
       slug: "mvp-lancamento",
-      description: "Campanha inicial da KORRE Loja",
+      description: "Campanha inicial da Loja do Korre",
       utmSource: "korre",
       utmMedium: "site",
       utmCampaign: "mvp-lancamento",

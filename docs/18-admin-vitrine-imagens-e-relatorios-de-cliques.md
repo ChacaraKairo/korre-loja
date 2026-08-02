@@ -1,8 +1,8 @@
-# Admin: vitrine, imagens e relatórios de cliques — KORRE Loja
+# Admin: vitrine, imagens e relatórios de cliques — Loja do Korre
 
 ## Objetivo
 
-Definir como o backend e o app desktop de gestão devem permitir controlar a forma como os produtos aparecem no site, quais imagens serão usadas, como os cliques serão medidos e quais relatórios precisam existir para operar a KORRE Loja com qualidade.
+Definir como o backend e o app desktop de gestão devem permitir controlar a forma como os produtos aparecem no site, quais imagens serão usadas, como os cliques serão medidos e quais relatórios precisam existir para operar a Loja do Korre com qualidade.
 
 Este documento complementa o documento `17-backend-admin-dados-e-gestao.md`.
 

@@ -1,8 +1,8 @@
-# Modelo de banco de dados — KORRE Loja
+# Modelo de banco de dados — Loja do Korre
 
 ## Objetivo
 
-Este documento descreve o modelo inicial de dados da KORRE Loja.
+Este documento descreve o modelo inicial de dados da Loja do Korre.
 
 Banco recomendado: PostgreSQL.
 ORM recomendado: Prisma.

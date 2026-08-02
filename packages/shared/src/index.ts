@@ -102,7 +102,7 @@ export type AdminDashboard = {
 };
 
 export const affiliateDisclosure =
-  "Alguns links da KORRE Loja podem ser links de afiliado. Podemos receber uma comissao se voce comprar pelo link, sem custo extra para voce.";
+  "Alguns links da Loja do Korre podem ser links de afiliado. Podemos receber uma comissao se voce comprar pelo link, sem custo extra para voce.";
 
 export function formatPrice(cents?: number, currency = "BRL") {
   if (!cents) {

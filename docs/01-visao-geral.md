@@ -1,8 +1,8 @@
-# Visão geral — KORRE Loja
+# Visão geral — Loja do Korre
 
 ## O que é
 
-A **KORRE Loja** é uma vitrine ecommerce afiliada, focada em produtos úteis para motoristas de aplicativo, motoboys, entregadores e profissionais autônomos que usam carro ou moto como ferramenta de trabalho.
+A **Loja do Korre** é uma vitrine ecommerce afiliada, focada em produtos úteis para motoristas de aplicativo, motoboys, entregadores e profissionais autônomos que usam carro ou moto como ferramenta de trabalho.
 
 O objetivo não é competir com o Mercado Livre, mas organizar uma curadoria de produtos relevantes para o público do KORRE e redirecionar o usuário para compra por meio de links de afiliado.
 
@@ -10,7 +10,7 @@ O objetivo não é competir com o Mercado Livre, mas organizar uma curadoria de 
 
 Motoristas e entregadores precisam comprar acessórios e itens de rotina, mas normalmente procuram produtos espalhados, sem curadoria e sem foco real na rotina de trabalho.
 
-A KORRE Loja organiza produtos por necessidade prática:
+A Loja do Korre organiza produtos por necessidade prática:
 
 - segurança no uso do celular;
 - carregamento durante o trabalho;
@@ -32,13 +32,13 @@ A loja deve responder a uma pergunta simples:
 
 Modelo inicial:
 
-- produtos exibidos no site da KORRE Loja;
+- produtos exibidos no site da Loja do Korre;
 - clique redireciona para o Mercado Livre;
 - link pode conter identificação de afiliado;
 - backend registra clique, produto, categoria, origem e data;
 - admin mostra os produtos mais clicados e campanhas com melhor desempenho.
 
-## O que a KORRE Loja não faz no MVP
+## O que a Loja do Korre não faz no MVP
 
 - Não processa pagamento.
 - Não emite nota fiscal de produto.
@@ -84,10 +84,10 @@ Modelo inicial:
 
 ## Relação com o KORRE principal
 
-O app KORRE principal pode futuramente ter banners ou links para a KORRE Loja, por exemplo:
+O app KORRE principal pode futuramente ter banners ou links para a Loja do Korre, por exemplo:
 
 - “Produtos úteis para seu veículo”.
 - “Itens recomendados para entregadores”.
 - “Acessórios para trabalhar melhor”.
 
-Mas o KORRE Loja deve continuar independente, para não misturar banco, deploy e regras de negócio do app principal.
+Mas a Loja do Korre deve continuar independente, para não misturar banco, deploy e regras de negócio do app principal.

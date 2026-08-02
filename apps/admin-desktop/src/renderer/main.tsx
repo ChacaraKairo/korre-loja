@@ -177,7 +177,7 @@ function App() {
     return (
       <main className="login-screen">
         <form className="login-panel" onSubmit={submitLogin}>
-          <strong>KORRE Loja</strong>
+          <strong>Loja do Korre</strong>
           <div>
             <p>Admin desktop</p>
             <h1>Acesse a gestao da vitrine</h1>
@@ -200,7 +200,7 @@ function App() {
   return (
     <main className="shell">
       <aside>
-        <strong>KORRE Loja</strong>
+        <strong>Loja do Korre</strong>
         <nav>
           <a className="active"><BarChart3 size={18} /> Dashboard</a>
           <a><Boxes size={18} /> Produtos</a>

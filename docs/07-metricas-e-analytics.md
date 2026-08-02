@@ -1,8 +1,8 @@
-# Métricas e analytics — KORRE Loja
+# Métricas e analytics — Loja do Korre
 
 ## Objetivo
 
-A KORRE Loja precisa medir quais produtos recebem mais atenção do público, sem coletar dados pessoais desnecessários.
+A Loja do Korre precisa medir quais produtos recebem mais atenção do público, sem coletar dados pessoais desnecessários.
 
 O foco inicial é entender:
 
