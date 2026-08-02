@@ -111,6 +111,7 @@ function App() {
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
   const visibleSubcategories = categorySlug === "all" ? [] : subcategoriesByCategory[categorySlug] ?? [];
+  const activeCategoryIndex = Math.max(0, catalog.categories.findIndex((category) => category.slug === categorySlug));
 
   function selectCategory(slug: string) {
     setCategorySlug(slug);
@@ -260,24 +261,15 @@ function App() {
               <button className={categorySlug === category.slug ? "active" : ""} onClick={() => selectCategory(category.slug)}>
                 {category.name} {categorySlug === category.slug ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </button>
-              {categorySlug === category.slug && (
-                <div className="nested-subcategories">
-                  {(subcategoriesByCategory[category.slug] ?? []).map((subcategory) => (
-                    <button
-                      className={selectedSubcategory === subcategory.label ? "active" : ""}
-                      key={subcategory.label}
-                      onClick={() => selectSubcategory(subcategory.label)}
-                    >
-                      {subcategory.label}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </aside>
 
-        <section className="subcategory-board" aria-label="Subcategorias">
+        <section
+          className={`subcategory-board ${categorySlug !== "all" ? "speech-board" : ""}`}
+          style={{ "--bubble-y": `${66 + activeCategoryIndex * 50}px` } as React.CSSProperties}
+          aria-label="Subcategorias"
+        >
           <div className="subcategory-heading">
             <div>
               <p className="eyebrow">Subcategorias</p>
