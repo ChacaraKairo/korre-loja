@@ -64,7 +64,7 @@ export class CatalogService {
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
     });
 
-    return categories.map(this.mapCategory);
+    return categories.map((category) => this.mapCategory(category));
   }
 
   async getProducts(filters: { vehicle?: string; category?: string }) {
@@ -88,7 +88,7 @@ export class CatalogService {
       orderBy: [{ featured: "desc" }, { updatedAt: "desc" }]
     });
 
-    return products.map(this.mapProduct);
+    return products.map((product) => this.mapProduct(product));
   }
 
   async getAllProducts() {
@@ -103,7 +103,7 @@ export class CatalogService {
       orderBy: { updatedAt: "desc" }
     });
 
-    return products.map(this.mapProduct);
+    return products.map((product) => this.mapProduct(product));
   }
 
   async getProductBySlug(slug: string): Promise<Product> {
