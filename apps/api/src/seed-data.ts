@@ -2,30 +2,39 @@ import type { Category, Product } from "@korre/shared";
 
 export const categories: Category[] = [
   {
-    id: "cat-suportes",
-    name: "Celular e suporte",
-    slug: "celular-e-suporte",
-    description: "Suportes, bases e acessorios para manter o celular visivel e seguro.",
-    icon: "phone",
+    id: "cat-eletronicos",
+    name: "Eletronicos",
+    slug: "eletronicos",
+    description: "Celulares, carregadores, power banks, cabos e acessorios para manter a operacao conectada.",
+    icon: "smartphone",
     sortOrder: 1,
     active: true
   },
   {
-    id: "cat-energia",
-    name: "Energia na rua",
-    slug: "energia-na-rua",
-    description: "Carregadores, cabos reforcados e power banks para longas jornadas.",
-    icon: "battery",
+    id: "cat-vestimentas",
+    name: "Vestimentas",
+    slug: "vestimentas",
+    description: "Capas de chuva, luvas, jaquetas, refletivos e protecoes para a rotina na rua.",
+    icon: "shirt",
     sortOrder: 2,
     active: true
   },
   {
-    id: "cat-chuva",
-    name: "Chuva e protecao",
-    slug: "chuva-e-protecao",
-    description: "Itens para trabalhar com mais seguranca em dias de chuva.",
-    icon: "cloud-rain",
+    id: "cat-equipamentos",
+    name: "Equipamentos",
+    slug: "equipamentos",
+    description: "Suportes, bags, mochilas, organizadores e itens de apoio para trabalho.",
+    icon: "briefcase",
     sortOrder: 3,
+    active: true
+  },
+  {
+    id: "cat-pecas",
+    name: "Pecas",
+    slug: "pecas",
+    description: "Itens de manutencao simples e pecas de reposicao para carro, moto, bike e scooter.",
+    icon: "wrench",
+    sortOrder: 4,
     active: true
   }
 ];
@@ -33,8 +42,8 @@ export const categories: Category[] = [
 export const products: Product[] = [
   {
     id: "prod-suporte-celular",
-    categoryId: "cat-suportes",
-    categorySlug: "celular-e-suporte",
+    categoryId: "cat-equipamentos",
+    categorySlug: "equipamentos",
     name: "Suporte veicular com trava reforcada",
     slug: "suporte-veicular-trava-reforcada",
     shortDescription: "Boa opcao para quem usa GPS por horas e precisa reduzir vibracao.",
@@ -46,7 +55,7 @@ export const products: Product[] = [
     currency: "BRL",
     status: "active",
     featured: true,
-    tags: ["gps", "carro", "rotina"],
+    tags: ["suportes para celular", "gps", "carro", "rotina"],
     bestFor: "Motoristas de app que passam o dia alternando entre mapas, chamadas e corridas.",
     avoidWhen: "O painel do veiculo nao tem area firme para ventosa ou base adesiva.",
     offer: {
@@ -60,8 +69,8 @@ export const products: Product[] = [
   },
   {
     id: "prod-cabo-reforcado",
-    categoryId: "cat-energia",
-    categorySlug: "energia-na-rua",
+    categoryId: "cat-eletronicos",
+    categorySlug: "eletronicos",
     name: "Cabo USB-C reforcado para carga rapida",
     slug: "cabo-usb-c-reforcado-carga-rapida",
     shortDescription: "Cabo extra para deixar no carro, moto ou mochila sem depender do principal.",
@@ -73,7 +82,7 @@ export const products: Product[] = [
     currency: "BRL",
     status: "active",
     featured: true,
-    tags: ["energia", "usb-c", "carga"],
+    tags: ["carregadores", "energia", "usb-c", "carga"],
     bestFor: "Quem alterna entre veiculo, power bank e tomada durante o dia.",
     avoidWhen: "Seu celular usa outro padrao de conector ou exige cabo certificado especifico.",
     offer: {
@@ -87,8 +96,8 @@ export const products: Product[] = [
   },
   {
     id: "prod-capa-chuva",
-    categoryId: "cat-chuva",
-    categorySlug: "chuva-e-protecao",
+    categoryId: "cat-vestimentas",
+    categorySlug: "vestimentas",
     name: "Capa de chuva para entrega",
     slug: "capa-de-chuva-para-entrega",
     shortDescription: "Camada de protecao para motoboy que nao pode parar quando o tempo vira.",
@@ -100,7 +109,7 @@ export const products: Product[] = [
     currency: "BRL",
     status: "active",
     featured: false,
-    tags: ["moto", "chuva", "entrega"],
+    tags: ["capa de chuva", "moto", "chuva", "entrega"],
     bestFor: "Entregadores que rodam mesmo em periodos de chuva e precisam secar rapido.",
     avoidWhen: "Voce precisa de EPI com certificacao especifica exigida pela empresa contratante.",
     offer: {
@@ -109,6 +118,61 @@ export const products: Product[] = [
       affiliateUrl: "https://www.mercadolivre.com.br/",
       active: true,
       referencePriceCents: 11990,
+      updatedAt: new Date().toISOString()
+    }
+  }
+  ,
+  {
+    id: "prod-celular-reserva",
+    categoryId: "cat-eletronicos",
+    categorySlug: "eletronicos",
+    name: "Celular reserva para aplicativos",
+    slug: "celular-reserva-para-aplicativos",
+    shortDescription: "Aparelho de apoio para quem precisa manter corridas, mapas e comunicacao sempre disponiveis.",
+    recommendationReason: "Ajuda a separar uso pessoal da operacao e reduz risco de ficar sem ferramenta de trabalho.",
+    vehicleType: "both",
+    audience: "general",
+    imageUrl: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 79990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["celulares", "aplicativos", "gps"],
+    bestFor: "Motoristas e entregadores que dependem do celular durante toda a jornada.",
+    avoidWhen: "Voce precisa de camera premium ou alto desempenho para jogos.",
+    offer: {
+      id: "offer-celular-reserva",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 79990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-kit-pastilha-freio",
+    categoryId: "cat-pecas",
+    categorySlug: "pecas",
+    name: "Kit de pastilhas de freio para revisao",
+    slug: "kit-pastilhas-freio-revisao",
+    shortDescription: "Item de manutencao preventiva para revisar antes de jornadas longas.",
+    recommendationReason: "Freio em dia reduz risco operacional e evita parar de trabalhar por desgaste ignorado.",
+    vehicleType: "motorcycle",
+    audience: "motoboy",
+    imageUrl: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 8990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["pecas", "freio", "manutencao", "moto"],
+    bestFor: "Motoboys que fazem revisao periodica e conhecem a compatibilidade da moto.",
+    avoidWhen: "Voce nao tem certeza do modelo correto para seu veiculo.",
+    offer: {
+      id: "offer-kit-pastilha-freio",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 8990,
       updatedAt: new Date().toISOString()
     }
   }

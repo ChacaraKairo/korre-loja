@@ -1,6 +1,18 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { BatteryCharging, Bike, Car, ExternalLink, Gauge, Search, ShieldCheck, Smartphone } from "lucide-react";
+import {
+  BatteryCharging,
+  Bike,
+  Car,
+  ChevronRight,
+  ExternalLink,
+  Menu,
+  PackageSearch,
+  Search,
+  ShieldCheck,
+  Smartphone,
+  Zap
+} from "lucide-react";
 import type { Product, PublicCatalog, VehicleType } from "@korre/shared";
 import { affiliateDisclosure, formatPrice } from "@korre/shared";
 import "./styles.css";
@@ -9,13 +21,32 @@ const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 const fallbackCatalog: PublicCatalog = {
   categories: [
-    { id: "cat-suportes", name: "Celular e suporte", slug: "celular-e-suporte", sortOrder: 1, active: true },
-    { id: "cat-energia", name: "Energia na rua", slug: "energia-na-rua", sortOrder: 2, active: true },
-    { id: "cat-chuva", name: "Chuva e protecao", slug: "chuva-e-protecao", sortOrder: 3, active: true }
+    { id: "cat-eletronicos", name: "Eletronicos", slug: "eletronicos", sortOrder: 1, active: true },
+    { id: "cat-vestimentas", name: "Vestimentas", slug: "vestimentas", sortOrder: 2, active: true },
+    { id: "cat-equipamentos", name: "Equipamentos", slug: "equipamentos", sortOrder: 3, active: true },
+    { id: "cat-pecas", name: "Pecas", slug: "pecas", sortOrder: 4, active: true }
   ],
   featuredProducts: [],
   products: []
 };
+
+const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: typeof Car }> = [
+  { label: "Todos", value: "all", icon: PackageSearch },
+  { label: "Carro", value: "car", icon: Car },
+  { label: "Moto", value: "motorcycle", icon: Smartphone },
+  { label: "Bicicleta", value: "bicycle", icon: Bike },
+  { label: "Scooter eletrica", value: "electric_scooter", icon: Zap },
+  { label: "Outros", value: "other", icon: Menu }
+];
+
+const subcategories = [
+  { label: "Celulares", category: "eletronicos" },
+  { label: "Carregadores", category: "eletronicos" },
+  { label: "Suportes para celular", category: "equipamentos" },
+  { label: "Capas de chuva", category: "vestimentas" },
+  { label: "Bags e mochilas", category: "equipamentos" },
+  { label: "Pecas de revisao", category: "pecas" }
+];
 
 function App() {
   const [vehicle, setVehicle] = useState<VehicleType | "all">("all");
@@ -98,7 +129,7 @@ function App() {
     return (
       <main>
         <nav className="detail-topbar">
-          <button onClick={() => navigate("/")}>KORRE Loja</button>
+          <button onClick={() => navigate("/")}><img src="/brand/korre-icon.png" alt="" /> KORRE Loja</button>
           <span>Compra fora da KORRE Loja, no marketplace parceiro</span>
         </nav>
 
@@ -142,57 +173,92 @@ function App() {
 
   return (
     <main>
-      <section className="hero">
-        <nav className="topbar">
-          <strong>KORRE Loja</strong>
-          <span>Curadoria para quem trabalha na rua</span>
+      <header className="market-header">
+        <div className="market-top">
+          <button className="brand" onClick={() => navigate("/")}>
+            <img src="/brand/korre-icon.png" alt="KORRE" />
+            <span>KORRE Loja</span>
+          </button>
+          <div className="market-search">
+            <Search size={20} />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar produtos, marcas e mais" />
+            <button>Buscar</button>
+          </div>
+          <span className="header-note">Compra segura no marketplace parceiro</span>
+        </div>
+        <nav className="market-nav">
+          <button><Menu size={16} /> Categorias</button>
+          <button onClick={() => setCategorySlug("eletronicos")}>Eletronicos</button>
+          <button onClick={() => setCategorySlug("vestimentas")}>Vestimentas</button>
+          <button onClick={() => setCategorySlug("equipamentos")}>Equipamentos</button>
+          <button onClick={() => setCategorySlug("pecas")}>Pecas</button>
         </nav>
-        <div className="hero-grid">
+      </header>
+
+      <section className="market-hero">
+        <div>
+          <p className="eyebrow">Marketplace afiliado do ecossistema KORRE</p>
+          <h1>Produtos para quem roda, entrega e precisa manter a operacao funcionando.</h1>
+          <p>
+            Uma vitrine curada no estilo marketplace, separada por tipo de motorista, categoria e subcategoria,
+            com foco em itens uteis para a rotina na rua.
+          </p>
+        </div>
+        <img src="/brand/korre-logo.png" alt="KORRE" />
+      </section>
+
+      <section className="driver-section">
+        <div className="section-heading compact-heading">
           <div>
-            <p className="eyebrow">Vitrine afiliada especializada</p>
-            <h1>Equipamentos uteis para rodar melhor, comprar com mais criterio e perder menos tempo.</h1>
-            <p className="hero-copy">
-              Produtos selecionados para motoristas, motoboys e entregadores, com foco em rotina real: energia,
-              protecao, organizacao e seguranca operacional.
-            </p>
-            <div className="searchbar">
-              <Search size={18} />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar por produto ou problema" />
-            </div>
+            <p className="eyebrow">Comece pelo seu perfil</p>
+            <h2>Tipo de motorista</h2>
           </div>
-          <div className="hero-panel">
-            <Gauge size={28} />
-            <strong>Comece pelo seu veiculo</strong>
-            <div className="vehicle-tabs">
-              <button className={vehicle === "all" ? "active" : ""} onClick={() => setVehicle("all")}>Todos</button>
-              <button className={vehicle === "car" ? "active" : ""} onClick={() => setVehicle("car")}><Car size={16} /> Carro</button>
-              <button className={vehicle === "motorcycle" ? "active" : ""} onClick={() => setVehicle("motorcycle")}><Smartphone size={16} /> Moto</button>
-              <button className={vehicle === "bicycle" ? "active" : ""} onClick={() => setVehicle("bicycle")}><Bike size={16} /> Bike</button>
-            </div>
-          </div>
+        </div>
+        <div className="driver-grid">
+          {driverProfiles.map((profile) => {
+            const Icon = profile.icon;
+            return (
+              <button className={vehicle === profile.value ? "active" : ""} key={profile.value} onClick={() => setVehicle(profile.value)}>
+                <Icon size={22} />
+                {profile.label}
+              </button>
+            );
+          })}
         </div>
       </section>
 
       {status === "error" && <p className="notice">Nao foi possivel carregar a API agora. Exibindo catalogo local de partida.</p>}
 
-      <section className="category-strip" aria-label="Categorias">
-        <button className={categorySlug === "all" ? "active" : ""} onClick={() => setCategorySlug("all")}>
-          <ShieldCheck size={16} />
-          Todas
-        </button>
-        {catalog.categories.map((category) => (
-          <button className={categorySlug === category.slug ? "active" : ""} key={category.id} onClick={() => setCategorySlug(category.slug)}>
-            <ShieldCheck size={16} />
-            {category.name}
+      <section className="marketplace-grid">
+        <aside className="category-panel">
+          <strong>Categorias</strong>
+          <button className={categorySlug === "all" ? "active" : ""} onClick={() => setCategorySlug("all")}>
+            Todas <ChevronRight size={16} />
           </button>
-        ))}
+          {catalog.categories.map((category) => (
+            <button className={categorySlug === category.slug ? "active" : ""} key={category.id} onClick={() => setCategorySlug(category.slug)}>
+              {category.name} <ChevronRight size={16} />
+            </button>
+          ))}
+        </aside>
+
+        <section className="subcategory-strip" aria-label="Subcategorias">
+          {subcategories.map((subcategory) => (
+            <button key={subcategory.label} onClick={() => {
+              setCategorySlug(subcategory.category);
+              setQuery(subcategory.label);
+            }}>
+              {subcategory.label}
+            </button>
+          ))}
+        </section>
       </section>
 
       <section className="content">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Produtos iniciais</p>
-            <h2>Curadoria MVP</h2>
+            <p className="eyebrow">Ofertas e recomendacoes</p>
+            <h2>Produtos para sua rotina</h2>
           </div>
           <span>{filteredProducts.length} itens ativos</span>
         </div>
@@ -221,7 +287,7 @@ function App() {
                 <div className="card-footer">
                   <strong>{formatPrice(product.referencePriceCents)}</strong>
                   <div className="card-actions">
-                    <button className="secondary-action" onClick={() => navigate(`/produto/${product.slug}`)}>Detalhes</button>
+                    <button className="secondary-action" onClick={() => navigate(`/produto/${product.slug}`)}>Ver detalhes</button>
                     <button disabled={!product.offer?.active} onClick={() => openOffer(product)}>
                       Mercado Livre <ExternalLink size={16} />
                     </button>
@@ -261,8 +327,8 @@ function App() {
 const seedProducts: Product[] = [
   {
     id: "prod-demo",
-    categoryId: "cat-suportes",
-    categorySlug: "celular-e-suporte",
+    categoryId: "cat-equipamentos",
+    categorySlug: "equipamentos",
     name: "Suporte veicular com trava reforcada",
     slug: "suporte-veicular-trava-reforcada",
     shortDescription: "Boa opcao para GPS diario.",
@@ -274,7 +340,7 @@ const seedProducts: Product[] = [
     currency: "BRL",
     status: "active",
     featured: true,
-    tags: ["gps", "carro"],
+    tags: ["suportes para celular", "gps", "carro"],
     bestFor: "Motoristas de app.",
     avoidWhen: "Painel sem area firme.",
     offer: {

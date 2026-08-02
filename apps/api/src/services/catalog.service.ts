@@ -5,7 +5,7 @@ import { slugify } from "@korre/shared";
 import { z } from "zod";
 import { PrismaService } from "./prisma.service";
 
-const vehicleTypes = ["car", "motorcycle", "bicycle", "both"] as const;
+const vehicleTypes = ["car", "motorcycle", "bicycle", "electric_scooter", "other", "both"] as const;
 const audiences = ["driver", "motoboy", "delivery", "general"] as const;
 const productStatuses = ["draft", "active", "inactive", "archived"] as const;
 

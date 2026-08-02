@@ -26,6 +26,17 @@ async function main() {
     }
   });
 
+  await prisma.category.updateMany({
+    where: {
+      slug: {
+        notIn: categories.map((category) => category.slug)
+      }
+    },
+    data: {
+      active: false
+    }
+  });
+
   for (const category of categories) {
     await prisma.category.upsert({
       where: { slug: category.slug },

@@ -1,4 +1,4 @@
-export type VehicleType = "car" | "motorcycle" | "bicycle" | "both";
+export type VehicleType = "car" | "motorcycle" | "bicycle" | "electric_scooter" | "other" | "both";
 
 export type ProductStatus = "draft" | "active" | "inactive" | "archived";
 
