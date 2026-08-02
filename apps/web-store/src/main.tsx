@@ -112,6 +112,7 @@ function App() {
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
   const visibleSubcategories = categorySlug === "all" ? [] : subcategoriesByCategory[categorySlug] ?? [];
   const activeCategoryIndex = Math.max(0, catalog.categories.findIndex((category) => category.slug === categorySlug));
+  const bubblePointerY = categorySlug === "all" ? 54 : 104 + activeCategoryIndex * 50;
 
   function selectCategory(slug: string) {
     setCategorySlug(slug);
@@ -267,7 +268,7 @@ function App() {
 
         <section
           className={`subcategory-board ${categorySlug !== "all" ? "speech-board" : ""}`}
-          style={{ "--bubble-y": `${66 + activeCategoryIndex * 50}px` } as React.CSSProperties}
+          style={{ "--bubble-y": `${bubblePointerY}px` } as React.CSSProperties}
           aria-label="Subcategorias"
         >
           <div className="subcategory-heading">
