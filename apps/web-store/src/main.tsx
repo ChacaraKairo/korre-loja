@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, type CSSProperties, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BatteryCharging,
@@ -6,12 +6,19 @@ import {
   ChevronDown,
   Car,
   ChevronRight,
+  ClipboardList,
+  CloudRain,
   ExternalLink,
+  Gauge,
+  LifeBuoy,
   Menu,
   PackageSearch,
+  Route,
   Search,
   ShieldCheck,
   Smartphone,
+  Target,
+  Wrench,
   Zap
 } from "lucide-react";
 import type { Product, PublicCatalog, VehicleType } from "@korre/shared";
@@ -66,6 +73,59 @@ const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: t
   { label: "Bicicleta", value: "bicycle", icon: Bike },
   { label: "Scooter eletrica", value: "electric_scooter", icon: Zap },
   { label: "Outros", value: "other", icon: Menu }
+];
+
+const problemHubs = [
+  { title: "Celular descarregando", query: "carregador", categorySlug: "trabalho-e-produtividade", tone: "very-high" },
+  { title: "Celular esquentando", query: "cooler celular", categorySlug: "eletronicos", tone: "high" },
+  { title: "Suporte caindo", query: "suporte celular", categorySlug: "equipamentos", tone: "very-high" },
+  { title: "Carro sujo", query: "limpeza", categorySlug: "limpeza-e-higienizacao", tone: "very-high" },
+  { title: "Mau cheiro", query: "odores", categorySlug: "limpeza-e-higienizacao", tone: "very-high" },
+  { title: "Desconforto ao dirigir", query: "conforto lombar", categorySlug: "conforto", tone: "very-high" },
+  { title: "Falta de organizacao", query: "organizador", categorySlug: "organizacao-do-veiculo", tone: "high" },
+  { title: "Trabalho na chuva", query: "chuva", categorySlug: "clima-e-protecao", tone: "very-high" },
+  { title: "Pneu sem pressao", query: "compressor", categorySlug: "pneus-e-rodas", tone: "very-high" },
+  { title: "Bateria descarregada", query: "bateria", categorySlug: "emergencia", tone: "very-high" },
+  { title: "Pedidos desorganizados", query: "delivery", categorySlug: "delivery", tone: "high" },
+  { title: "Registrar o transito", query: "dashcam", categorySlug: "tecnologia-veicular", tone: "very-high" }
+];
+
+const objectiveHubs = [
+  { title: "Economizar combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao", icon: Gauge },
+  { title: "Reduzir manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao", icon: Wrench },
+  { title: "Melhorar avaliacoes", subtitle: "Limpeza, conforto e atendimento ao passageiro.", categorySlug: "passageiros-e-familia", icon: ShieldCheck },
+  { title: "Ganhar produtividade", subtitle: "Energia, suportes, organizacao e delivery.", categorySlug: "trabalho-e-produtividade", icon: Target },
+  { title: "Preparar para viagem", subtitle: "Bagagem, emergencia, alimentacao e navegacao.", categorySlug: "viagens-e-uso-rodoviario", icon: Route },
+  { title: "Trabalhar com seguranca", subtitle: "Camera, visibilidade, pneus e sinalizacao.", categorySlug: "seguranca", icon: LifeBuoy }
+];
+
+const workHubs = [
+  { title: "Motorista de aplicativo", items: ["Essenciais para comecar", "Celular e carregamento", "Atendimento", "Conforto", "Limpeza", "Kits completos"] },
+  { title: "Taxista", items: ["Atendimento ao passageiro", "Organizacao", "Seguranca", "Conservacao", "Tecnologia"] },
+  { title: "Motoboy", items: ["Chuva", "Baus e bags", "Suporte antivibracao", "Visibilidade", "Manutencao de corrente"] },
+  { title: "Entregador de carro", items: ["Pedidos", "Bebidas", "Porta-malas", "Limpeza rapida", "Controle de custos"] },
+  { title: "Ciclista entregador", items: ["Iluminacao", "Bolsas", "Hidratacao", "Seguranca", "Kit chuva"] },
+  { title: "Motorista profissional", items: ["Alta quilometragem", "Conforto", "Emergencia", "Tecnologia", "Viagem"] }
+];
+
+const kitHubs = [
+  "Kit motorista de aplicativo iniciante",
+  "Kit motorista cinco estrelas",
+  "Kit motoboy chuva",
+  "Kit celular sempre carregado",
+  "Kit limpeza rapida",
+  "Kit pneu e calibragem",
+  "Kit trabalho noturno",
+  "Kit emergencia"
+];
+
+const contentHubs = [
+  { title: "Guias de compra", text: "Como escolher suporte, carregador, dashcam, compressor e mochila termica." },
+  { title: "Reviews", text: "Analise de uso, pontos positivos, limitacoes, compatibilidade e alternativas." },
+  { title: "Comparativos", text: "Produto contra produto, barato contra premium, marcas, tecnologias e tamanhos." },
+  { title: "Manutencao", text: "Pneus, bateria, filtros, palhetas, iluminacao e sinais de desgaste." },
+  { title: "Seguranca", text: "Trabalho noturno, chuva, visibilidade, cameras, passageiros e emergencia." },
+  { title: "Legislacao", text: "Conteudo datado, por jurisdicao, com fontes oficiais quando for regulatorio." }
 ];
 
 function App() {
@@ -126,7 +186,7 @@ function App() {
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
   const visibleSubcategories = activeCategory?.subcategories ?? [];
   const activeCategoryIndex = Math.max(0, catalog.categories.findIndex((category) => category.slug === categorySlug));
-  const bubblePointerY = categorySlug === "all" ? 54 : 104 + activeCategoryIndex * 50;
+  const bubblePointerY = categorySlug === "all" ? 54 : Math.min(330, Math.max(64, 104 + activeCategoryIndex * 50));
 
   function selectCategory(slug: string) {
     setCategorySlug(slug);
@@ -135,6 +195,13 @@ function App() {
 
   function selectSubcategory(label: string) {
     setSelectedSubcategory((current) => current === label ? "" : label);
+  }
+
+  function focusHub(category: string, searchText = "") {
+    setCategorySlug(category);
+    setSelectedSubcategory("");
+    setQuery(searchText);
+    document.querySelector(".content")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function navigate(nextPath: string) {
@@ -234,9 +301,14 @@ function App() {
           <p className="eyebrow">Marketplace afiliado do ecossistema KORRE</p>
           <h1>Produtos para quem roda, entrega e precisa manter a operacao funcionando.</h1>
           <p>
-            Uma vitrine curada no estilo marketplace, separada por tipo de motorista, categoria e subcategoria,
-            com foco em itens uteis para a rotina na rua.
+            Uma vitrine curada no estilo marketplace, separada por perfil, veiculo, problema, contexto de uso
+            e solucao recomendada para quem vive na correria.
           </p>
+          <div className="formula-strip" aria-label="Logica de recomendacao">
+            {["Perfil profissional", "Veiculo", "Problema", "Contexto", "Solucao"].map((step) => (
+              <span key={step}>{step}</span>
+            ))}
+          </div>
         </div>
         <img src="/brand/logo-completa-sem-fundo.png" alt="Loja do Korre" />
       </section>
@@ -263,6 +335,24 @@ function App() {
 
       {status === "error" && <p className="notice">Nao foi possivel carregar a API agora. Exibindo catalogo local de partida.</p>}
 
+      <section className="hub-section">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="eyebrow">O que esta acontecendo?</p>
+            <h2>Resolva pelo problema</h2>
+          </div>
+          <span>{problemHubs.length} caminhos rapidos</span>
+        </div>
+        <div className="problem-grid">
+          {problemHubs.map((hub) => (
+            <button className={hub.tone === "very-high" ? "priority" : ""} key={hub.title} onClick={() => focusHub(hub.categorySlug, hub.query)}>
+              <LifeBuoy size={18} />
+              <span>{hub.title}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
       <section className="marketplace-grid">
         <aside className="category-panel">
           <strong>Categorias</strong>
@@ -280,7 +370,7 @@ function App() {
 
         <section
           className={`subcategory-board ${categorySlug !== "all" ? "speech-board" : ""}`}
-          style={{ "--bubble-y": `${bubblePointerY}px` } as React.CSSProperties}
+          style={{ "--bubble-y": `${bubblePointerY}px` } as CSSProperties}
           aria-label="Subcategorias"
         >
           <div className="subcategory-heading">
@@ -360,6 +450,98 @@ function App() {
         </div>
       </section>
 
+      <section className="strategy-section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Por objetivo</p>
+            <h2>Compre pelo resultado esperado</h2>
+          </div>
+        </div>
+        <div className="objective-grid">
+          {objectiveHubs.map((hub) => {
+            const Icon = hub.icon;
+            return (
+              <button key={hub.title} onClick={() => focusHub(hub.categorySlug)}>
+                <Icon size={22} />
+                <strong>{hub.title}</strong>
+                <span>{hub.subtitle}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="strategy-section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Para o seu trabalho</p>
+            <h2>Hubs por profissao</h2>
+          </div>
+        </div>
+        <div className="work-grid">
+          {workHubs.map((hub) => (
+            <article key={hub.title}>
+              <h3>{hub.title}</h3>
+              <div>
+                {hub.items.map((item) => <span key={item}>{item}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="strategy-section split-section">
+        <article>
+          <div className="section-heading compact-heading">
+            <div>
+              <p className="eyebrow">Kits completos</p>
+              <h2>Combos por profissao, problema e jornada</h2>
+            </div>
+          </div>
+          <div className="kit-list">
+            {kitHubs.map((kit) => (
+              <button key={kit} onClick={() => focusHub("kits-loja-do-korre", kit.replace("Kit ", ""))}>
+                <PackageSearch size={18} />
+                {kit}
+              </button>
+            ))}
+          </div>
+        </article>
+
+        <article>
+          <div className="section-heading compact-heading">
+            <div>
+              <p className="eyebrow">Clima e sazonalidade</p>
+              <h2>Prioridades da rotina</h2>
+            </div>
+          </div>
+          <div className="season-card">
+            <CloudRain size={28} />
+            <strong>Chuva, calor, frio, ferias e datas profissionais</strong>
+            <p>Campanhas podem destacar capas, impermeabilizacao, hidratacao, ventilacao, viagem, presentes e kits por faixa de preco.</p>
+            <button onClick={() => focusHub("clima-e-protecao", "chuva")}>Ver itens de clima</button>
+          </div>
+        </article>
+      </section>
+
+      <section className="strategy-section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Conteudo especializado</p>
+            <h2>Guias, reviews e comparativos</h2>
+          </div>
+        </div>
+        <div className="content-hub-grid">
+          {contentHubs.map((hub) => (
+            <article key={hub.title}>
+              <ClipboardList size={20} />
+              <h3>{hub.title}</h3>
+              <p>{hub.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="affiliate">
         <BatteryCharging size={22} />
         <p>{affiliateDisclosure}</p>
@@ -378,7 +560,7 @@ function App() {
           <h2>Marketplace parceiro</h2>
           <p>
             A compra acontece fora da Loja do Korre. Preco, estoque, entrega, garantia e pos-venda sao responsabilidade
-            do marketplace e do vendedor do anuncio.
+            do marketplace e do vendedor do anuncio. Usamos botoes como conferir preco e ver oferta para evitar confusao.
           </p>
         </article>
       </section>

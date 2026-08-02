@@ -2,13 +2,33 @@ import type { Category, Product } from "@korre/shared";
 
 export const categories: Category[] = [
   {
+    id: "cat-trabalho-produtividade",
+    name: "Trabalho e produtividade",
+    slug: "trabalho-e-produtividade",
+    description: "Essenciais para operar apps, atender passageiros, entregar pedidos e organizar a jornada.",
+    icon: "briefcase",
+    subcategories: ["Suportes para celular", "Carregadores", "Cabos", "Power banks", "Atendimento ao passageiro", "Bags de entrega", "Mochilas termicas", "Gestao da jornada"],
+    sortOrder: 1,
+    active: true
+  },
+  {
     id: "cat-eletronicos",
     name: "Eletronicos",
     slug: "eletronicos",
     description: "Celulares, carregadores, power banks, cabos e acessorios para manter a operacao conectada.",
     icon: "smartphone",
-    subcategories: ["Celulares", "Carregadores", "Power banks", "Cabos reforcados"],
-    sortOrder: 1,
+    subcategories: ["Celulares", "Carregadores", "Power banks", "Cabos reforcados", "Coolers para celular", "Impressoras portateis"],
+    sortOrder: 2,
+    active: true
+  },
+  {
+    id: "cat-tecnologia-veicular",
+    name: "Tecnologia veicular",
+    slug: "tecnologia-veicular",
+    description: "Multimidia, cameras, sensores, diagnostico e energia para dirigir com mais controle.",
+    icon: "cpu",
+    subcategories: ["Multimidia", "Dashcams", "Cameras de re", "Sensores", "OBD2", "Energia", "GPS", "Conectividade"],
+    sortOrder: 3,
     active: true
   },
   {
@@ -17,8 +37,8 @@ export const categories: Category[] = [
     slug: "autopecas",
     description: "Pecas de reposicao e itens de manutencao preventiva ou corretiva.",
     icon: "wrench",
-    subcategories: ["Oleo do motor", "Filtros", "Freios", "Suspensao", "Direcao", "Correias", "Ignicao", "Arrefecimento", "Palhetas", "Eletrica", "Baterias"],
-    sortOrder: 2,
+    subcategories: ["Motor", "Filtros", "Freios", "Suspensao", "Direcao", "Correias", "Ignicao", "Arrefecimento", "Palhetas", "Eletrica", "Baterias"],
+    sortOrder: 4,
     active: true
   },
   {
@@ -28,7 +48,7 @@ export const categories: Category[] = [
     description: "Pneus, rodas, calotas e reparos para carro, moto, bicicleta e utilitarios.",
     icon: "circle",
     subcategories: ["Pneus de passeio", "Pneus SUV", "Pneus utilitarios", "Pneus de moto", "Pneus de bicicleta", "Rodas", "Calotas", "Kit reparo", "Compressor", "Selante"],
-    sortOrder: 3,
+    sortOrder: 5,
     active: true
   },
   {
@@ -38,17 +58,37 @@ export const categories: Category[] = [
     description: "Ferramentas para pequenos reparos, revisoes e emergencias operacionais.",
     icon: "tool",
     subcategories: ["Kits de ferramentas", "Chaves", "Alicates", "Torquimetros", "Lanternas", "Multimetros", "Organizadores"],
-    sortOrder: 4,
+    sortOrder: 6,
     active: true
   },
   {
     id: "cat-manutencao",
-    name: "Manutencao",
+    name: "Manutencao preventiva",
     slug: "manutencao",
     description: "Lubrificantes, aditivos, graxas, limpeza tecnica e manutencao preventiva.",
     icon: "settings",
-    subcategories: ["Lubrificantes", "Graxas", "Aditivos", "Limpeza do motor", "Higienizacao interna", "Produtos de limpeza tecnica"],
-    sortOrder: 5,
+    subcategories: ["Fluidos", "Filtros", "Ignicao", "Freios", "Pneus", "Bateria", "Visibilidade", "Moto", "Bicicleta"],
+    sortOrder: 7,
+    active: true
+  },
+  {
+    id: "cat-manutencao-corretiva",
+    name: "Manutencao corretiva",
+    slug: "manutencao-corretiva",
+    description: "Pecas e itens para corrigir falhas comuns com orientacao de compatibilidade.",
+    icon: "wrench",
+    subcategories: ["Motor", "Eletrica", "Freios", "Suspensao", "Direcao", "Transmissao", "Acabamento", "Moto", "Bicicleta"],
+    sortOrder: 8,
+    active: true
+  },
+  {
+    id: "cat-limpeza-higienizacao",
+    name: "Limpeza e higienizacao",
+    slug: "limpeza-e-higienizacao",
+    description: "Limpeza interna, externa, odores e protecao para manter o veiculo pronto para trabalhar.",
+    icon: "sparkles",
+    subcategories: ["Interna", "Externa", "Vidros", "Estofados", "Couro", "Painel", "Rodas", "Odores", "Lavagem a seco", "Limpeza rapida", "Kits profissionais", "Protecao"],
+    sortOrder: 9,
     active: true
   },
   {
@@ -58,7 +98,7 @@ export const categories: Category[] = [
     description: "Produtos para conservar, limpar e melhorar a aparencia do veiculo.",
     icon: "sparkles",
     subcategories: ["Lavagem", "Cera", "Polimento", "Cristalizacao", "Limpeza de bancos", "Limpeza de couro", "Aromatizantes", "Aspiradores"],
-    sortOrder: 6,
+    sortOrder: 10,
     active: true
   },
   {
@@ -67,8 +107,8 @@ export const categories: Category[] = [
     slug: "organizacao-do-veiculo",
     description: "Itens para manter documentos, objetos, bagagens e ferramentas no lugar.",
     icon: "archive",
-    subcategories: ["Organizadores", "Porta-malas", "Porta-documentos", "Porta-moedas", "Porta-copos", "Lixeira automotiva", "Cabides"],
-    sortOrder: 7,
+    subcategories: ["Interior", "Porta-malas", "Banco traseiro", "Console", "Documentos", "Cabos", "Ferramentas", "Pedidos", "Alimentos", "Moto", "Bicicleta", "Viagem"],
+    sortOrder: 11,
     active: true
   },
   {
@@ -77,8 +117,38 @@ export const categories: Category[] = [
     slug: "seguranca",
     description: "Itens para emergencias, prevencao de risco e seguranca em rota.",
     icon: "shield",
-    subcategories: ["Extintores", "Triangulos", "Coletes refletivos", "Cabos de bateria", "Kits de emergencia", "Lanternas", "Martelo de emergencia", "Cortador de cinto"],
-    sortOrder: 8,
+    subcategories: ["Visibilidade", "Registro por camera", "Monitoramento", "Pneus", "Iluminacao", "Chuva", "Emergencia", "Protecao para moto", "Protecao para bicicleta", "Passageiros", "Protecao do veiculo"],
+    sortOrder: 12,
+    active: true
+  },
+  {
+    id: "cat-emergencia-imprevistos",
+    name: "Emergencia",
+    slug: "emergencia",
+    description: "Kits e equipamentos para panes, pneus, bateria, chuva, sinalizacao e primeiros cuidados.",
+    icon: "alert-triangle",
+    subcategories: ["Bateria", "Pneus", "Iluminacao", "Energia", "Sinalizacao", "Chuva", "Primeiros cuidados", "Organizacao do kit", "Documentacao", "Ferramentas"],
+    sortOrder: 13,
+    active: true
+  },
+  {
+    id: "cat-clima-protecao",
+    name: "Clima e protecao",
+    slug: "clima-e-protecao",
+    description: "Produtos para trabalhar com chuva, calor, frio, poeira e lama.",
+    icon: "cloud-rain",
+    subcategories: ["Chuva", "Calor", "Frio", "Poeira", "Lama", "Impermeabilizacao", "Protecao solar", "Ventilacao"],
+    sortOrder: 14,
+    active: true
+  },
+  {
+    id: "cat-viagens-rodoviario",
+    name: "Viagens e uso rodoviario",
+    slug: "viagens-e-uso-rodoviario",
+    description: "Bagagem, energia, conforto, emergencia e alimentacao para trajetos longos.",
+    icon: "map",
+    subcategories: ["Bagagem", "Alimentacao", "Conforto", "Energia", "Navegacao", "Emergencia", "Criancas", "Animais", "Estrada"],
+    sortOrder: 15,
     active: true
   },
   {
@@ -88,7 +158,7 @@ export const categories: Category[] = [
     description: "Capas de chuva, luvas, jaquetas, refletivos e protecoes para a rotina na rua.",
     icon: "shirt",
     subcategories: ["Capas de chuva", "Luvas", "Jaquetas", "Refletivos"],
-    sortOrder: 9,
+    sortOrder: 16,
     active: true
   },
   {
@@ -98,7 +168,17 @@ export const categories: Category[] = [
     description: "Capacetes, viseiras e comunicacao para motociclistas e entregadores.",
     icon: "helmet",
     subcategories: ["Aberto", "Fechado", "Articulado", "Off-road", "Viseiras", "Intercomunicadores"],
-    sortOrder: 10,
+    sortOrder: 17,
+    active: true
+  },
+  {
+    id: "cat-motocicletas",
+    name: "Motocicletas",
+    slug: "motocicletas",
+    description: "Celular, chuva, baus, bags, seguranca, conforto e manutencao para moto.",
+    icon: "bike",
+    subcategories: ["Equipamentos do motociclista", "Celular e navegacao", "Chuva", "Baus e bolsas", "Entregas", "Seguranca", "Conforto", "Manutencao", "Ferramentas"],
+    sortOrder: 18,
     active: true
   },
   {
@@ -107,8 +187,8 @@ export const categories: Category[] = [
     slug: "conforto",
     description: "Produtos para reduzir desgaste fisico em jornadas longas.",
     icon: "armchair",
-    subcategories: ["Almofadas lombares", "Almofadas de pescoco", "Assentos", "Massageadores", "Ventiladores", "Aquecedores", "Capas de banco"],
-    sortOrder: 11,
+    subcategories: ["Assento e postura", "Temperatura", "Hidratacao", "Alimentacao", "Protecao solar", "Vestuario", "Conforto para passageiro", "Conforto para moto", "Conforto para bicicleta", "Viagem longa"],
+    sortOrder: 19,
     active: true
   },
   {
@@ -118,7 +198,7 @@ export const categories: Category[] = [
     description: "Itens para agua, cafe, marmita e alimentacao durante o trabalho.",
     icon: "cup",
     subcategories: ["Garrafas termicas", "Copos termicos", "Caixas termicas", "Marmitas", "Bolsas termicas", "Cafeteiras automotivas"],
-    sortOrder: 12,
+    sortOrder: 20,
     active: true
   },
   {
@@ -128,7 +208,7 @@ export const categories: Category[] = [
     description: "Cuidados pessoais, primeiros socorros e higiene para a rotina na rua.",
     icon: "heart",
     subcategories: ["Primeiros socorros", "Protetor solar", "Repelentes", "Mascaras", "Alcool em gel", "Lencos", "Papel toalha", "Escova dental", "Desodorantes"],
-    sortOrder: 13,
+    sortOrder: 21,
     active: true
   },
   {
@@ -138,7 +218,7 @@ export const categories: Category[] = [
     description: "Bags, baus, redes e acessorios para motoboys e entregadores.",
     icon: "package",
     subcategories: ["Mochilas", "Baus", "Bagageiros", "Elasticos", "Redes", "Capas termicas", "Bags impermeaveis"],
-    sortOrder: 14,
+    sortOrder: 22,
     active: true
   },
   {
@@ -147,8 +227,8 @@ export const categories: Category[] = [
     slug: "bicicletas",
     description: "Equipamentos para ciclistas profissionais e entregadores de bike.",
     icon: "bike",
-    subcategories: ["Capacetes", "Luzes", "Bombas", "Camaras", "Correntes", "Cadeados", "Bolsas"],
-    sortOrder: 15,
+    subcategories: ["Iluminacao", "Seguranca", "Celular", "Bolsas e transporte", "Entregas", "Hidratacao", "Conforto", "Manutencao", "Ferramentas"],
+    sortOrder: 23,
     active: true
   },
   {
@@ -158,7 +238,7 @@ export const categories: Category[] = [
     description: "Suportes, bags, mochilas, organizadores e itens de apoio para trabalho.",
     icon: "briefcase",
     subcategories: ["Suportes para celular", "Bags e mochilas", "Organizadores", "Acessorios de apoio"],
-    sortOrder: 16,
+    sortOrder: 24,
     active: true
   },
   {
@@ -168,7 +248,7 @@ export const categories: Category[] = [
     description: "Itens de manutencao simples e pecas de reposicao para carro, moto, bike e scooter.",
     icon: "wrench",
     subcategories: ["Pecas de revisao", "Freios", "Iluminacao", "Kits de reparo"],
-    sortOrder: 17,
+    sortOrder: 25,
     active: false
   },
   {
@@ -178,17 +258,37 @@ export const categories: Category[] = [
     description: "Servicos recorrentes e protecao para quem depende do veiculo.",
     icon: "badge",
     subcategories: ["Seguro automotivo", "Rastreadores", "Assistencia 24h", "Protecao veicular"],
-    sortOrder: 18,
+    sortOrder: 26,
     active: true
   },
   {
     id: "cat-acessorios-automotivos",
-    name: "Acessorios automotivos",
-    slug: "acessorios-automotivos",
+    name: "Acessorios para carro",
+    slug: "acessorios-para-carro",
     description: "Tapetes, peliculas, capas, adesivos e itens internos do veiculo.",
     icon: "car",
-    subcategories: ["Peliculas", "Insulfilm", "Tapetes", "Capas de volante", "Descanso de braco", "Frisos", "Adesivos"],
-    sortOrder: 19,
+    subcategories: ["Interior", "Exterior", "Tapetes", "Capas", "Peliculas", "Porta-malas", "Console", "Bancos", "Volante", "Acabamento"],
+    sortOrder: 27,
+    active: true
+  },
+  {
+    id: "cat-transporte-passageiros",
+    name: "Passageiros e familia",
+    slug: "passageiros-e-familia",
+    description: "Itens para passageiros, criancas, animais, organizacao e conforto no banco traseiro.",
+    icon: "users",
+    subcategories: ["Passageiros", "Criancas", "Animais", "Porta-copos", "Protetores de banco", "Lixeiras", "Organizadores", "Conforto"],
+    sortOrder: 28,
+    active: true
+  },
+  {
+    id: "cat-documentacao-gestao",
+    name: "Documentacao e gestao",
+    slug: "documentacao-e-gestao",
+    description: "Apoio para controle de jornada, documentos, custos, quilometragem e rotina profissional.",
+    icon: "clipboard-list",
+    subcategories: ["Documentos", "Controle de custos", "Quilometragem", "Planejamento", "Recibos", "Pastas", "Etiquetas", "Organizacao digital"],
+    sortOrder: 29,
     active: true
   },
   {
@@ -198,7 +298,7 @@ export const categories: Category[] = [
     description: "Farois, lanternas, LEDs e sinalizacao para dirigir melhor e ser visto.",
     icon: "lightbulb",
     subcategories: ["LED", "Farois", "Lanternas", "Milhas", "Lampadas internas"],
-    sortOrder: 20,
+    sortOrder: 30,
     active: true
   },
   {
@@ -207,8 +307,8 @@ export const categories: Category[] = [
     slug: "kits-loja-do-korre",
     description: "Combos prontos por profissao, clima, jornada e objetivo.",
     icon: "boxes",
-    subcategories: ["Kit iniciante", "Kit premium", "Kit economia", "Kit chuva", "Kit noite", "Kit viagem", "Kit manutencao preventiva", "Kit longas jornadas", "Kit delivery"],
-    sortOrder: 21,
+    subcategories: ["Por profissao", "Por problema", "Por orcamento", "Por jornada", "Economicos", "Custo-beneficio", "Premium", "Kit chuva", "Kit noite", "Kit emergencia", "Kit delivery"],
+    sortOrder: 31,
     active: true
   }
 ];
@@ -347,6 +447,222 @@ export const products: Product[] = [
       affiliateUrl: "https://www.mercadolivre.com.br/",
       active: true,
       referencePriceCents: 8990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-carregador-veicular-duplo",
+    categoryId: "cat-trabalho-produtividade",
+    categorySlug: "trabalho-e-produtividade",
+    name: "Carregador veicular duplo carga rapida",
+    slug: "carregador-veicular-duplo-carga-rapida",
+    shortDescription: "Energia para celular do motorista e passageiro sem improvisar adaptadores.",
+    recommendationReason: "Resolve o ponto mais critico da jornada: manter apps, GPS e comunicacao ligados.",
+    vehicleType: "car",
+    audience: "driver",
+    imageUrl: "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 5990,
+    currency: "BRL",
+    status: "active",
+    featured: true,
+    tags: ["carregador", "celular descarregando", "atendimento ao passageiro", "energia"],
+    bestFor: "Motoristas de aplicativo que precisam carregar dois aparelhos ou atender passageiro.",
+    avoidWhen: "Seu veiculo ja possui USB-C nativo com potencia suficiente.",
+    offer: {
+      id: "offer-carregador-veicular-duplo",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 5990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-dashcam-dupla",
+    categoryId: "cat-tecnologia-veicular",
+    categorySlug: "tecnologia-veicular",
+    name: "Dashcam dupla para registro de rota",
+    slug: "dashcam-dupla-registro-rota",
+    shortDescription: "Camera frontal e interna para registrar acontecimentos durante corridas e viagens.",
+    recommendationReason: "Aumenta a confianca em situacoes de contestacao, incidentes e trabalho noturno.",
+    vehicleType: "car",
+    audience: "driver",
+    imageUrl: "https://images.unsplash.com/photo-1617824040896-4b771231a33f?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 28990,
+    currency: "BRL",
+    status: "active",
+    featured: true,
+    tags: ["dashcam", "camera", "registro do transito", "seguranca"],
+    bestFor: "Motoristas que transportam passageiros ou rodam em horarios de maior risco.",
+    avoidWhen: "Voce nao quer lidar com instalacao, fio aparente ou cartao de memoria.",
+    offer: {
+      id: "offer-dashcam-dupla",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 28990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-kit-limpeza-rapida",
+    categoryId: "cat-limpeza-higienizacao",
+    categorySlug: "limpeza-e-higienizacao",
+    name: "Kit limpeza rapida para carro de trabalho",
+    slug: "kit-limpeza-rapida-carro-trabalho",
+    shortDescription: "Panos, limpador interno e neutralizador para manter o carro apresentavel entre corridas.",
+    recommendationReason: "Ajuda a recuperar o padrao de atendimento depois de sujeira, chuva ou passageiro descuidado.",
+    vehicleType: "car",
+    audience: "driver",
+    imageUrl: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 8490,
+    currency: "BRL",
+    status: "active",
+    featured: true,
+    tags: ["limpeza", "limpeza rapida", "carro sujo", "odores"],
+    bestFor: "Motoristas que precisam manter boa avaliacao sem parar muito tempo.",
+    avoidWhen: "O veiculo precisa de limpeza profunda ou higienizacao profissional.",
+    offer: {
+      id: "offer-kit-limpeza-rapida",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 8490,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-apoio-lombar-motorista",
+    categoryId: "cat-conforto",
+    categorySlug: "conforto",
+    name: "Apoio lombar para longas jornadas",
+    slug: "apoio-lombar-longas-jornadas",
+    shortDescription: "Almofada de suporte para reduzir desconforto em turnos prolongados.",
+    recommendationReason: "Melhora postura e ajuda quem sente dor depois de muitas horas dirigindo.",
+    vehicleType: "car",
+    audience: "driver",
+    imageUrl: "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 7990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["conforto lombar", "desconforto", "ergonomia", "jornada longa"],
+    bestFor: "Motoristas que passam horas sentados e querem uma melhoria simples de ergonomia.",
+    avoidWhen: "O banco ja tem ajuste lombar eficiente ou ha dor que exige avaliacao profissional.",
+    offer: {
+      id: "offer-apoio-lombar-motorista",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 7990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-compressor-portatil",
+    categoryId: "cat-pneus-rodas",
+    categorySlug: "pneus-e-rodas",
+    name: "Compressor portatil para pneus",
+    slug: "compressor-portatil-pneus",
+    shortDescription: "Calibragem e emergencia para carro, moto e bicicleta.",
+    recommendationReason: "Reduz parada inesperada por pneu baixo e ajuda a economizar combustivel com calibragem correta.",
+    vehicleType: "both",
+    audience: "general",
+    imageUrl: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 16990,
+    currency: "BRL",
+    status: "active",
+    featured: true,
+    tags: ["compressor", "pneu sem pressao", "calibragem", "economizar combustivel"],
+    bestFor: "Quem roda muito e quer manter pressao correta sem depender sempre de posto.",
+    avoidWhen: "Voce precisa inflar pneus grandes acima da capacidade do aparelho.",
+    offer: {
+      id: "offer-compressor-portatil",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 16990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-auxiliar-partida",
+    categoryId: "cat-emergencia-imprevistos",
+    categorySlug: "emergencia",
+    name: "Auxiliar de partida compacto",
+    slug: "auxiliar-partida-compacto",
+    shortDescription: "Fonte de emergencia para bateria descarregada em rotina profissional.",
+    recommendationReason: "Evita perder horas de trabalho esperando ajuda quando a bateria falha.",
+    vehicleType: "car",
+    audience: "driver",
+    imageUrl: "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 24990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["bateria", "bateria descarregada", "emergencia", "energia"],
+    bestFor: "Motoristas que trabalham de madrugada, viajam ou rodam alta quilometragem.",
+    avoidWhen: "A bateria apresenta defeito recorrente que precisa de diagnostico profissional.",
+    offer: {
+      id: "offer-auxiliar-partida",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 24990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-mochila-termica-delivery",
+    categoryId: "cat-delivery",
+    categorySlug: "delivery",
+    name: "Mochila termica para delivery",
+    slug: "mochila-termica-delivery",
+    shortDescription: "Transporte de pedidos com melhor organizacao e conservacao de temperatura.",
+    recommendationReason: "Ajuda a reduzir reclamacao por pedido amassado, frio ou mal acomodado.",
+    vehicleType: "motorcycle",
+    audience: "motoboy",
+    imageUrl: "https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 13990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["delivery", "pedidos desorganizados", "mochila termica", "motoboy"],
+    bestFor: "Motoboys e ciclistas entregadores que fazem rota com pedidos variados.",
+    avoidWhen: "Voce precisa transportar volumes muito grandes ou caixas rigidas.",
+    offer: {
+      id: "offer-mochila-termica-delivery",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 13990,
+      updatedAt: new Date().toISOString()
+    }
+  },
+  {
+    id: "prod-kit-chuva-profissional",
+    categoryId: "cat-kits-korre",
+    categorySlug: "kits-loja-do-korre",
+    name: "Kit chuva para rotina profissional",
+    slug: "kit-chuva-rotina-profissional",
+    shortDescription: "Selecao inicial para trabalhar quando o tempo vira.",
+    recommendationReason: "Combina protecao pessoal, impermeabilizacao e visibilidade em um caminho de compra.",
+    vehicleType: "both",
+    audience: "general",
+    imageUrl: "https://images.unsplash.com/photo-1493314894560-5c412a56c17c?auto=format&fit=crop&w=900&q=80",
+    referencePriceCents: 19990,
+    currency: "BRL",
+    status: "active",
+    featured: false,
+    tags: ["kit chuva", "chuva", "trabalho noturno", "emergencia"],
+    bestFor: "Motoristas e entregadores que querem montar uma base antes do periodo de chuvas.",
+    avoidWhen: "Voce precisa de item homologado por regra especifica do contratante.",
+    offer: {
+      id: "offer-kit-chuva-profissional",
+      provider: "mercado_livre",
+      affiliateUrl: "https://www.mercadolivre.com.br/",
+      active: true,
+      referencePriceCents: 19990,
       updatedAt: new Date().toISOString()
     }
   }

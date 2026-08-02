@@ -59,6 +59,8 @@ main {
 .driver-section,
 .marketplace-grid,
 .content,
+.hub-section,
+.strategy-section,
 .affiliate,
 .legal-section,
 .detail-topbar,
@@ -194,6 +196,23 @@ main {
   width: 100%;
   max-height: 190px;
   object-fit: contain;
+}
+
+.formula-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.formula-strip span {
+  border: 1px solid rgba(0, 200, 83, 0.55);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #e9fff1;
+  background: rgba(0, 200, 83, 0.12);
+  font-size: 0.88rem;
+  font-weight: 800;
 }
 
 .eyebrow {
@@ -397,6 +416,45 @@ main {
   background: #fff8e5;
 }
 
+.hub-section,
+.strategy-section {
+  margin-top: 18px;
+  padding: 22px;
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.problem-grid button {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  background: #f8f8f8;
+  font-weight: 800;
+  text-align: left;
+}
+
+.problem-grid button.priority {
+  border-color: rgba(0, 200, 83, 0.42);
+  background: #effff5;
+}
+
+.problem-grid svg {
+  flex: 0 0 auto;
+  color: var(--korre-primary);
+}
+
 .content {
   padding: 32px 0;
 }
@@ -405,6 +463,139 @@ main {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+}
+
+.objective-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.objective-grid button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  min-height: 116px;
+  gap: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--text);
+  background: #ffffff;
+  text-align: left;
+}
+
+.objective-grid svg {
+  grid-row: span 2;
+  color: var(--korre-primary);
+}
+
+.objective-grid strong,
+.work-grid h3,
+.content-hub-grid h3 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.objective-grid span,
+.content-hub-grid p,
+.season-card p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.work-grid,
+.content-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.work-grid article,
+.content-hub-grid article,
+.split-section > article {
+  border: 1px solid var(--soft-border);
+  border-radius: 8px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.work-grid article {
+  display: grid;
+  gap: 14px;
+}
+
+.work-grid article > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.work-grid span {
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: #1f1f1f;
+  background: #f1f1f1;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.split-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 16px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.kit-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kit-list button,
+.season-card button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 46px;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  background: #ffffff;
+  font-weight: 800;
+  text-align: left;
+}
+
+.kit-list svg,
+.content-hub-grid svg,
+.season-card svg {
+  color: var(--korre-primary);
+}
+
+.season-card {
+  display: grid;
+  gap: 12px;
+}
+
+.season-card strong {
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+.season-card button {
+  justify-content: center;
+  color: #071107;
+  background: var(--korre-primary);
+}
+
+.content-hub-grid article {
+  display: grid;
+  gap: 10px;
 }
 
 .product-card {
@@ -655,14 +846,20 @@ dl {
   }
 
   .driver-grid,
-  .product-grid {
+  .product-grid,
+  .problem-grid,
+  .objective-grid,
+  .work-grid,
+  .content-hub-grid,
+  .kit-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .marketplace-grid,
   .market-hero,
   .product-detail,
-  .legal-section {
+  .legal-section,
+  .split-section {
     grid-template-columns: 1fr;
   }
 
@@ -712,6 +909,11 @@ dl {
 
   .driver-grid,
   .product-grid,
+  .problem-grid,
+  .objective-grid,
+  .work-grid,
+  .content-hub-grid,
+  .kit-list,
   .subcategory-strip,
   .category-cards,
   .detail-grid {
