@@ -223,10 +223,9 @@ function App() {
         </div>
         <nav className="market-nav">
           <button><Menu size={16} /> Categorias</button>
-          <button onClick={() => selectCategory("eletronicos")}>Eletronicos</button>
-          <button onClick={() => selectCategory("vestimentas")}>Vestimentas</button>
-          <button onClick={() => selectCategory("equipamentos")}>Equipamentos</button>
-          <button onClick={() => selectCategory("pecas")}>Pecas</button>
+          {catalog.categories.slice(0, 8).map((category) => (
+            <button key={category.id} onClick={() => selectCategory(category.slug)}>{category.name}</button>
+          ))}
         </nav>
       </header>
 

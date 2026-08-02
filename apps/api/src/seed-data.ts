@@ -12,13 +12,143 @@ export const categories: Category[] = [
     active: true
   },
   {
+    id: "cat-autopecas",
+    name: "Autopecas",
+    slug: "autopecas",
+    description: "Pecas de reposicao e itens de manutencao preventiva ou corretiva.",
+    icon: "wrench",
+    subcategories: ["Oleo do motor", "Filtros", "Freios", "Suspensao", "Direcao", "Correias", "Ignicao", "Arrefecimento", "Palhetas", "Eletrica", "Baterias"],
+    sortOrder: 2,
+    active: true
+  },
+  {
+    id: "cat-pneus-rodas",
+    name: "Pneus e rodas",
+    slug: "pneus-e-rodas",
+    description: "Pneus, rodas, calotas e reparos para carro, moto, bicicleta e utilitarios.",
+    icon: "circle",
+    subcategories: ["Pneus de passeio", "Pneus SUV", "Pneus utilitarios", "Pneus de moto", "Pneus de bicicleta", "Rodas", "Calotas", "Kit reparo", "Compressor", "Selante"],
+    sortOrder: 3,
+    active: true
+  },
+  {
+    id: "cat-ferramentas",
+    name: "Ferramentas",
+    slug: "ferramentas",
+    description: "Ferramentas para pequenos reparos, revisoes e emergencias operacionais.",
+    icon: "tool",
+    subcategories: ["Kits de ferramentas", "Chaves", "Alicates", "Torquimetros", "Lanternas", "Multimetros", "Organizadores"],
+    sortOrder: 4,
+    active: true
+  },
+  {
+    id: "cat-manutencao",
+    name: "Manutencao",
+    slug: "manutencao",
+    description: "Lubrificantes, aditivos, graxas, limpeza tecnica e manutencao preventiva.",
+    icon: "settings",
+    subcategories: ["Lubrificantes", "Graxas", "Aditivos", "Limpeza do motor", "Higienizacao interna", "Produtos de limpeza tecnica"],
+    sortOrder: 5,
+    active: true
+  },
+  {
+    id: "cat-estetica",
+    name: "Estetica automotiva",
+    slug: "estetica-automotiva",
+    description: "Produtos para conservar, limpar e melhorar a aparencia do veiculo.",
+    icon: "sparkles",
+    subcategories: ["Lavagem", "Cera", "Polimento", "Cristalizacao", "Limpeza de bancos", "Limpeza de couro", "Aromatizantes", "Aspiradores"],
+    sortOrder: 6,
+    active: true
+  },
+  {
+    id: "cat-organizacao",
+    name: "Organizacao do veiculo",
+    slug: "organizacao-do-veiculo",
+    description: "Itens para manter documentos, objetos, bagagens e ferramentas no lugar.",
+    icon: "archive",
+    subcategories: ["Organizadores", "Porta-malas", "Porta-documentos", "Porta-moedas", "Porta-copos", "Lixeira automotiva", "Cabides"],
+    sortOrder: 7,
+    active: true
+  },
+  {
+    id: "cat-seguranca",
+    name: "Seguranca",
+    slug: "seguranca",
+    description: "Itens para emergencias, prevencao de risco e seguranca em rota.",
+    icon: "shield",
+    subcategories: ["Extintores", "Triangulos", "Coletes refletivos", "Cabos de bateria", "Kits de emergencia", "Lanternas", "Martelo de emergencia", "Cortador de cinto"],
+    sortOrder: 8,
+    active: true
+  },
+  {
     id: "cat-vestimentas",
     name: "Vestimentas",
     slug: "vestimentas",
     description: "Capas de chuva, luvas, jaquetas, refletivos e protecoes para a rotina na rua.",
     icon: "shirt",
     subcategories: ["Capas de chuva", "Luvas", "Jaquetas", "Refletivos"],
-    sortOrder: 2,
+    sortOrder: 9,
+    active: true
+  },
+  {
+    id: "cat-capacetes",
+    name: "Capacetes",
+    slug: "capacetes",
+    description: "Capacetes, viseiras e comunicacao para motociclistas e entregadores.",
+    icon: "helmet",
+    subcategories: ["Aberto", "Fechado", "Articulado", "Off-road", "Viseiras", "Intercomunicadores"],
+    sortOrder: 10,
+    active: true
+  },
+  {
+    id: "cat-conforto",
+    name: "Conforto",
+    slug: "conforto",
+    description: "Produtos para reduzir desgaste fisico em jornadas longas.",
+    icon: "armchair",
+    subcategories: ["Almofadas lombares", "Almofadas de pescoco", "Assentos", "Massageadores", "Ventiladores", "Aquecedores", "Capas de banco"],
+    sortOrder: 11,
+    active: true
+  },
+  {
+    id: "cat-alimentacao",
+    name: "Alimentacao",
+    slug: "alimentacao",
+    description: "Itens para agua, cafe, marmita e alimentacao durante o trabalho.",
+    icon: "cup",
+    subcategories: ["Garrafas termicas", "Copos termicos", "Caixas termicas", "Marmitas", "Bolsas termicas", "Cafeteiras automotivas"],
+    sortOrder: 12,
+    active: true
+  },
+  {
+    id: "cat-saude-higiene",
+    name: "Saude e higiene",
+    slug: "saude-e-higiene",
+    description: "Cuidados pessoais, primeiros socorros e higiene para a rotina na rua.",
+    icon: "heart",
+    subcategories: ["Primeiros socorros", "Protetor solar", "Repelentes", "Mascaras", "Alcool em gel", "Lencos", "Papel toalha", "Escova dental", "Desodorantes"],
+    sortOrder: 13,
+    active: true
+  },
+  {
+    id: "cat-delivery",
+    name: "Delivery",
+    slug: "delivery",
+    description: "Bags, baus, redes e acessorios para motoboys e entregadores.",
+    icon: "package",
+    subcategories: ["Mochilas", "Baus", "Bagageiros", "Elasticos", "Redes", "Capas termicas", "Bags impermeaveis"],
+    sortOrder: 14,
+    active: true
+  },
+  {
+    id: "cat-bicicletas",
+    name: "Bicicletas",
+    slug: "bicicletas",
+    description: "Equipamentos para ciclistas profissionais e entregadores de bike.",
+    icon: "bike",
+    subcategories: ["Capacetes", "Luzes", "Bombas", "Camaras", "Correntes", "Cadeados", "Bolsas"],
+    sortOrder: 15,
     active: true
   },
   {
@@ -28,7 +158,7 @@ export const categories: Category[] = [
     description: "Suportes, bags, mochilas, organizadores e itens de apoio para trabalho.",
     icon: "briefcase",
     subcategories: ["Suportes para celular", "Bags e mochilas", "Organizadores", "Acessorios de apoio"],
-    sortOrder: 3,
+    sortOrder: 16,
     active: true
   },
   {
@@ -38,7 +168,47 @@ export const categories: Category[] = [
     description: "Itens de manutencao simples e pecas de reposicao para carro, moto, bike e scooter.",
     icon: "wrench",
     subcategories: ["Pecas de revisao", "Freios", "Iluminacao", "Kits de reparo"],
-    sortOrder: 4,
+    sortOrder: 17,
+    active: false
+  },
+  {
+    id: "cat-servicos-protecao",
+    name: "Servicos e protecao",
+    slug: "servicos-e-protecao",
+    description: "Servicos recorrentes e protecao para quem depende do veiculo.",
+    icon: "badge",
+    subcategories: ["Seguro automotivo", "Rastreadores", "Assistencia 24h", "Protecao veicular"],
+    sortOrder: 18,
+    active: true
+  },
+  {
+    id: "cat-acessorios-automotivos",
+    name: "Acessorios automotivos",
+    slug: "acessorios-automotivos",
+    description: "Tapetes, peliculas, capas, adesivos e itens internos do veiculo.",
+    icon: "car",
+    subcategories: ["Peliculas", "Insulfilm", "Tapetes", "Capas de volante", "Descanso de braco", "Frisos", "Adesivos"],
+    sortOrder: 19,
+    active: true
+  },
+  {
+    id: "cat-iluminacao",
+    name: "Iluminacao",
+    slug: "iluminacao",
+    description: "Farois, lanternas, LEDs e sinalizacao para dirigir melhor e ser visto.",
+    icon: "lightbulb",
+    subcategories: ["LED", "Farois", "Lanternas", "Milhas", "Lampadas internas"],
+    sortOrder: 20,
+    active: true
+  },
+  {
+    id: "cat-kits-korre",
+    name: "Kits Loja do Korre",
+    slug: "kits-loja-do-korre",
+    description: "Combos prontos por profissao, clima, jornada e objetivo.",
+    icon: "boxes",
+    subcategories: ["Kit iniciante", "Kit premium", "Kit economia", "Kit chuva", "Kit noite", "Kit viagem", "Kit manutencao preventiva", "Kit longas jornadas", "Kit delivery"],
+    sortOrder: 21,
     active: true
   }
 ];
@@ -155,8 +325,8 @@ export const products: Product[] = [
   },
   {
     id: "prod-kit-pastilha-freio",
-    categoryId: "cat-pecas",
-    categorySlug: "pecas",
+    categoryId: "cat-autopecas",
+    categorySlug: "autopecas",
     name: "Kit de pastilhas de freio para revisao",
     slug: "kit-pastilhas-freio-revisao",
     shortDescription: "Item de manutencao preventiva para revisar antes de jornadas longas.",

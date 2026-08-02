@@ -25,6 +25,7 @@
 18. [Backend e Admin: dados, métricas e gestão](17-backend-admin-dados-e-gestao.md)
 19. [Admin: vitrine, imagens e relatórios de cliques](18-admin-vitrine-imagens-e-relatorios-de-cliques.md)
 20. [Funcionalidades para gestão eficiente](19-funcionalidades-gestao-eficiente.md)
+21. [Arquitetura de categorias da Loja do Korre](20-arquitetura-categorias-loja-do-korre.md)
 
 ## Visão de alto nível
 
