@@ -98,4 +98,47 @@ O app KORRE pode futuramente apontar para a loja, mas a loja deve ter:
 
 ## Status
 
-Documentação inicial criada. Implementação ainda não iniciada.
+Implementação iniciada em monorepo TypeScript com:
+
+- `apps/web-store`: site publico React + Vite.
+- `apps/api`: API NestJS com Prisma preparado e catalogo seed inicial.
+- `apps/admin-desktop`: admin interno Electron + React + Vite.
+- `packages/shared`: tipos e helpers compartilhados.
+
+A interface visual segue a paleta do site KORRE principal:
+
+- fundo `#0a0a0a`;
+- superficies `#111111`, `#161616` e `#202020`;
+- verde primario `#00c853`;
+- verde forte `#00e676`;
+- texto branco e cinzas neutros para apoio.
+
+## Como rodar localmente
+
+```bash
+npm install
+npm run dev:api
+npm run dev:web
+```
+
+Em outro terminal, para abrir o admin desktop:
+
+```bash
+npm run dev:desktop
+```
+
+URLs padrao:
+
+- Site publico: `http://localhost:5173`
+- API: `http://localhost:3333`
+- Swagger da API: `http://localhost:3333/docs`
+
+## Comandos uteis
+
+```bash
+npm run typecheck
+npm run build
+npm run prisma:generate
+```
+
+Copie `.env.example` para `.env` quando for ligar o PostgreSQL real.

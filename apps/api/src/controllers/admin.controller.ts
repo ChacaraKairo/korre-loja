@@ -1,0 +1,63 @@
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import type { CategoryInput, ProductInput } from "@korre/shared";
+import { CatalogService } from "../services/catalog.service";
+
+@Controller("admin")
+export class AdminController {
+  constructor(private readonly catalog: CatalogService) {}
+
+  @Get("dashboard")
+  dashboard() {
+    return this.catalog.getAdminDashboard();
+  }
+
+  @Get("products")
+  products() {
+    return this.catalog.getAllProducts();
+  }
+
+  @Post("products")
+  createProduct(@Body() payload: ProductInput) {
+    return this.catalog.createProduct(payload);
+  }
+
+  @Patch("products/:id")
+  updateProduct(@Param("id") id: string, @Body() payload: Partial<ProductInput> & { status?: string; featured?: boolean }) {
+    return this.catalog.updateProduct(id, payload);
+  }
+
+  @Delete("products/:id")
+  deleteProduct(@Param("id") id: string) {
+    return this.catalog.archiveProduct(id);
+  }
+
+  @Get("categories")
+  categories() {
+    return this.catalog.getCategories();
+  }
+
+  @Post("categories")
+  createCategory(@Body() payload: CategoryInput) {
+    return this.catalog.createCategory(payload);
+  }
+
+  @Patch("categories/:id")
+  updateCategory(@Param("id") id: string, @Body() payload: Partial<CategoryInput>) {
+    return this.catalog.updateCategory(id, payload);
+  }
+
+  @Delete("categories/:id")
+  deleteCategory(@Param("id") id: string) {
+    return this.catalog.disableCategory(id);
+  }
+
+  @Get("clicks")
+  clicks() {
+    return this.catalog.getClicks();
+  }
+
+  @Get("reports/top-products")
+  topProducts() {
+    return this.catalog.getTopProducts();
+  }
+}

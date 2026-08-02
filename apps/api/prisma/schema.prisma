@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         String     @default("admin")
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model Category {
+  id          String         @id @default(uuid())
+  name        String
+  slug        String         @unique
+  description String?
+  icon        String?
+  sortOrder   Int            @default(0)
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  products    Product[]
+  clicks      ProductClick[]
+}
+
+model Product {
+  id                   String          @id @default(uuid())
+  categoryId           String
+  category             Category        @relation(fields: [categoryId], references: [id])
+  name                 String
+  slug                 String          @unique
+  shortDescription     String?
+  description          String?
+  recommendationReason String?
+  vehicleType          String          @default("both")
+  audience             String          @default("general")
+  imageUrl             String?
+  referencePriceCents  Int?
+  currency             String          @default("BRL")
+  status               String          @default("draft")
+  featured             Boolean         @default(false)
+  tags                 String[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  affiliateLinks       AffiliateLink[]
+  clicks               ProductClick[]
+}
+
+model AffiliateLink {
+  id           String   @id @default(uuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id])
+  provider     String   @default("mercado_livre")
+  originalUrl  String
+  affiliateUrl String
+  active       Boolean  @default(true)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Campaign {
+  id          String         @id @default(uuid())
+  name        String
+  slug        String         @unique
+  description String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  startsAt    DateTime?
+  endsAt      DateTime?
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  clicks      ProductClick[]
+}
+
+model ProductClick {
+  id             String    @id @default(uuid())
+  productId      String
+  product        Product   @relation(fields: [productId], references: [id])
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id])
+  campaignId     String?
+  campaign       Campaign? @relation(fields: [campaignId], references: [id])
+  source         String?
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  referrer       String?
+  userAgentShort String?
+  ipHash         String?
+  createdAt      DateTime  @default(now())
+
+  @@index([productId])
+  @@index([categoryId])
+  @@index([campaignId])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id          String     @id @default(uuid())
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id])
+  action      String
+  entity      String?
+  entityId    String?
+  detailsJson Json?
+  createdAt   DateTime   @default(now())
+}
