@@ -30,6 +30,7 @@ const categorySchema = z.object({
   slug: z.string().optional(),
   description: z.string().optional(),
   icon: z.string().optional(),
+  subcategories: z.array(z.string()).optional(),
   sortOrder: z.coerce.number().int().optional(),
   active: z.coerce.boolean().optional()
 });
@@ -318,6 +319,7 @@ export class CatalogService {
         slug: await this.uniqueCategorySlug(input.slug ?? input.name),
         description: input.description,
         icon: input.icon,
+        subcategoriesJson: JSON.stringify(input.subcategories ?? []),
         sortOrder: input.sortOrder ?? 0,
         active: input.active ?? true
       }
@@ -340,6 +342,7 @@ export class CatalogService {
         slug: payload.slug ? await this.uniqueCategorySlug(payload.slug, id) : undefined,
         description: payload.description,
         icon: payload.icon,
+        subcategoriesJson: payload.subcategories ? JSON.stringify(payload.subcategories) : undefined,
         sortOrder: payload.sortOrder,
         active: payload.active
       }
@@ -421,6 +424,7 @@ export class CatalogService {
       slug: category.slug,
       description: category.description ?? undefined,
       icon: category.icon ?? undefined,
+      subcategories: this.readStringList(category.subcategoriesJson),
       sortOrder: category.sortOrder,
       active: category.active
     };
@@ -467,9 +471,13 @@ export class CatalogService {
   }
 
   private readTags(tagsJson: string) {
+    return this.readStringList(tagsJson);
+  }
+
+  private readStringList(value: string) {
     try {
-      const tags = JSON.parse(tagsJson);
-      return Array.isArray(tags) ? tags.filter((tag): tag is string => typeof tag === "string") : [];
+      const items = JSON.parse(value);
+      return Array.isArray(items) ? items.filter((item): item is string => typeof item === "string") : [];
     } catch {
       return [];
     }

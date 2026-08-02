@@ -22,10 +22,38 @@ const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 const fallbackCatalog: PublicCatalog = {
   categories: [
-    { id: "cat-eletronicos", name: "Eletronicos", slug: "eletronicos", sortOrder: 1, active: true },
-    { id: "cat-vestimentas", name: "Vestimentas", slug: "vestimentas", sortOrder: 2, active: true },
-    { id: "cat-equipamentos", name: "Equipamentos", slug: "equipamentos", sortOrder: 3, active: true },
-    { id: "cat-pecas", name: "Pecas", slug: "pecas", sortOrder: 4, active: true }
+    {
+      id: "cat-eletronicos",
+      name: "Eletronicos",
+      slug: "eletronicos",
+      subcategories: ["Celulares", "Carregadores", "Power banks", "Cabos reforcados"],
+      sortOrder: 1,
+      active: true
+    },
+    {
+      id: "cat-vestimentas",
+      name: "Vestimentas",
+      slug: "vestimentas",
+      subcategories: ["Capas de chuva", "Luvas", "Jaquetas", "Refletivos"],
+      sortOrder: 2,
+      active: true
+    },
+    {
+      id: "cat-equipamentos",
+      name: "Equipamentos",
+      slug: "equipamentos",
+      subcategories: ["Suportes para celular", "Bags e mochilas", "Organizadores", "Acessorios de apoio"],
+      sortOrder: 3,
+      active: true
+    },
+    {
+      id: "cat-pecas",
+      name: "Pecas",
+      slug: "pecas",
+      subcategories: ["Pecas de revisao", "Freios", "Iluminacao", "Kits de reparo"],
+      sortOrder: 4,
+      active: true
+    }
   ],
   featuredProducts: [],
   products: []
@@ -39,20 +67,6 @@ const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: t
   { label: "Scooter eletrica", value: "electric_scooter", icon: Zap },
   { label: "Outros", value: "other", icon: Menu }
 ];
-
-const subcategories = [
-  { label: "Celulares", category: "eletronicos" },
-  { label: "Carregadores", category: "eletronicos" },
-  { label: "Suportes para celular", category: "equipamentos" },
-  { label: "Capas de chuva", category: "vestimentas" },
-  { label: "Bags e mochilas", category: "equipamentos" },
-  { label: "Pecas de revisao", category: "pecas" }
-];
-
-const subcategoriesByCategory = subcategories.reduce<Record<string, Array<{ label: string; category: string }>>>((acc, subcategory) => {
-  acc[subcategory.category] = [...(acc[subcategory.category] ?? []), subcategory];
-  return acc;
-}, {});
 
 function App() {
   const [vehicle, setVehicle] = useState<VehicleType | "all">("all");
@@ -110,7 +124,7 @@ function App() {
   });
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
-  const visibleSubcategories = categorySlug === "all" ? [] : subcategoriesByCategory[categorySlug] ?? [];
+  const visibleSubcategories = activeCategory?.subcategories ?? [];
   const activeCategoryIndex = Math.max(0, catalog.categories.findIndex((category) => category.slug === categorySlug));
   const bubblePointerY = categorySlug === "all" ? 54 : 104 + activeCategoryIndex * 50;
 
@@ -290,11 +304,11 @@ function App() {
             <div className="subcategory-strip">
               {visibleSubcategories.map((subcategory) => (
                 <button
-                  className={selectedSubcategory === subcategory.label ? "active" : ""}
-                  key={subcategory.label}
-                  onClick={() => selectSubcategory(subcategory.label)}
+                  className={selectedSubcategory === subcategory ? "active" : ""}
+                  key={subcategory}
+                  onClick={() => selectSubcategory(subcategory)}
                 >
-                  {subcategory.label}
+                  {subcategory}
                 </button>
               ))}
             </div>

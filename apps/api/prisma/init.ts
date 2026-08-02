@@ -23,12 +23,15 @@ export async function initDatabase(prisma = new PrismaClient()) {
       "slug" TEXT NOT NULL UNIQUE,
       "description" TEXT,
       "icon" TEXT,
+      "subcategoriesJson" TEXT NOT NULL DEFAULT '[]',
       "sortOrder" INTEGER NOT NULL DEFAULT 0,
       "active" BOOLEAN NOT NULL DEFAULT true,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Category" ADD COLUMN "subcategoriesJson" TEXT NOT NULL DEFAULT '[]';`).catch(() => undefined);
 
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "Product" (

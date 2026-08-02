@@ -7,6 +7,7 @@ export const categories: Category[] = [
     slug: "eletronicos",
     description: "Celulares, carregadores, power banks, cabos e acessorios para manter a operacao conectada.",
     icon: "smartphone",
+    subcategories: ["Celulares", "Carregadores", "Power banks", "Cabos reforcados"],
     sortOrder: 1,
     active: true
   },
@@ -16,6 +17,7 @@ export const categories: Category[] = [
     slug: "vestimentas",
     description: "Capas de chuva, luvas, jaquetas, refletivos e protecoes para a rotina na rua.",
     icon: "shirt",
+    subcategories: ["Capas de chuva", "Luvas", "Jaquetas", "Refletivos"],
     sortOrder: 2,
     active: true
   },
@@ -25,6 +27,7 @@ export const categories: Category[] = [
     slug: "equipamentos",
     description: "Suportes, bags, mochilas, organizadores e itens de apoio para trabalho.",
     icon: "briefcase",
+    subcategories: ["Suportes para celular", "Bags e mochilas", "Organizadores", "Acessorios de apoio"],
     sortOrder: 3,
     active: true
   },
@@ -34,6 +37,7 @@ export const categories: Category[] = [
     slug: "pecas",
     description: "Itens de manutencao simples e pecas de reposicao para carro, moto, bike e scooter.",
     icon: "wrench",
+    subcategories: ["Pecas de revisao", "Freios", "Iluminacao", "Kits de reparo"],
     sortOrder: 4,
     active: true
   }

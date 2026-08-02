@@ -8,6 +8,7 @@ export type Category = {
   slug: string;
   description?: string;
   icon?: string;
+  subcategories: string[];
   sortOrder: number;
   active: boolean;
 };
@@ -86,6 +87,7 @@ export type CategoryInput = {
   slug?: string;
   description?: string;
   icon?: string;
+  subcategories?: string[];
   sortOrder?: number;
   active?: boolean;
 };

@@ -44,6 +44,7 @@ async function main() {
         name: category.name,
         description: category.description,
         icon: category.icon,
+        subcategoriesJson: JSON.stringify(category.subcategories),
         sortOrder: category.sortOrder,
         active: category.active
       },
@@ -53,6 +54,7 @@ async function main() {
         slug: category.slug,
         description: category.description,
         icon: category.icon,
+        subcategoriesJson: JSON.stringify(category.subcategories),
         sortOrder: category.sortOrder,
         active: category.active
       }
