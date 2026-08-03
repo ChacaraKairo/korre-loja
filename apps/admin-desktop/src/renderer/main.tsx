@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, ClipboardList, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, Clipboard, ClipboardList, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
 import type {
   AdminDashboard,
   AffiliateOffer,
@@ -367,6 +367,15 @@ function App() {
     await loadAdminData();
   }
 
+  async function copyWaitingRoomLink(link: WaitingRoomLink) {
+    try {
+      await navigator.clipboard.writeText(link.url);
+      setFeedback("Link copiado.");
+    } catch {
+      setFeedback("Nao foi possivel copiar automaticamente.");
+    }
+  }
+
   async function createOffer(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFeedback("Salvando oferta...");
@@ -586,6 +595,7 @@ function App() {
                     {link.notes && <span>{link.notes}</span>}
                     <span>{link.status} - {new Date(link.createdAt).toLocaleString("pt-BR")}</span>
                     <div className="panel-actions">
+                      <button type="button" className="table-action" onClick={() => void copyWaitingRoomLink(link)}><Clipboard size={14} /> Copiar link</button>
                       <button type="button" className="table-action" onClick={() => void updateWaitingRoomStatus(link, "reviewing")}>Revisando</button>
                       <button type="button" className="table-action" onClick={() => void updateWaitingRoomStatus(link, "converted")}>Convertido</button>
                       <button type="button" className="icon-action" onClick={() => void updateWaitingRoomStatus(link, "discarded")} aria-label="Descartar link"><Trash2 size={15} /></button>
