@@ -30,34 +30,34 @@ const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 const fallbackCatalog: PublicCatalog = {
   categories: [
     {
-      id: "cat-eletronicos",
-      name: "Eletronicos",
-      slug: "eletronicos",
-      subcategories: ["Celulares", "Carregadores", "Power banks", "Cabos reforcados"],
+      id: "cat-trabalho-produtividade",
+      name: "Trabalho e produtividade",
+      slug: "trabalho-e-produtividade",
+      subcategories: ["Suportes para celular", "Carregadores", "Cabos", "Power banks", "Atendimento ao passageiro", "Gestao da jornada"],
       sortOrder: 1,
       active: true
     },
     {
-      id: "cat-vestimentas",
-      name: "Vestimentas",
-      slug: "vestimentas",
-      subcategories: ["Capas de chuva", "Luvas", "Jaquetas", "Refletivos"],
+      id: "cat-tecnologia",
+      name: "Tecnologia e eletronicos",
+      slug: "tecnologia-e-eletronicos",
+      subcategories: ["Celulares", "Carregadores", "Power banks", "Dashcams", "OBD2", "Cameras de re"],
       sortOrder: 2,
       active: true
     },
     {
-      id: "cat-equipamentos",
-      name: "Equipamentos",
-      slug: "equipamentos",
-      subcategories: ["Suportes para celular", "Bags e mochilas", "Organizadores", "Acessorios de apoio"],
+      id: "cat-manutencao-pecas",
+      name: "Manutencao, pecas e pneus",
+      slug: "manutencao-pecas-e-pneus",
+      subcategories: ["Autopecas", "Freios", "Filtros", "Pneus", "Rodas", "Ferramentas"],
       sortOrder: 3,
       active: true
     },
     {
-      id: "cat-pecas",
-      name: "Pecas",
-      slug: "pecas",
-      subcategories: ["Pecas de revisao", "Freios", "Iluminacao", "Kits de reparo"],
+      id: "cat-limpeza-estetica",
+      name: "Limpeza, higiene e estetica",
+      slug: "limpeza-higiene-e-estetica",
+      subcategories: ["Limpeza interna", "Limpeza externa", "Vidros", "Odores", "Polimento", "Aspiradores"],
       sortOrder: 4,
       active: true
     }
@@ -77,26 +77,26 @@ const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: t
 
 const problemHubs = [
   { title: "Celular descarregando", query: "carregador", categorySlug: "trabalho-e-produtividade", tone: "very-high" },
-  { title: "Celular esquentando", query: "cooler celular", categorySlug: "eletronicos", tone: "high" },
-  { title: "Suporte caindo", query: "suporte celular", categorySlug: "equipamentos", tone: "very-high" },
-  { title: "Carro sujo", query: "limpeza", categorySlug: "limpeza-e-higienizacao", tone: "very-high" },
-  { title: "Mau cheiro", query: "odores", categorySlug: "limpeza-e-higienizacao", tone: "very-high" },
-  { title: "Desconforto ao dirigir", query: "conforto lombar", categorySlug: "conforto", tone: "very-high" },
-  { title: "Falta de organizacao", query: "organizador", categorySlug: "organizacao-do-veiculo", tone: "high" },
-  { title: "Trabalho na chuva", query: "chuva", categorySlug: "clima-e-protecao", tone: "very-high" },
-  { title: "Pneu sem pressao", query: "compressor", categorySlug: "pneus-e-rodas", tone: "very-high" },
-  { title: "Bateria descarregada", query: "bateria", categorySlug: "emergencia", tone: "very-high" },
-  { title: "Pedidos desorganizados", query: "delivery", categorySlug: "delivery", tone: "high" },
-  { title: "Registrar o transito", query: "dashcam", categorySlug: "tecnologia-veicular", tone: "very-high" }
+  { title: "Celular esquentando", query: "cooler celular", categorySlug: "tecnologia-e-eletronicos", tone: "high" },
+  { title: "Suporte caindo", query: "suporte celular", categorySlug: "trabalho-e-produtividade", tone: "very-high" },
+  { title: "Carro sujo", query: "limpeza", categorySlug: "limpeza-higiene-e-estetica", tone: "very-high" },
+  { title: "Mau cheiro", query: "odores", categorySlug: "limpeza-higiene-e-estetica", tone: "very-high" },
+  { title: "Desconforto ao dirigir", query: "conforto lombar", categorySlug: "organizacao-conforto-e-saude", tone: "very-high" },
+  { title: "Falta de organizacao", query: "organizador", categorySlug: "organizacao-conforto-e-saude", tone: "high" },
+  { title: "Trabalho na chuva", query: "chuva", categorySlug: "seguranca-clima-e-emergencia", tone: "very-high" },
+  { title: "Pneu sem pressao", query: "compressor", categorySlug: "manutencao-pecas-e-pneus", tone: "very-high" },
+  { title: "Bateria descarregada", query: "bateria", categorySlug: "seguranca-clima-e-emergencia", tone: "very-high" },
+  { title: "Pedidos desorganizados", query: "delivery", categorySlug: "moto-vestimentas-e-delivery", tone: "high" },
+  { title: "Registrar o transito", query: "dashcam", categorySlug: "tecnologia-e-eletronicos", tone: "very-high" }
 ];
 
 const objectiveHubs = [
-  { title: "Economizar combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao", icon: Gauge },
-  { title: "Reduzir manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao", icon: Wrench },
-  { title: "Melhorar avaliacoes", subtitle: "Limpeza, conforto e atendimento ao passageiro.", categorySlug: "passageiros-e-familia", icon: ShieldCheck },
+  { title: "Economizar combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao-pecas-e-pneus", icon: Gauge },
+  { title: "Reduzir manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao-pecas-e-pneus", icon: Wrench },
+  { title: "Melhorar avaliacoes", subtitle: "Limpeza, conforto e atendimento ao passageiro.", categorySlug: "organizacao-conforto-e-saude", icon: ShieldCheck },
   { title: "Ganhar produtividade", subtitle: "Energia, suportes, organizacao e delivery.", categorySlug: "trabalho-e-produtividade", icon: Target },
-  { title: "Preparar para viagem", subtitle: "Bagagem, emergencia, alimentacao e navegacao.", categorySlug: "viagens-e-uso-rodoviario", icon: Route },
-  { title: "Trabalhar com seguranca", subtitle: "Camera, visibilidade, pneus e sinalizacao.", categorySlug: "seguranca", icon: LifeBuoy }
+  { title: "Preparar para viagem", subtitle: "Bagagem, emergencia, alimentacao e navegacao.", categorySlug: "acessorios-viagem-e-servicos", icon: Route },
+  { title: "Trabalhar com seguranca", subtitle: "Camera, visibilidade, pneus e sinalizacao.", categorySlug: "seguranca-clima-e-emergencia", icon: LifeBuoy }
 ];
 
 const workHubs = [
@@ -497,7 +497,7 @@ function App() {
             <CloudRain size={28} />
             <strong>Chuva, calor, frio, ferias e datas profissionais</strong>
             <p>Campanhas podem destacar capas, impermeabilizacao, hidratacao, ventilacao, viagem, presentes e kits por faixa de preco.</p>
-            <button onClick={() => focusHub("clima-e-protecao", "chuva")}>Ver itens de clima</button>
+            <button onClick={() => focusHub("seguranca-clima-e-emergencia", "chuva")}>Ver itens de clima</button>
           </div>
         </article>
       </section>
@@ -549,8 +549,8 @@ function App() {
 const seedProducts: Product[] = [
   {
     id: "prod-demo",
-    categoryId: "cat-equipamentos",
-    categorySlug: "equipamentos",
+    categoryId: "cat-trabalho-produtividade",
+    categorySlug: "trabalho-e-produtividade",
     name: "Suporte veicular com trava reforcada",
     slug: "suporte-veicular-trava-reforcada",
     shortDescription: "Boa opcao para GPS diario.",
