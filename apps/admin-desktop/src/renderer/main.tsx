@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, ClipboardList, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
 import type {
   AdminDashboard,
   AffiliateOffer,
@@ -15,14 +15,17 @@ import type {
   ProductInput,
   StoreHub,
   StoreHubInput,
-  VehicleType
+  VehicleType,
+  WaitingRoomLink,
+  WaitingRoomLinkInput,
+  WaitingRoomStatus
 } from "@korre/shared";
 import "./styles.css";
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 const tokenStorageKey = "korre-loja-admin-token";
 
-type ModuleId = "dashboard" | "products" | "categories" | "hubs" | "offers" | "reports" | "settings";
+type ModuleId = "dashboard" | "waiting-room" | "products" | "categories" | "hubs" | "offers" | "reports" | "settings";
 
 type CategoryFilterDraft = {
   id: string;
@@ -52,6 +55,7 @@ function App() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [hubs, setHubs] = useState<StoreHub[]>([]);
   const [offers, setOffers] = useState<AffiliateOffer[]>([]);
+  const [waitingRoomLinks, setWaitingRoomLinks] = useState<WaitingRoomLink[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [clicks, setClicks] = useState<ClickEvent[]>([]);
   const [filterDrafts, setFilterDrafts] = useState<CategoryFilterDraft[]>([]);
@@ -93,6 +97,12 @@ function App() {
     affiliateUrl: "",
     active: true
   });
+  const [waitingRoomForm, setWaitingRoomForm] = useState<WaitingRoomLinkInput>({
+    url: "",
+    title: "",
+    notes: "",
+    status: "waiting"
+  });
   const [campaignForm, setCampaignForm] = useState<CampaignInput>({
     name: "",
     slug: "",
@@ -130,15 +140,17 @@ function App() {
       adminFetch("/admin/products").then((response) => response.json()),
       adminFetch("/admin/categories").then((response) => response.json()),
       adminFetch("/admin/hubs").then((response) => response.json()),
+      adminFetch("/admin/waiting-room").then((response) => response.json()),
       adminFetch("/admin/offers").then((response) => response.json()),
       adminFetch("/admin/campaigns").then((response) => response.json()),
       adminFetch("/admin/clicks").then((response) => response.json())
     ])
-      .then(([dashboardData, productData, categoryData, hubData, offerData, campaignData, clickData]) => {
+      .then(([dashboardData, productData, categoryData, hubData, waitingRoomData, offerData, campaignData, clickData]) => {
         setDashboard(dashboardData);
         setProducts(productData);
         setCategories(categoryData);
         setHubs(hubData);
+        setWaitingRoomLinks(waitingRoomData);
         setOffers(offerData);
         setCampaigns(campaignData);
         setClicks(clickData);
@@ -190,6 +202,7 @@ function App() {
     setProducts([]);
     setCategories([]);
     setHubs([]);
+    setWaitingRoomLinks([]);
     setOffers([]);
     setCampaigns([]);
     setClicks([]);
@@ -305,6 +318,34 @@ function App() {
     await loadAdminData();
   }
 
+  async function createWaitingRoomLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFeedback("Adicionando link na sala de espera...");
+    const response = await adminFetch("/admin/waiting-room", {
+      method: "POST",
+      body: JSON.stringify(waitingRoomForm)
+    });
+
+    if (!response.ok) {
+      setFeedback("Nao foi possivel adicionar o link.");
+      return;
+    }
+
+    setFeedback("Link adicionado na sala de espera.");
+    setWaitingRoomForm({ url: "", title: "", notes: "", status: "waiting" });
+    await loadAdminData();
+  }
+
+  async function updateWaitingRoomStatus(link: WaitingRoomLink, status: WaitingRoomStatus) {
+    const response = await adminFetch(`/admin/waiting-room/${link.id}`, {
+      method: status === "discarded" ? "DELETE" : "PATCH",
+      body: status === "discarded" ? undefined : JSON.stringify({ status })
+    });
+
+    setFeedback(response.ok ? "Sala de espera atualizada." : "Nao foi possivel atualizar o link.");
+    await loadAdminData();
+  }
+
   async function createOffer(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFeedback("Salvando oferta...");
@@ -412,12 +453,14 @@ function App() {
     { label: "Produtos ativos", value: dashboard?.activeProducts ?? 0, Icon: Boxes },
     { label: "Categorias", value: dashboard?.activeCategories ?? 0, Icon: Tags },
     { label: "Hubs ativos", value: dashboard?.activeHubs ?? 0, Icon: FolderTree },
+    { label: "Na espera", value: waitingRoomLinks.length, Icon: ClipboardList },
     { label: "Campanhas", value: dashboard?.activeCampaigns ?? 0, Icon: Megaphone },
     { label: "Sem link valido", value: dashboard?.productsWithoutOffer ?? 0, Icon: Link2 }
   ];
 
   const modules: Array<{ id: ModuleId; label: string; Icon: LucideIcon }> = [
     { id: "dashboard", label: "Dashboard", Icon: BarChart3 },
+    { id: "waiting-room", label: "Sala de espera", Icon: ClipboardList },
     { id: "products", label: "Produtos", Icon: Boxes },
     { id: "categories", label: "Categorias", Icon: Tags },
     { id: "hubs", label: "Hubs", Icon: FolderTree },
@@ -500,6 +543,58 @@ function App() {
                 <article><span>Cliques em 7 dias</span><strong>{dashboard?.clicksLastSevenDays ?? 0}</strong></article>
               </div>
             </section>
+          </div>
+        )}
+
+        {activeModule === "waiting-room" && (
+          <div className="window split-window">
+            <section className="panel">
+              <div className="panel-heading">
+                <div>
+                  <p>Sala de espera</p>
+                  <h2>Links para revisar depois</h2>
+                </div>
+                <span>{waitingRoomLinks.length} links</span>
+              </div>
+              <div className="click-list">
+                {waitingRoomLinks.length === 0 && <p>Nenhum link aguardando revisao.</p>}
+                {waitingRoomLinks.map((link) => (
+                  <article key={link.id}>
+                    <strong>{link.title || link.url}</strong>
+                    <a href={link.url} target="_blank" rel="noreferrer">{link.url}</a>
+                    {link.notes && <span>{link.notes}</span>}
+                    <span>{link.status} - {new Date(link.createdAt).toLocaleString("pt-BR")}</span>
+                    <div className="panel-actions">
+                      <button type="button" className="table-action" onClick={() => void updateWaitingRoomStatus(link, "reviewing")}>Revisando</button>
+                      <button type="button" className="table-action" onClick={() => void updateWaitingRoomStatus(link, "converted")}>Convertido</button>
+                      <button type="button" className="icon-action" onClick={() => void updateWaitingRoomStatus(link, "discarded")} aria-label="Descartar link"><Trash2 size={15} /></button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <form className="panel form-panel" onSubmit={createWaitingRoomLink}>
+              <div className="panel-heading">
+                <div>
+                  <p>Entrada rapida</p>
+                  <h2>Novo link</h2>
+                </div>
+              </div>
+              <label>
+                Link
+                <input required type="url" placeholder="https://..." value={waitingRoomForm.url} onChange={(event) => setWaitingRoomForm({ ...waitingRoomForm, url: event.target.value })} />
+              </label>
+              <label>
+                Titulo opcional
+                <input value={waitingRoomForm.title} onChange={(event) => setWaitingRoomForm({ ...waitingRoomForm, title: event.target.value })} />
+              </label>
+              <label>
+                Observacao
+                <textarea value={waitingRoomForm.notes} onChange={(event) => setWaitingRoomForm({ ...waitingRoomForm, notes: event.target.value })} />
+              </label>
+              <button type="submit"><Plus size={16} /> Adicionar na espera</button>
+            </form>
           </div>
         )}
 

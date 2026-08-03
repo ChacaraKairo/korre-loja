@@ -89,6 +89,18 @@ export async function initDatabase(prisma = new PrismaClient()) {
   `);
 
   await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS "WaitingRoomLink" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "url" TEXT NOT NULL,
+      "title" TEXT,
+      "notes" TEXT,
+      "status" TEXT NOT NULL DEFAULT 'waiting',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "Campaign" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "name" TEXT NOT NULL,
@@ -142,6 +154,7 @@ export async function initDatabase(prisma = new PrismaClient()) {
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Product_featured_idx" ON "Product" ("featured");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StoreHub_type_idx" ON "StoreHub" ("type");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StoreHub_active_idx" ON "StoreHub" ("active");`);
+  await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "WaitingRoomLink_status_idx" ON "WaitingRoomLink" ("status");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_productId_idx" ON "ProductClick" ("productId");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_categoryId_idx" ON "ProductClick" ("categoryId");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_campaignId_idx" ON "ProductClick" ("campaignId");`);

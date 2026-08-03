@@ -33,6 +33,25 @@ export type AffiliateOfferInput = {
   notes?: string;
 };
 
+export type WaitingRoomStatus = "waiting" | "reviewing" | "converted" | "discarded";
+
+export type WaitingRoomLink = {
+  id: string;
+  url: string;
+  title?: string;
+  notes?: string;
+  status: WaitingRoomStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type WaitingRoomLinkInput = {
+  url: string;
+  title?: string;
+  notes?: string;
+  status?: WaitingRoomStatus;
+};
+
 export type Product = {
   id: string;
   categoryId: string;

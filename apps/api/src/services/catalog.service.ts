@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import type { AffiliateLink, Campaign as DbCampaign, Category as DbCategory, Product as DbProduct, StoreHub as DbStoreHub } from "@prisma/client";
+import type { AffiliateLink, Campaign as DbCampaign, Category as DbCategory, Product as DbProduct, StoreHub as DbStoreHub, WaitingRoomLink as DbWaitingRoomLink } from "@prisma/client";
 import type {
   AffiliateOffer,
   AffiliateOfferInput,
@@ -13,7 +13,10 @@ import type {
   ProductStatus,
   StoreHub,
   StoreHubInput,
-  VehicleType
+  VehicleType,
+  WaitingRoomLink,
+  WaitingRoomLinkInput,
+  WaitingRoomStatus
 } from "@korre/shared";
 import { slugify } from "@korre/shared";
 import { z } from "zod";
@@ -23,6 +26,7 @@ const vehicleTypes = ["car", "motorcycle", "bicycle", "electric_scooter", "other
 const audiences = ["driver", "motoboy", "delivery", "general"] as const;
 const productStatuses = ["draft", "active", "inactive", "archived"] as const;
 const hubTypes = ["problem", "objective", "profession", "kit", "content", "seasonal"] as const;
+const waitingRoomStatuses = ["waiting", "reviewing", "converted", "discarded"] as const;
 
 const productSchema = z.object({
   categoryId: z.string().min(1),
@@ -69,6 +73,13 @@ const offerSchema = z.object({
   affiliateUrl: z.string().url(),
   active: z.coerce.boolean().optional(),
   notes: z.string().optional()
+});
+
+const waitingRoomSchema = z.object({
+  url: z.string().url(),
+  title: z.string().optional(),
+  notes: z.string().optional(),
+  status: z.enum(waitingRoomStatuses).optional()
 });
 
 const campaignSchema = z.object({
@@ -499,6 +510,53 @@ export class CatalogService {
     return offers.map((offer) => this.mapOffer(offer));
   }
 
+  async getWaitingRoomLinks() {
+    const links = await this.prisma.waitingRoomLink.findMany({
+      where: { status: { not: "discarded" } },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }]
+    });
+
+    return links.map((link) => this.mapWaitingRoomLink(link));
+  }
+
+  async createWaitingRoomLink(payload: WaitingRoomLinkInput) {
+    const input = this.parse(waitingRoomSchema, payload);
+    const link = await this.prisma.waitingRoomLink.create({
+      data: {
+        url: input.url,
+        title: input.title,
+        notes: input.notes,
+        status: input.status ?? "waiting"
+      }
+    });
+
+    return this.mapWaitingRoomLink(link);
+  }
+
+  async updateWaitingRoomLink(id: string, payload: Partial<WaitingRoomLinkInput>) {
+    const current = await this.prisma.waitingRoomLink.findUnique({ where: { id } });
+
+    if (!current) {
+      throw new NotFoundException("Link da sala de espera nao encontrado");
+    }
+
+    const link = await this.prisma.waitingRoomLink.update({
+      where: { id },
+      data: {
+        url: payload.url,
+        title: payload.title,
+        notes: payload.notes,
+        status: waitingRoomStatuses.includes(payload.status as WaitingRoomStatus) ? payload.status : undefined
+      }
+    });
+
+    return this.mapWaitingRoomLink(link);
+  }
+
+  async discardWaitingRoomLink(id: string) {
+    return this.updateWaitingRoomLink(id, { status: "discarded" });
+  }
+
   async createOffer(payload: AffiliateOfferInput) {
     const input = this.parse(offerSchema, payload);
     const product = await this.prisma.product.findUnique({ where: { id: input.productId } });
@@ -713,6 +771,18 @@ export class CatalogService {
       active: offer.active,
       referencePriceCents: offer.product?.referencePriceCents ?? undefined,
       updatedAt: offer.updatedAt.toISOString()
+    };
+  }
+
+  private mapWaitingRoomLink(link: DbWaitingRoomLink): WaitingRoomLink {
+    return {
+      id: link.id,
+      url: link.url,
+      title: link.title ?? undefined,
+      notes: link.notes ?? undefined,
+      status: waitingRoomStatuses.includes(link.status as WaitingRoomStatus) ? link.status as WaitingRoomStatus : "waiting",
+      createdAt: link.createdAt.toISOString(),
+      updatedAt: link.updatedAt.toISOString()
     };
   }
 

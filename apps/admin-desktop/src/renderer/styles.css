@@ -383,8 +383,10 @@ textarea {
 }
 
 .click-list span,
-.click-list p {
+.click-list p,
+.click-list a {
   color: var(--muted);
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 980px) {

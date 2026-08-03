@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
-import type { AffiliateOfferInput, CampaignInput, CategoryInput, ProductInput, StoreHubInput } from "@korre/shared";
+import type { AffiliateOfferInput, CampaignInput, CategoryInput, ProductInput, StoreHubInput, WaitingRoomLinkInput } from "@korre/shared";
 import { AuthGuard } from "../common/auth.guard";
 import { CatalogService } from "../services/catalog.service";
 
@@ -76,6 +76,26 @@ export class AdminController {
   @Get("offers")
   offers() {
     return this.catalog.getOffers();
+  }
+
+  @Get("waiting-room")
+  waitingRoom() {
+    return this.catalog.getWaitingRoomLinks();
+  }
+
+  @Post("waiting-room")
+  createWaitingRoomLink(@Body() payload: WaitingRoomLinkInput) {
+    return this.catalog.createWaitingRoomLink(payload);
+  }
+
+  @Patch("waiting-room/:id")
+  updateWaitingRoomLink(@Param("id") id: string, @Body() payload: Partial<WaitingRoomLinkInput>) {
+    return this.catalog.updateWaitingRoomLink(id, payload);
+  }
+
+  @Delete("waiting-room/:id")
+  deleteWaitingRoomLink(@Param("id") id: string) {
+    return this.catalog.discardWaitingRoomLink(id);
   }
 
   @Post("offers")
