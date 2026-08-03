@@ -27,6 +27,13 @@ const audiences = ["driver", "motoboy", "delivery", "general"] as const;
 const productStatuses = ["draft", "active", "inactive", "archived"] as const;
 const hubTypes = ["problem", "objective", "profession", "kit", "content", "seasonal"] as const;
 const waitingRoomStatuses = ["waiting", "reviewing", "converted", "discarded"] as const;
+const imageString = z.string().refine((value) => {
+  if (value.startsWith("data:image/")) {
+    return true;
+  }
+
+  return z.string().url().safeParse(value).success;
+}, "Imagem deve ser uma URL valida ou um arquivo de imagem local.");
 
 const productSchema = z.object({
   categoryId: z.string().min(1),
@@ -36,8 +43,8 @@ const productSchema = z.object({
   recommendationReason: z.string().min(3),
   vehicleType: z.enum(vehicleTypes),
   audience: z.enum(audiences),
-  imageUrl: z.string().url().optional().or(z.literal("")),
-  photos: z.array(z.string().url()).optional(),
+  imageUrl: imageString.optional().or(z.literal("")),
+  photos: z.array(imageString).optional(),
   referencePriceCents: z.coerce.number().int().positive().optional(),
   status: z.enum(productStatuses).optional(),
   featured: z.coerce.boolean().optional(),

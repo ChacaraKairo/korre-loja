@@ -50,6 +50,34 @@ function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? value : [];
 }
 
+const productStatusLabels: Record<Product["status"], string> = {
+  draft: "Rascunho",
+  active: "Ativo",
+  inactive: "Inativo",
+  archived: "Arquivado"
+};
+
+const waitingRoomStatusLabels: Record<WaitingRoomStatus, string> = {
+  waiting: "Aguardando",
+  reviewing: "Em revisao",
+  converted: "Convertido",
+  discarded: "Descartado"
+};
+
+const providerLabels: Record<AffiliateOffer["provider"], string> = {
+  mercado_livre: "Mercado Livre",
+  other: "Outro"
+};
+
+const hubTypeLabels: Record<StoreHub["type"], string> = {
+  problem: "Problema",
+  objective: "Objetivo",
+  profession: "Profissao",
+  kit: "Kit",
+  content: "Conteudo",
+  seasonal: "Sazonal"
+};
+
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem(tokenStorageKey) ?? "");
   const [login, setLogin] = useState({ email: "admin@korre.local", password: "change-me" });
@@ -135,6 +163,15 @@ function App() {
 
   function textToList(value: string) {
     return value.split(/\n|,/).map((item) => item.trim()).filter(Boolean);
+  }
+
+  function setProductPhotos(photos: string[]) {
+    const cleanPhotos = photos.map((photo) => photo.trim()).filter(Boolean);
+    setForm((current) => ({
+      ...current,
+      photos: cleanPhotos,
+      imageUrl: cleanPhotos[0] ?? ""
+    }));
   }
 
   async function adminFetch(path: string, init?: RequestInit) {
@@ -329,10 +366,46 @@ function App() {
   function downloadPhoto(url: string) {
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = url.split("/").pop()?.split("?")[0] || "foto-produto";
+    anchor.download = url.startsWith("data:image/") ? "foto-produto" : url.split("/").pop()?.split("?")[0] || "foto-produto";
     anchor.target = "_blank";
     anchor.rel = "noreferrer";
     anchor.click();
+  }
+
+  function addPhotoUrl() {
+    const url = window.prompt("Cole a URL da foto");
+
+    if (!url?.trim()) {
+      return;
+    }
+
+    setProductPhotos([...(form.photos ?? []), url.trim()]);
+  }
+
+  function removePhoto(index: number) {
+    setProductPhotos((form.photos ?? []).filter((_, photoIndex) => photoIndex !== index));
+  }
+
+  async function addPhotoFiles(files: FileList | null) {
+    if (!files?.length) {
+      return;
+    }
+
+    const images = await Promise.all(
+      Array.from(files)
+        .filter((file) => file.type.startsWith("image/"))
+        .map(
+          (file) =>
+            new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(String(reader.result));
+              reader.onerror = () => reject(reader.error);
+              reader.readAsDataURL(file);
+            })
+        )
+    );
+
+    setProductPhotos([...(form.photos ?? []), ...images]);
   }
 
   async function updateProductStatus(product: Product, status: Product["status"]) {
@@ -572,7 +645,7 @@ function App() {
   ];
 
   const modules: Array<{ id: ModuleId; label: string; Icon: LucideIcon }> = [
-    { id: "dashboard", label: "Dashboard", Icon: BarChart3 },
+    { id: "dashboard", label: "Painel", Icon: BarChart3 },
     { id: "waiting-room", label: "Sala de espera", Icon: ClipboardList },
     { id: "products", label: "Produtos", Icon: Boxes },
     { id: "categories", label: "Categorias", Icon: Tags },
@@ -676,7 +749,7 @@ function App() {
                     <strong>{link.title || link.url}</strong>
                     <a href={link.url} target="_blank" rel="noreferrer">{link.url}</a>
                     {link.notes && <span>{link.notes}</span>}
-                    <span>{link.status} - {new Date(link.createdAt).toLocaleString("pt-BR")}</span>
+                    <span>{waitingRoomStatusLabels[link.status]} - {new Date(link.createdAt).toLocaleString("pt-BR")}</span>
                     <div className="panel-actions">
                       <button type="button" className="table-action" onClick={() => void copyWaitingRoomLink(link)}><Clipboard size={14} /> Copiar link</button>
                       <button type="button" className="table-action" onClick={() => void updateWaitingRoomStatus(link, "reviewing")}>Revisando</button>
@@ -735,7 +808,7 @@ function App() {
               <div className="table-scroll">
                 <table className="products-table">
                   <thead>
-                    <tr><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Status</th><th>Link</th><th>Valor</th><th>Marketplace</th><th>Fotos</th><th>Acoes</th></tr>
+                  <tr><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Status</th><th>Link</th><th>Valor</th><th>Loja</th><th>Fotos</th><th>Acoes</th></tr>
                   </thead>
                   <tbody>
                     {products.map((product) => (
@@ -743,10 +816,10 @@ function App() {
                         <td><strong>{product.name}</strong></td>
                         <td>{product.categorySlug}</td>
                         <td>{product.subcategory ?? "-"}</td>
-                        <td><span className={`status-pill status-${product.status}`}>{product.status}</span></td>
+                        <td><span className={`status-pill status-${product.status}`}>{productStatusLabels[product.status]}</span></td>
                         <td>{product.offer?.affiliateUrl ? <a href={product.offer.affiliateUrl} target="_blank" rel="noreferrer">Abrir</a> : "Sem link"}</td>
                         <td>{product.referencePriceCents ? (product.referencePriceCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "-"}</td>
-                        <td>{product.offer?.provider ?? "-"}</td>
+                        <td>{product.offer?.provider ? providerLabels[product.offer.provider] : "-"}</td>
                         <td>{product.photos?.length || (product.imageUrl ? 1 : 0)}</td>
                         <td>
                           <div className="panel-actions">
@@ -781,18 +854,44 @@ function App() {
                     <label>Subcategoria<select value={form.subcategory} onChange={(event) => setForm({ ...form, subcategory: event.target.value })}><option value="">Sem subcategoria</option>{selectedProductCategory?.subcategories.map((subcategory) => <option key={subcategory} value={subcategory}>{subcategory}</option>)}</select></label>
                     <label>Veiculo<select value={form.vehicleType} onChange={(event) => setForm({ ...form, vehicleType: event.target.value as VehicleType })}><option value="both">Todos</option><option value="car">Carro</option><option value="motorcycle">Moto</option><option value="bicycle">Bike</option><option value="electric_scooter">Scooter eletrica</option><option value="other">Outros</option></select></label>
                     <label>Valor em centavos<input type="number" min="1" value={form.referencePriceCents ?? ""} onChange={(event) => setForm({ ...form, referencePriceCents: event.target.value ? Number(event.target.value) : undefined })} /></label>
-                    <label>Marketplace<select value={form.marketplace} onChange={(event) => setForm({ ...form, marketplace: event.target.value as ProductInput["marketplace"] })}><option value="mercado_livre">Mercado Livre</option><option value="other">Outro</option></select></label>
+                    <label>Loja<select value={form.marketplace} onChange={(event) => setForm({ ...form, marketplace: event.target.value as ProductInput["marketplace"] })}><option value="mercado_livre">Mercado Livre</option><option value="other">Outro</option></select></label>
                     <label>Link afiliado<input type="url" value={form.affiliateUrl} onChange={(event) => setForm({ ...form, affiliateUrl: event.target.value })} /></label>
                   </div>
 
-                  <label>Fotos, uma URL por linha<textarea value={listToText(form.photos)} onChange={(event) => setForm({ ...form, photos: textToList(event.target.value), imageUrl: textToList(event.target.value)[0] ?? form.imageUrl })} /></label>
-                  {Boolean(form.photos?.length) && (
-                    <div className="photo-actions">
-                      {form.photos?.map((photo) => (
-                        <button type="button" className="table-action" key={photo} onClick={() => downloadPhoto(photo)}><Download size={14} /> Baixar foto</button>
-                      ))}
+                  <section className="photo-manager">
+                    <div className="photo-manager-heading">
+                      <div>
+                        <p>Fotos</p>
+                        <h3>Imagens do produto</h3>
+                      </div>
+                      <div className="panel-actions">
+                        <button type="button" className="table-action" onClick={addPhotoUrl}><Plus size={14} /> URL</button>
+                        <label className="file-button">
+                          <Plus size={14} /> Arquivo
+                          <input type="file" accept="image/*" multiple onChange={(event) => void addPhotoFiles(event.target.files)} />
+                        </label>
+                      </div>
                     </div>
-                  )}
+
+                    <label>URLs das fotos, uma por linha<textarea value={listToText(form.photos)} onChange={(event) => setProductPhotos(textToList(event.target.value))} /></label>
+
+                    {form.photos?.length ? (
+                      <div className="photo-grid">
+                        {form.photos.map((photo, index) => (
+                          <article className="photo-card" key={`${photo}-${index}`}>
+                            <img src={photo} alt={`Foto ${index + 1} do produto`} />
+                            {index === 0 && <span className="cover-badge">Principal</span>}
+                            <div className="photo-card-actions">
+                              <button type="button" className="table-action" onClick={() => downloadPhoto(photo)}><Download size={14} /> Baixar</button>
+                              <button type="button" className="icon-action" onClick={() => removePhoto(index)} aria-label="Remover foto"><Trash2 size={15} /></button>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="empty-photos">Nenhuma foto adicionada.</div>
+                    )}
+                  </section>
 
                   <div className="form-grid two-columns">
                     <label>Descricao curta<textarea required value={form.shortDescription} onChange={(event) => setForm({ ...form, shortDescription: event.target.value })} /></label>
@@ -882,7 +981,7 @@ function App() {
                 {hubs.map((hub) => (
                   <article key={hub.id}>
                     <strong>{hub.title}</strong>
-                    <span>{hub.type} - {hub.categorySlug ?? "sem categoria"} - {hub.active ? "ativo" : "inativo"}</span>
+                    <span>{hubTypeLabels[hub.type]} - {hub.categorySlug ?? "sem categoria"} - {hub.active ? "ativo" : "inativo"}</span>
                     <button type="button" className="table-action" onClick={() => void toggleHub(hub)}>{hub.active ? "Desativar" : "Ativar"}</button>
                   </article>
                 ))}
@@ -906,8 +1005,8 @@ function App() {
             <section className="panel">
               <div className="panel-heading"><div><p>Ofertas</p><h2>Links afiliados</h2></div><span>{offers.length} links</span></div>
               <table>
-                <thead><tr><th>Produto</th><th>Provider</th><th>Status</th><th>Acoes</th></tr></thead>
-                <tbody>{offers.map((offer) => <tr key={offer.id}><td>{offer.productName}</td><td>{offer.provider}</td><td>{offer.active ? "ativa" : "inativa"}</td><td><button type="button" className="table-action" onClick={() => void toggleOffer(offer)}>{offer.active ? "Desativar" : "Ativar"}</button></td></tr>)}</tbody>
+                <thead><tr><th>Produto</th><th>Fornecedor</th><th>Status</th><th>Acoes</th></tr></thead>
+                <tbody>{offers.map((offer) => <tr key={offer.id}><td>{offer.productName}</td><td>{providerLabels[offer.provider]}</td><td>{offer.active ? "ativa" : "inativa"}</td><td><button type="button" className="table-action" onClick={() => void toggleOffer(offer)}>{offer.active ? "Desativar" : "Ativar"}</button></td></tr>)}</tbody>
               </table>
             </section>
             <section className="panel-stack">
