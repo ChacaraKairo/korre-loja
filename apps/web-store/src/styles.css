@@ -48,9 +48,9 @@ main {
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: var(--korre-bg);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid rgba(0, 80, 34, 0.16);
+  background: linear-gradient(90deg, #f6fff9 0%, #d8ffe7 54%, #b9f8d0 100%);
+  box-shadow: 0 10px 22px rgba(0, 80, 34, 0.14);
 }
 
 .market-top,
@@ -84,14 +84,6 @@ main {
   background: transparent;
   font-weight: 900;
   white-space: nowrap;
-}
-
-.brand {
-  border: 1px solid rgba(0, 200, 83, 0.38);
-  border-radius: 8px;
-  padding: 4px 12px;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.12), 0 8px 18px rgba(0, 0, 0, 0.28);
 }
 
 .brand img {
@@ -142,8 +134,9 @@ main {
 }
 
 .header-note {
-  color: #c9c9c9;
+  color: #114524;
   font-size: 0.88rem;
+  font-weight: 800;
   white-space: nowrap;
 }
 
