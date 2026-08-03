@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "name": "Korre",
+    "storeName": "Loja do Korre",
+    "description": ""
+  },
+  "social": {
+    "youtube": {
+      "channelUrl": "https://www.youtube.com/channel/UCp2u-o5_tC4I5i64qwiiooA",
+      "handleUrl": "https://www.youtube.com/@korre_app"
+    },
+    "instagram": "",
+    "tiktok": "",
+    "facebook": "",
+    "linkedin": "",
+    "x": ""
+  },
+  "contact": {
+    "email": "",
+    "phone": "",
+    "whatsapp": "",
+    "website": "",
+    "supportUrl": ""
+  },
+  "business": {
+    "companyName": "",
+    "document": "",
+    "address": ""
+  },
+  "notes": ""
+}
