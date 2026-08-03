@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, Clipboard, ClipboardList, Download, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, Clipboard, ClipboardList, Download, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, X, type LucideIcon } from "lucide-react";
 import type {
   AdminDashboard,
   AffiliateOffer,
@@ -64,6 +64,7 @@ function App() {
   const [clicks, setClicks] = useState<ClickEvent[]>([]);
   const [filterDrafts, setFilterDrafts] = useState<CategoryFilterDraft[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [productModalOpen, setProductModalOpen] = useState(false);
   const [productStatus, setProductStatus] = useState<Product["status"]>("active");
   const [feedback, setFeedback] = useState("");
   const [form, setForm] = useState<ProductInput>({
@@ -266,7 +267,7 @@ function App() {
     }
 
     setFeedback(selectedProductId ? "Produto atualizado." : "Produto cadastrado.");
-    clearProductEditor();
+    closeProductEditor();
     await loadAdminData();
   }
 
@@ -291,8 +292,19 @@ function App() {
     }));
   }
 
+  function openNewProduct() {
+    clearProductEditor();
+    setProductModalOpen(true);
+  }
+
+  function closeProductEditor() {
+    setProductModalOpen(false);
+    clearProductEditor();
+  }
+
   function editProduct(product: Product) {
     setSelectedProductId(product.id);
+    setProductModalOpen(true);
     setProductStatus(product.status);
     setForm({
       categoryId: product.categoryId,
@@ -701,71 +713,101 @@ function App() {
         )}
 
         {activeModule === "products" && (
-          <div className="window split-window">
-            <section className="panel">
+          <div className="window products-window">
+            <section className="panel products-panel">
               <div className="panel-heading">
                 <div>
                   <p>Produtos</p>
                   <h2>Catalogo administrativo</h2>
                 </div>
-                <span>{products.length} produtos</span>
+                <div className="panel-actions">
+                  <span>{products.length} produtos</span>
+                  <button type="button" onClick={openNewProduct}><Plus size={16} /> Novo produto</button>
+                </div>
               </div>
-              <table>
-                <thead>
-                  <tr><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Status</th><th>Link</th><th>Valor</th><th>Marketplace</th><th>Fotos</th><th>Acoes</th></tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product.id}>
-                      <td>{product.name}</td>
-                      <td>{product.categorySlug}</td>
-                      <td>{product.subcategory ?? "-"}</td>
-                      <td>{product.status}</td>
-                      <td>{product.offer?.affiliateUrl ? <a href={product.offer.affiliateUrl} target="_blank" rel="noreferrer">Abrir</a> : "Sem link"}</td>
-                      <td>{product.referencePriceCents ? (product.referencePriceCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "-"}</td>
-                      <td>{product.offer?.provider ?? "-"}</td>
-                      <td>{product.photos?.length || (product.imageUrl ? 1 : 0)}</td>
-                      <td>
-                        <div className="panel-actions">
-                          <button className="table-action" type="button" onClick={() => editProduct(product)}>Editar</button>
-                          <button className="table-action" type="button" onClick={() => void updateProductStatus(product, product.status === "active" ? "inactive" : "active")}>
-                            {product.status === "active" ? "Pausar" : "Ativar"}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+              <div className="product-summary">
+                <article><span>Ativos</span><strong>{products.filter((product) => product.status === "active").length}</strong></article>
+                <article><span>Sem link</span><strong>{products.filter((product) => !product.offer?.affiliateUrl).length}</strong></article>
+                <article><span>Com fotos</span><strong>{products.filter((product) => product.photos?.length || product.imageUrl).length}</strong></article>
+              </div>
+
+              <div className="table-scroll">
+                <table className="products-table">
+                  <thead>
+                    <tr><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Status</th><th>Link</th><th>Valor</th><th>Marketplace</th><th>Fotos</th><th>Acoes</th></tr>
+                  </thead>
+                  <tbody>
+                    {products.map((product) => (
+                      <tr key={product.id}>
+                        <td><strong>{product.name}</strong></td>
+                        <td>{product.categorySlug}</td>
+                        <td>{product.subcategory ?? "-"}</td>
+                        <td><span className={`status-pill status-${product.status}`}>{product.status}</span></td>
+                        <td>{product.offer?.affiliateUrl ? <a href={product.offer.affiliateUrl} target="_blank" rel="noreferrer">Abrir</a> : "Sem link"}</td>
+                        <td>{product.referencePriceCents ? (product.referencePriceCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "-"}</td>
+                        <td>{product.offer?.provider ?? "-"}</td>
+                        <td>{product.photos?.length || (product.imageUrl ? 1 : 0)}</td>
+                        <td>
+                          <div className="panel-actions">
+                            <button className="table-action" type="button" onClick={() => editProduct(product)}>Editar</button>
+                            <button className="table-action" type="button" onClick={() => void updateProductStatus(product, product.status === "active" ? "inactive" : "active")}>
+                              {product.status === "active" ? "Pausar" : "Ativar"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
 
-            <form className="panel form-panel" onSubmit={saveProduct}>
-              <div className="panel-heading">
-                <div><p>{selectedProductId ? "Edicao" : "Cadastro"}</p><h2>{selectedProductId ? "Editar produto" : "Novo produto"}</h2></div>
-                {selectedProductId && <button type="button" className="table-action" onClick={clearProductEditor}>Novo</button>}
+            {productModalOpen && (
+              <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label={selectedProductId ? "Editar produto" : "Novo produto"}>
+                <form className="modal-panel product-modal form-panel" onSubmit={saveProduct}>
+                  <div className="modal-heading">
+                    <div>
+                      <p>{selectedProductId ? "Edicao" : "Cadastro"}</p>
+                      <h2>{selectedProductId ? "Editar produto" : "Novo produto"}</h2>
+                    </div>
+                    <button type="button" className="icon-action" onClick={closeProductEditor} aria-label="Fechar"><X size={16} /></button>
+                  </div>
+
+                  <div className="form-grid two-columns">
+                    <label>Nome<input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label>
+                    <label>Status<select value={productStatus} onChange={(event) => setProductStatus(event.target.value as Product["status"])}><option value="draft">Rascunho</option><option value="active">Ativo</option><option value="inactive">Inativo</option><option value="archived">Arquivado</option></select></label>
+                    <label>Categoria<select required value={form.categoryId} onChange={(event) => setForm({ ...form, categoryId: event.target.value, subcategory: "" })}>{activeCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+                    <label>Subcategoria<select value={form.subcategory} onChange={(event) => setForm({ ...form, subcategory: event.target.value })}><option value="">Sem subcategoria</option>{selectedProductCategory?.subcategories.map((subcategory) => <option key={subcategory} value={subcategory}>{subcategory}</option>)}</select></label>
+                    <label>Veiculo<select value={form.vehicleType} onChange={(event) => setForm({ ...form, vehicleType: event.target.value as VehicleType })}><option value="both">Todos</option><option value="car">Carro</option><option value="motorcycle">Moto</option><option value="bicycle">Bike</option><option value="electric_scooter">Scooter eletrica</option><option value="other">Outros</option></select></label>
+                    <label>Valor em centavos<input type="number" min="1" value={form.referencePriceCents ?? ""} onChange={(event) => setForm({ ...form, referencePriceCents: event.target.value ? Number(event.target.value) : undefined })} /></label>
+                    <label>Marketplace<select value={form.marketplace} onChange={(event) => setForm({ ...form, marketplace: event.target.value as ProductInput["marketplace"] })}><option value="mercado_livre">Mercado Livre</option><option value="other">Outro</option></select></label>
+                    <label>Link afiliado<input type="url" value={form.affiliateUrl} onChange={(event) => setForm({ ...form, affiliateUrl: event.target.value })} /></label>
+                  </div>
+
+                  <label>Fotos, uma URL por linha<textarea value={listToText(form.photos)} onChange={(event) => setForm({ ...form, photos: textToList(event.target.value), imageUrl: textToList(event.target.value)[0] ?? form.imageUrl })} /></label>
+                  {Boolean(form.photos?.length) && (
+                    <div className="photo-actions">
+                      {form.photos?.map((photo) => (
+                        <button type="button" className="table-action" key={photo} onClick={() => downloadPhoto(photo)}><Download size={14} /> Baixar foto</button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="form-grid two-columns">
+                    <label>Descricao curta<textarea required value={form.shortDescription} onChange={(event) => setForm({ ...form, shortDescription: event.target.value })} /></label>
+                    <label>Motivo da recomendacao<textarea required value={form.recommendationReason} onChange={(event) => setForm({ ...form, recommendationReason: event.target.value })} /></label>
+                    <label>Melhor para<input required value={form.bestFor} onChange={(event) => setForm({ ...form, bestFor: event.target.value })} /></label>
+                    <label>Quando evitar<input required value={form.avoidWhen} onChange={(event) => setForm({ ...form, avoidWhen: event.target.value })} /></label>
+                  </div>
+
+                  <div className="modal-footer">
+                    <button type="button" className="table-action" onClick={closeProductEditor}>Cancelar</button>
+                    <button type="submit"><Save size={16} /> Salvar produto</button>
+                  </div>
+                </form>
               </div>
-              <label>Nome<input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label>
-              <label>Categoria<select required value={form.categoryId} onChange={(event) => setForm({ ...form, categoryId: event.target.value })}>{activeCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-              <label>Subcategoria<select value={form.subcategory} onChange={(event) => setForm({ ...form, subcategory: event.target.value })}><option value="">Sem subcategoria</option>{selectedProductCategory?.subcategories.map((subcategory) => <option key={subcategory} value={subcategory}>{subcategory}</option>)}</select></label>
-              <label>Status<select value={productStatus} onChange={(event) => setProductStatus(event.target.value as Product["status"])}><option value="draft">Rascunho</option><option value="active">Ativo</option><option value="inactive">Inativo</option><option value="archived">Arquivado</option></select></label>
-              <label>Veiculo<select value={form.vehicleType} onChange={(event) => setForm({ ...form, vehicleType: event.target.value as VehicleType })}><option value="both">Todos</option><option value="car">Carro</option><option value="motorcycle">Moto</option><option value="bicycle">Bike</option><option value="electric_scooter">Scooter eletrica</option><option value="other">Outros</option></select></label>
-              <label>Valor em centavos<input type="number" min="1" value={form.referencePriceCents ?? ""} onChange={(event) => setForm({ ...form, referencePriceCents: event.target.value ? Number(event.target.value) : undefined })} /></label>
-              <label>Marketplace<select value={form.marketplace} onChange={(event) => setForm({ ...form, marketplace: event.target.value as ProductInput["marketplace"] })}><option value="mercado_livre">Mercado Livre</option><option value="other">Outro</option></select></label>
-              <label>Link afiliado<input type="url" value={form.affiliateUrl} onChange={(event) => setForm({ ...form, affiliateUrl: event.target.value })} /></label>
-              <label>Fotos, uma URL por linha<textarea value={listToText(form.photos)} onChange={(event) => setForm({ ...form, photos: textToList(event.target.value), imageUrl: textToList(event.target.value)[0] ?? form.imageUrl })} /></label>
-              {Boolean(form.photos?.length) && (
-                <div className="photo-actions">
-                  {form.photos?.map((photo) => (
-                    <button type="button" className="table-action" key={photo} onClick={() => downloadPhoto(photo)}><Download size={14} /> Baixar</button>
-                  ))}
-                </div>
-              )}
-              <label>Descricao curta<textarea required value={form.shortDescription} onChange={(event) => setForm({ ...form, shortDescription: event.target.value })} /></label>
-              <label>Motivo da recomendacao<textarea required value={form.recommendationReason} onChange={(event) => setForm({ ...form, recommendationReason: event.target.value })} /></label>
-              <label>Melhor para<input required value={form.bestFor} onChange={(event) => setForm({ ...form, bestFor: event.target.value })} /></label>
-              <label>Quando evitar<input required value={form.avoidWhen} onChange={(event) => setForm({ ...form, avoidWhen: event.target.value })} /></label>
-              <button type="submit"><Save size={16} /> Salvar produto</button>
-            </form>
+            )}
           </div>
         )}
 
