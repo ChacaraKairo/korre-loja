@@ -12,7 +12,14 @@
   --warning: #ffb020;
   color: var(--text);
   background: var(--market-bg);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 * {
@@ -49,7 +56,12 @@ main {
   top: 0;
   z-index: 20;
   border-bottom: 1px solid rgba(0, 80, 34, 0.16);
-  background: linear-gradient(90deg, #f6fff9 0%, #d8ffe7 54%, #b9f8d0 100%);
+  background: linear-gradient(
+    90deg,
+    #f6fff9 0%,
+    #d8ffe7 54%,
+    #b9f8d0 100%
+  );
   box-shadow: 0 10px 22px rgba(0, 80, 34, 0.14);
 }
 
@@ -87,10 +99,10 @@ main {
 }
 
 .brand img {
-  width: 340px;
-  height: 70px;
-  object-fit: cover;
-  object-position: center;
+  width: 200px;
+  height: auto;
+  max-height: 62px;
+  object-fit: contain;
 }
 
 .detail-topbar img {
@@ -151,8 +163,13 @@ main {
   border-radius: 8px;
   color: #ffffff;
   background:
-    linear-gradient(90deg, rgba(10, 10, 10, 0.96), rgba(10, 10, 10, 0.68)),
-    url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1800&q=80") center/cover;
+    linear-gradient(
+      90deg,
+      rgba(10, 10, 10, 0.96),
+      rgba(10, 10, 10, 0.68)
+    ),
+    url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1800&q=80')
+      center/cover;
 }
 
 .market-hero h1 {
@@ -671,7 +688,10 @@ dl {
 
 .product-detail {
   display: grid;
-  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 0.85fr) minmax(
+      0,
+      1fr
+    );
   gap: 28px;
   padding: 28px 0 72px;
 }
