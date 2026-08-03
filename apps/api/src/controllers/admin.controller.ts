@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
-import type { CategoryInput, ProductInput } from "@korre/shared";
+import type { CategoryInput, ProductInput, StoreHubInput } from "@korre/shared";
 import { AuthGuard } from "../common/auth.guard";
 import { CatalogService } from "../services/catalog.service";
 
@@ -51,6 +51,26 @@ export class AdminController {
   @Delete("categories/:id")
   deleteCategory(@Param("id") id: string) {
     return this.catalog.disableCategory(id);
+  }
+
+  @Get("hubs")
+  hubs() {
+    return this.catalog.getAllHubs();
+  }
+
+  @Post("hubs")
+  createHub(@Body() payload: StoreHubInput) {
+    return this.catalog.createHub(payload);
+  }
+
+  @Patch("hubs/:id")
+  updateHub(@Param("id") id: string, @Body() payload: Partial<StoreHubInput>) {
+    return this.catalog.updateHub(id, payload);
+  }
+
+  @Delete("hubs/:id")
+  deleteHub(@Param("id") id: string) {
+    return this.catalog.disableHub(id);
   }
 
   @Get("clicks")

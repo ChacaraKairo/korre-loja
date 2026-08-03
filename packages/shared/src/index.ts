@@ -47,6 +47,34 @@ export type PublicCatalog = {
   categories: Category[];
   featuredProducts: Product[];
   products: Product[];
+  hubs: StoreHub[];
+};
+
+export type HubType = "problem" | "objective" | "profession" | "kit" | "content" | "seasonal";
+
+export type StoreHub = {
+  id: string;
+  type: HubType;
+  title: string;
+  slug: string;
+  subtitle?: string;
+  categorySlug?: string;
+  query?: string;
+  items: string[];
+  priority: number;
+  active: boolean;
+};
+
+export type StoreHubInput = {
+  type: HubType;
+  title: string;
+  slug?: string;
+  subtitle?: string;
+  categorySlug?: string;
+  query?: string;
+  items?: string[];
+  priority?: number;
+  active?: boolean;
 };
 
 export type ClickPayload = {
@@ -95,6 +123,7 @@ export type CategoryInput = {
 export type AdminDashboard = {
   activeProducts: number;
   activeCategories: number;
+  activeHubs: number;
   clicksToday: number;
   clicksLastSevenDays: number;
   topProductName: string;

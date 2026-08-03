@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
 import { BarChart3, Boxes, Link2, LogOut, Settings, Tags, type LucideIcon } from "lucide-react";
-import type { AdminDashboard, Category, ClickEvent, Product, ProductInput, VehicleType } from "@korre/shared";
+import type { AdminDashboard, Category, ClickEvent, Product, ProductInput, StoreHub, StoreHubInput, VehicleType } from "@korre/shared";
 import "./styles.css";
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -14,6 +14,7 @@ function App() {
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [hubs, setHubs] = useState<StoreHub[]>([]);
   const [clicks, setClicks] = useState<ClickEvent[]>([]);
   const [feedback, setFeedback] = useState("");
   const [form, setForm] = useState<ProductInput>({
@@ -27,6 +28,16 @@ function App() {
     avoidWhen: "",
     affiliateUrl: "",
     tags: []
+  });
+  const [hubForm, setHubForm] = useState<StoreHubInput>({
+    type: "problem",
+    title: "",
+    subtitle: "",
+    categorySlug: "",
+    query: "",
+    items: [],
+    priority: 0,
+    active: true
   });
 
   async function adminFetch(path: string, init?: RequestInit) {
@@ -53,12 +64,14 @@ function App() {
       adminFetch("/admin/dashboard").then((response) => response.json()),
       adminFetch("/admin/products").then((response) => response.json()),
       adminFetch("/admin/categories").then((response) => response.json()),
+      adminFetch("/admin/hubs").then((response) => response.json()),
       adminFetch("/admin/clicks").then((response) => response.json())
     ])
-      .then(([dashboardData, productData, categoryData, clickData]) => {
+      .then(([dashboardData, productData, categoryData, hubData, clickData]) => {
         setDashboard(dashboardData);
         setProducts(productData);
         setCategories(categoryData);
+        setHubs(hubData);
         setClicks(clickData);
         setForm((current) => ({
           ...current,
@@ -69,6 +82,7 @@ function App() {
         setDashboard({
           activeProducts: 0,
           activeCategories: 0,
+          activeHubs: 0,
           clicksToday: 0,
           clicksLastSevenDays: 0,
           topProductName: "API offline",
@@ -112,6 +126,7 @@ function App() {
     setDashboard(null);
     setProducts([]);
     setCategories([]);
+    setHubs([]);
     setClicks([]);
   }
 
@@ -166,9 +181,35 @@ function App() {
     await loadAdminData();
   }
 
+  async function createHub(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFeedback("Salvando hub...");
+
+    const payload = {
+      ...hubForm,
+      items: Array.isArray(hubForm.items) ? hubForm.items : String(hubForm.items).split(",").map((item) => item.trim()).filter(Boolean),
+      priority: hubForm.priority ? Number(hubForm.priority) : 0
+    };
+
+    const response = await adminFetch("/admin/hubs", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      setFeedback("Nao foi possivel salvar o hub.");
+      return;
+    }
+
+    setFeedback("Hub cadastrado.");
+    setHubForm((current) => ({ ...current, title: "", subtitle: "", query: "", items: [] }));
+    await loadAdminData();
+  }
+
   const stats: Array<{ label: string; value: number; Icon: LucideIcon }> = [
     { label: "Produtos ativos", value: dashboard?.activeProducts ?? 0, Icon: Boxes },
     { label: "Categorias", value: dashboard?.activeCategories ?? 0, Icon: Tags },
+    { label: "Hubs ativos", value: dashboard?.activeHubs ?? 0, Icon: Settings },
     { label: "Cliques hoje", value: dashboard?.clicksToday ?? 0, Icon: BarChart3 },
     { label: "Sem link valido", value: dashboard?.productsWithoutOffer ?? 0, Icon: Link2 }
   ];
@@ -318,6 +359,70 @@ function App() {
             </label>
             <button type="submit">Cadastrar produto</button>
             {feedback && <span className="feedback">{feedback}</span>}
+          </form>
+
+          <section className="panel">
+            <div className="panel-heading">
+              <div>
+                <p>Taxonomia</p>
+                <h2>Hubs administraveis</h2>
+              </div>
+              <span>{hubs.length} hubs</span>
+            </div>
+            <div className="click-list">
+              {hubs.slice(0, 12).map((hub) => (
+                <article key={hub.id}>
+                  <strong>{hub.title}</strong>
+                  <span>{hub.type} - {hub.categorySlug ?? "sem categoria"} - {hub.active ? "ativo" : "inativo"}</span>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <form className="panel form-panel" onSubmit={createHub}>
+            <div className="panel-heading">
+              <div>
+                <p>Taxonomia</p>
+                <h2>Novo hub</h2>
+              </div>
+            </div>
+            <label>
+              Tipo
+              <select value={hubForm.type} onChange={(event) => setHubForm({ ...hubForm, type: event.target.value as StoreHubInput["type"] })}>
+                <option value="problem">Problema</option>
+                <option value="objective">Objetivo</option>
+                <option value="profession">Profissao</option>
+                <option value="kit">Kit</option>
+                <option value="content">Conteudo</option>
+                <option value="seasonal">Sazonal</option>
+              </select>
+            </label>
+            <label>
+              Titulo
+              <input required value={hubForm.title} onChange={(event) => setHubForm({ ...hubForm, title: event.target.value })} />
+            </label>
+            <label>
+              Texto de apoio
+              <input value={hubForm.subtitle} onChange={(event) => setHubForm({ ...hubForm, subtitle: event.target.value })} />
+            </label>
+            <label>
+              Categoria alvo
+              <select value={hubForm.categorySlug} onChange={(event) => setHubForm({ ...hubForm, categorySlug: event.target.value })}>
+                <option value="">Sem categoria</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.slug}>{category.name}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Busca interna
+              <input value={hubForm.query} onChange={(event) => setHubForm({ ...hubForm, query: event.target.value })} />
+            </label>
+            <label>
+              Itens separados por virgula
+              <input value={Array.isArray(hubForm.items) ? hubForm.items.join(", ") : hubForm.items} onChange={(event) => setHubForm({ ...hubForm, items: event.target.value.split(",").map((item) => item.trim()).filter(Boolean) })} />
+            </label>
+            <button type="submit">Cadastrar hub</button>
           </form>
 
           <section className="panel">

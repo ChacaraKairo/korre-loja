@@ -63,7 +63,8 @@ const fallbackCatalog: PublicCatalog = {
     }
   ],
   featuredProducts: [],
-  products: []
+  products: [],
+  hubs: []
 };
 
 const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: typeof Car }> = [
@@ -184,6 +185,12 @@ function App() {
   });
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
+  const problemHubCards = catalog.hubs.filter((hub) => hub.type === "problem");
+  const objectiveHubCards = catalog.hubs.filter((hub) => hub.type === "objective");
+  const workHubCards = catalog.hubs.filter((hub) => hub.type === "profession");
+  const kitHubCards = catalog.hubs.filter((hub) => hub.type === "kit");
+  const contentHubCards = catalog.hubs.filter((hub) => hub.type === "content");
+  const seasonalHub = catalog.hubs.find((hub) => hub.type === "seasonal");
 
   function selectCategory(slug: string) {
     setCategorySlug((current) => current === slug && slug !== "all" ? "all" : slug);
@@ -338,11 +345,11 @@ function App() {
             <p className="eyebrow">O que esta acontecendo?</p>
             <h2>Resolva pelo problema</h2>
           </div>
-          <span>{problemHubs.length} caminhos rapidos</span>
+          <span>{(problemHubCards.length || problemHubs.length)} caminhos rapidos</span>
         </div>
         <div className="problem-grid">
-          {problemHubs.map((hub) => (
-            <button className={hub.tone === "very-high" ? "priority" : ""} key={hub.title} onClick={() => focusHub(hub.categorySlug, hub.query)}>
+          {(problemHubCards.length ? problemHubCards : problemHubs).map((hub, index) => (
+            <button className={index < 10 ? "priority" : ""} key={hub.title} onClick={() => focusHub(hub.categorySlug ?? "all", hub.query)}>
               <LifeBuoy size={18} />
               <span>{hub.title}</span>
             </button>
@@ -436,10 +443,11 @@ function App() {
           </div>
         </div>
         <div className="objective-grid">
-          {objectiveHubs.map((hub) => {
-            const Icon = hub.icon;
+          {(objectiveHubCards.length ? objectiveHubCards : objectiveHubs).map((hub, index) => {
+            const icons = [Gauge, Wrench, ShieldCheck, Target, Route, LifeBuoy];
+            const Icon = "icon" in hub ? hub.icon : icons[index % icons.length];
             return (
-              <button key={hub.title} onClick={() => focusHub(hub.categorySlug)}>
+              <button key={hub.title} onClick={() => focusHub(hub.categorySlug ?? "all", "query" in hub ? hub.query : "")}>
                 <Icon size={22} />
                 <strong>{hub.title}</strong>
                 <span>{hub.subtitle}</span>
@@ -457,7 +465,7 @@ function App() {
           </div>
         </div>
         <div className="work-grid">
-          {workHubs.map((hub) => (
+          {(workHubCards.length ? workHubCards : workHubs).map((hub) => (
             <article key={hub.title}>
               <h3>{hub.title}</h3>
               <div>
@@ -477,10 +485,10 @@ function App() {
             </div>
           </div>
           <div className="kit-list">
-            {kitHubs.map((kit) => (
-              <button key={kit} onClick={() => focusHub("kits-loja-do-korre", kit.replace("Kit ", ""))}>
+            {(kitHubCards.length ? kitHubCards : kitHubs.map((title) => ({ title, categorySlug: "kits-loja-do-korre", query: title.replace("Kit ", "") }))).map((kit) => (
+              <button key={kit.title} onClick={() => focusHub(kit.categorySlug ?? "kits-loja-do-korre", kit.query)}>
                 <PackageSearch size={18} />
-                {kit}
+                {kit.title}
               </button>
             ))}
           </div>
@@ -495,9 +503,9 @@ function App() {
           </div>
           <div className="season-card">
             <CloudRain size={28} />
-            <strong>Chuva, calor, frio, ferias e datas profissionais</strong>
-            <p>Campanhas podem destacar capas, impermeabilizacao, hidratacao, ventilacao, viagem, presentes e kits por faixa de preco.</p>
-            <button onClick={() => focusHub("seguranca-clima-e-emergencia", "chuva")}>Ver itens de clima</button>
+            <strong>{seasonalHub?.title ?? "Chuva, calor, frio, ferias e datas profissionais"}</strong>
+            <p>{seasonalHub?.subtitle ?? "Campanhas podem destacar capas, impermeabilizacao, hidratacao, ventilacao, viagem, presentes e kits por faixa de preco."}</p>
+            <button onClick={() => focusHub(seasonalHub?.categorySlug ?? "seguranca-clima-e-emergencia", seasonalHub?.query ?? "chuva")}>Ver itens de clima</button>
           </div>
         </article>
       </section>
@@ -510,11 +518,11 @@ function App() {
           </div>
         </div>
         <div className="content-hub-grid">
-          {contentHubs.map((hub) => (
+          {(contentHubCards.length ? contentHubCards : contentHubs).map((hub) => (
             <article key={hub.title}>
               <ClipboardList size={20} />
               <h3>{hub.title}</h3>
-              <p>{hub.text}</p>
+              <p>{"text" in hub ? hub.text : hub.subtitle}</p>
             </article>
           ))}
         </div>

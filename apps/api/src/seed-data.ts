@@ -1,4 +1,4 @@
-import type { Category, Product } from "@korre/shared";
+import type { Category, Product, StoreHub } from "@korre/shared";
 
 export const categories: Category[] = [
   {
@@ -456,4 +456,40 @@ export const products: Product[] = [
       updatedAt: new Date().toISOString()
     }
   }
+];
+
+export const storeHubs: StoreHub[] = [
+  { id: "hub-problem-celular-descarregando", type: "problem", title: "Celular descarregando", slug: "celular-descarregando", categorySlug: "trabalho-e-produtividade", query: "carregador", items: [], priority: 1, active: true },
+  { id: "hub-problem-celular-esquentando", type: "problem", title: "Celular esquentando", slug: "celular-esquentando", categorySlug: "tecnologia-e-eletronicos", query: "cooler celular", items: [], priority: 2, active: true },
+  { id: "hub-problem-suporte-caindo", type: "problem", title: "Suporte caindo", slug: "suporte-caindo", categorySlug: "trabalho-e-produtividade", query: "suporte celular", items: [], priority: 3, active: true },
+  { id: "hub-problem-carro-sujo", type: "problem", title: "Carro sujo", slug: "carro-sujo", categorySlug: "limpeza-higiene-e-estetica", query: "limpeza", items: [], priority: 4, active: true },
+  { id: "hub-problem-mau-cheiro", type: "problem", title: "Mau cheiro", slug: "mau-cheiro", categorySlug: "limpeza-higiene-e-estetica", query: "odores", items: [], priority: 5, active: true },
+  { id: "hub-problem-desconforto", type: "problem", title: "Desconforto ao dirigir", slug: "desconforto-ao-dirigir", categorySlug: "organizacao-conforto-e-saude", query: "conforto lombar", items: [], priority: 6, active: true },
+  { id: "hub-problem-organizacao", type: "problem", title: "Falta de organizacao", slug: "falta-de-organizacao", categorySlug: "organizacao-conforto-e-saude", query: "organizador", items: [], priority: 7, active: true },
+  { id: "hub-problem-chuva", type: "problem", title: "Trabalho na chuva", slug: "trabalho-na-chuva", categorySlug: "seguranca-clima-e-emergencia", query: "chuva", items: [], priority: 8, active: true },
+  { id: "hub-problem-pneu", type: "problem", title: "Pneu sem pressao", slug: "pneu-sem-pressao", categorySlug: "manutencao-pecas-e-pneus", query: "compressor", items: [], priority: 9, active: true },
+  { id: "hub-problem-bateria", type: "problem", title: "Bateria descarregada", slug: "bateria-descarregada", categorySlug: "seguranca-clima-e-emergencia", query: "bateria", items: [], priority: 10, active: true },
+  { id: "hub-problem-pedidos", type: "problem", title: "Pedidos desorganizados", slug: "pedidos-desorganizados", categorySlug: "moto-vestimentas-e-delivery", query: "delivery", items: [], priority: 11, active: true },
+  { id: "hub-problem-registro-transito", type: "problem", title: "Registrar o transito", slug: "registrar-o-transito", categorySlug: "tecnologia-e-eletronicos", query: "dashcam", items: [], priority: 12, active: true },
+  { id: "hub-objective-economizar", type: "objective", title: "Economizar combustivel", slug: "economizar-combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao-pecas-e-pneus", items: [], priority: 1, active: true },
+  { id: "hub-objective-reduzir-manutencao", type: "objective", title: "Reduzir manutencao", slug: "reduzir-manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao-pecas-e-pneus", items: [], priority: 2, active: true },
+  { id: "hub-objective-avaliacoes", type: "objective", title: "Melhorar avaliacoes", slug: "melhorar-avaliacoes", subtitle: "Limpeza, conforto e atendimento ao passageiro.", categorySlug: "organizacao-conforto-e-saude", items: [], priority: 3, active: true },
+  { id: "hub-objective-produtividade", type: "objective", title: "Ganhar produtividade", slug: "ganhar-produtividade", subtitle: "Energia, suportes, organizacao e delivery.", categorySlug: "trabalho-e-produtividade", items: [], priority: 4, active: true },
+  { id: "hub-objective-viagem", type: "objective", title: "Preparar para viagem", slug: "preparar-para-viagem", subtitle: "Bagagem, emergencia, alimentacao e navegacao.", categorySlug: "acessorios-viagem-e-servicos", items: [], priority: 5, active: true },
+  { id: "hub-objective-seguranca", type: "objective", title: "Trabalhar com seguranca", slug: "trabalhar-com-seguranca", subtitle: "Camera, visibilidade, pneus e sinalizacao.", categorySlug: "seguranca-clima-e-emergencia", items: [], priority: 6, active: true },
+  { id: "hub-profession-app", type: "profession", title: "Motorista de aplicativo", slug: "motorista-de-aplicativo", items: ["Essenciais para comecar", "Celular e carregamento", "Atendimento", "Conforto", "Limpeza", "Kits completos"], priority: 1, active: true },
+  { id: "hub-profession-taxista", type: "profession", title: "Taxista", slug: "taxista", items: ["Atendimento ao passageiro", "Organizacao", "Seguranca", "Conservacao", "Tecnologia"], priority: 2, active: true },
+  { id: "hub-profession-motoboy", type: "profession", title: "Motoboy", slug: "motoboy", items: ["Chuva", "Baus e bags", "Suporte antivibracao", "Visibilidade", "Manutencao de corrente"], priority: 3, active: true },
+  { id: "hub-profession-entregador-carro", type: "profession", title: "Entregador de carro", slug: "entregador-de-carro", items: ["Pedidos", "Bebidas", "Porta-malas", "Limpeza rapida", "Controle de custos"], priority: 4, active: true },
+  { id: "hub-profession-ciclista", type: "profession", title: "Ciclista entregador", slug: "ciclista-entregador", items: ["Iluminacao", "Bolsas", "Hidratacao", "Seguranca", "Kit chuva"], priority: 5, active: true },
+  { id: "hub-profession-motorista-profissional", type: "profession", title: "Motorista profissional", slug: "motorista-profissional", items: ["Alta quilometragem", "Conforto", "Emergencia", "Tecnologia", "Viagem"], priority: 6, active: true },
+  { id: "hub-kit-app-iniciante", type: "kit", title: "Kit motorista de aplicativo iniciante", slug: "kit-motorista-de-aplicativo-iniciante", categorySlug: "kits-loja-do-korre", query: "motorista de aplicativo iniciante", items: [], priority: 1, active: true },
+  { id: "hub-kit-cinco-estrelas", type: "kit", title: "Kit motorista cinco estrelas", slug: "kit-motorista-cinco-estrelas", categorySlug: "kits-loja-do-korre", query: "motorista cinco estrelas", items: [], priority: 2, active: true },
+  { id: "hub-kit-motoboy-chuva", type: "kit", title: "Kit motoboy chuva", slug: "kit-motoboy-chuva", categorySlug: "kits-loja-do-korre", query: "motoboy chuva", items: [], priority: 3, active: true },
+  { id: "hub-kit-celular-carregado", type: "kit", title: "Kit celular sempre carregado", slug: "kit-celular-sempre-carregado", categorySlug: "kits-loja-do-korre", query: "celular sempre carregado", items: [], priority: 4, active: true },
+  { id: "hub-kit-limpeza", type: "kit", title: "Kit limpeza rapida", slug: "kit-limpeza-rapida", categorySlug: "kits-loja-do-korre", query: "limpeza rapida", items: [], priority: 5, active: true },
+  { id: "hub-content-guias", type: "content", title: "Guias de compra", slug: "guias-de-compra", subtitle: "Como escolher suporte, carregador, dashcam, compressor e mochila termica.", items: [], priority: 1, active: true },
+  { id: "hub-content-reviews", type: "content", title: "Reviews", slug: "reviews", subtitle: "Analise de uso, pontos positivos, limitacoes, compatibilidade e alternativas.", items: [], priority: 2, active: true },
+  { id: "hub-content-comparativos", type: "content", title: "Comparativos", slug: "comparativos", subtitle: "Produto contra produto, barato contra premium, marcas, tecnologias e tamanhos.", items: [], priority: 3, active: true },
+  { id: "hub-season-chuva", type: "seasonal", title: "Chuva, calor, frio, ferias e datas profissionais", slug: "clima-e-sazonalidade", subtitle: "Campanhas podem destacar capas, impermeabilizacao, hidratacao, ventilacao, viagem, presentes e kits por faixa de preco.", categorySlug: "seguranca-clima-e-emergencia", query: "chuva", items: [], priority: 1, active: true }
 ];

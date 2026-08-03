@@ -34,6 +34,23 @@ export async function initDatabase(prisma = new PrismaClient()) {
   await prisma.$executeRawUnsafe(`ALTER TABLE "Category" ADD COLUMN "subcategoriesJson" TEXT NOT NULL DEFAULT '[]';`).catch(() => undefined);
 
   await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS "StoreHub" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "type" TEXT NOT NULL,
+      "title" TEXT NOT NULL,
+      "slug" TEXT NOT NULL UNIQUE,
+      "subtitle" TEXT,
+      "categorySlug" TEXT,
+      "query" TEXT,
+      "itemsJson" TEXT NOT NULL DEFAULT '[]',
+      "priority" INTEGER NOT NULL DEFAULT 0,
+      "active" BOOLEAN NOT NULL DEFAULT true,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "Product" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "categoryId" TEXT NOT NULL,
@@ -123,6 +140,8 @@ export async function initDatabase(prisma = new PrismaClient()) {
 
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Product_status_idx" ON "Product" ("status");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Product_featured_idx" ON "Product" ("featured");`);
+  await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StoreHub_type_idx" ON "StoreHub" ("type");`);
+  await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StoreHub_active_idx" ON "StoreHub" ("active");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_productId_idx" ON "ProductClick" ("productId");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_categoryId_idx" ON "ProductClick" ("categoryId");`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ProductClick_campaignId_idx" ON "ProductClick" ("campaignId");`);

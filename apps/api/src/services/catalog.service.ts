@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import type { AffiliateLink, Category as DbCategory, Product as DbProduct } from "@prisma/client";
-import type { Category, CategoryInput, ClickPayload, Product, ProductInput, ProductStatus, VehicleType } from "@korre/shared";
+import type { AffiliateLink, Category as DbCategory, Product as DbProduct, StoreHub as DbStoreHub } from "@prisma/client";
+import type { Category, CategoryInput, ClickPayload, Product, ProductInput, ProductStatus, StoreHub, StoreHubInput, VehicleType } from "@korre/shared";
 import { slugify } from "@korre/shared";
 import { z } from "zod";
 import { PrismaService } from "./prisma.service";
@@ -8,6 +8,7 @@ import { PrismaService } from "./prisma.service";
 const vehicleTypes = ["car", "motorcycle", "bicycle", "electric_scooter", "other", "both"] as const;
 const audiences = ["driver", "motoboy", "delivery", "general"] as const;
 const productStatuses = ["draft", "active", "inactive", "archived"] as const;
+const hubTypes = ["problem", "objective", "profession", "kit", "content", "seasonal"] as const;
 
 const productSchema = z.object({
   categoryId: z.string().min(1),
@@ -35,6 +36,18 @@ const categorySchema = z.object({
   active: z.coerce.boolean().optional()
 });
 
+const hubSchema = z.object({
+  type: z.enum(hubTypes),
+  title: z.string().min(2),
+  slug: z.string().optional(),
+  subtitle: z.string().optional(),
+  categorySlug: z.string().optional(),
+  query: z.string().optional(),
+  items: z.array(z.string()).optional(),
+  priority: z.coerce.number().int().optional(),
+  active: z.coerce.boolean().optional()
+});
+
 const clickSchema = z.object({
   productId: z.string().min(1),
   categoryId: z.string().optional(),
@@ -50,13 +63,34 @@ export class CatalogService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getPublicCatalog() {
-    const [categories, products] = await Promise.all([this.getCategories(), this.getProducts({})]);
+    const [categories, products, hubs] = await Promise.all([this.getCategories(), this.getProducts({}), this.getHubs()]);
 
     return {
       categories,
       featuredProducts: products.filter((product) => product.featured),
-      products
+      products,
+      hubs
     };
+  }
+
+  async getHubs(type?: string) {
+    const hubs = await this.prisma.storeHub.findMany({
+      where: {
+        active: true,
+        type: type && hubTypes.includes(type as StoreHub["type"]) ? type : undefined
+      },
+      orderBy: [{ type: "asc" }, { priority: "asc" }, { title: "asc" }]
+    });
+
+    return hubs.map((hub) => this.mapHub(hub));
+  }
+
+  async getAllHubs() {
+    const hubs = await this.prisma.storeHub.findMany({
+      orderBy: [{ type: "asc" }, { priority: "asc" }, { title: "asc" }]
+    });
+
+    return hubs.map((hub) => this.mapHub(hub));
   }
 
   async getCategories() {
@@ -174,10 +208,11 @@ export class CatalogService {
     const sevenDaysAgo = new Date(now);
     sevenDaysAgo.setDate(now.getDate() - 7);
 
-    const [activeProducts, activeCategories, clicksToday, clicksLastSevenDays, allProducts, topProducts] =
+    const [activeProducts, activeCategories, activeHubs, clicksToday, clicksLastSevenDays, allProducts, topProducts] =
       await Promise.all([
         this.prisma.product.count({ where: { status: "active" } }),
         this.prisma.category.count({ where: { active: true } }),
+        this.prisma.storeHub.count({ where: { active: true } }),
         this.prisma.productClick.count({ where: { createdAt: { gte: startOfToday } } }),
         this.prisma.productClick.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
         this.prisma.product.findMany({
@@ -190,6 +225,7 @@ export class CatalogService {
     return {
       activeProducts,
       activeCategories,
+      activeHubs,
       clicksToday,
       clicksLastSevenDays,
       topProductName: topProducts[0]?.clicks ? topProducts[0].product.name : "Sem cliques ainda",
@@ -355,6 +391,54 @@ export class CatalogService {
     return this.updateCategory(id, { active: false });
   }
 
+  async createHub(payload: StoreHubInput) {
+    const input = this.parse(hubSchema, payload);
+    const hub = await this.prisma.storeHub.create({
+      data: {
+        type: input.type,
+        title: input.title,
+        slug: await this.uniqueHubSlug(input.slug ?? input.title),
+        subtitle: input.subtitle,
+        categorySlug: input.categorySlug,
+        query: input.query,
+        itemsJson: JSON.stringify(input.items ?? []),
+        priority: input.priority ?? 0,
+        active: input.active ?? true
+      }
+    });
+
+    return this.mapHub(hub);
+  }
+
+  async updateHub(id: string, payload: Partial<StoreHubInput>) {
+    const current = await this.prisma.storeHub.findUnique({ where: { id } });
+
+    if (!current) {
+      throw new NotFoundException("Hub nao encontrado");
+    }
+
+    const hub = await this.prisma.storeHub.update({
+      where: { id },
+      data: {
+        type: payload.type,
+        title: payload.title,
+        slug: payload.slug ? await this.uniqueHubSlug(payload.slug, id) : undefined,
+        subtitle: payload.subtitle,
+        categorySlug: payload.categorySlug,
+        query: payload.query,
+        itemsJson: payload.items ? JSON.stringify(payload.items) : undefined,
+        priority: payload.priority,
+        active: payload.active
+      }
+    });
+
+    return this.mapHub(hub);
+  }
+
+  async disableHub(id: string) {
+    return this.updateHub(id, { active: false });
+  }
+
   async getClicks() {
     const clicks = await this.prisma.productClick.findMany({
       include: {
@@ -427,6 +511,21 @@ export class CatalogService {
       subcategories: this.readStringList(category.subcategoriesJson),
       sortOrder: category.sortOrder,
       active: category.active
+    };
+  }
+
+  private mapHub(hub: DbStoreHub): StoreHub {
+    return {
+      id: hub.id,
+      type: hub.type as StoreHub["type"],
+      title: hub.title,
+      slug: hub.slug,
+      subtitle: hub.subtitle ?? undefined,
+      categorySlug: hub.categorySlug ?? undefined,
+      query: hub.query ?? undefined,
+      items: this.readStringList(hub.itemsJson),
+      priority: hub.priority,
+      active: hub.active
     };
   }
 
@@ -510,6 +609,13 @@ export class CatalogService {
     return this.uniqueSlug(value, async (slug) => {
       const category = await this.prisma.category.findUnique({ where: { slug } });
       return !category || category.id === currentId;
+    });
+  }
+
+  private async uniqueHubSlug(value: string, currentId?: string) {
+    return this.uniqueSlug(value, async (slug) => {
+      const hub = await this.prisma.storeHub.findUnique({ where: { slug } });
+      return !hub || hub.id === currentId;
     });
   }
 

@@ -31,6 +31,11 @@ export class PublicController {
     return this.catalog.getCategories();
   }
 
+  @Get("public/hubs")
+  hubs(@Query("type") type?: string) {
+    return this.catalog.getHubs(type);
+  }
+
   @Get("public/categories/:slug/products")
   categoryProducts(@Param("slug") slug: string) {
     return this.catalog.getProducts({ category: slug });

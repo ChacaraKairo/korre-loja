@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { categories, products } from "../src/seed-data";
+import { categories, products, storeHubs } from "../src/seed-data";
 import { initDatabase } from "./init";
 
 const prisma = new PrismaClient();
@@ -125,6 +125,45 @@ async function main() {
         }
       });
     }
+  }
+
+  await prisma.storeHub.updateMany({
+    where: {
+      slug: {
+        notIn: storeHubs.map((hub) => hub.slug)
+      }
+    },
+    data: {
+      active: false
+    }
+  });
+
+  for (const hub of storeHubs) {
+    await prisma.storeHub.upsert({
+      where: { slug: hub.slug },
+      update: {
+        type: hub.type,
+        title: hub.title,
+        subtitle: hub.subtitle,
+        categorySlug: hub.categorySlug,
+        query: hub.query,
+        itemsJson: JSON.stringify(hub.items),
+        priority: hub.priority,
+        active: hub.active
+      },
+      create: {
+        id: hub.id,
+        type: hub.type,
+        title: hub.title,
+        slug: hub.slug,
+        subtitle: hub.subtitle,
+        categorySlug: hub.categorySlug,
+        query: hub.query,
+        itemsJson: JSON.stringify(hub.items),
+        priority: hub.priority,
+        active: hub.active
+      }
+    });
   }
 
   await prisma.campaign.upsert({
