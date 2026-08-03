@@ -292,12 +292,6 @@ function App() {
           </div>
           <span className="header-note">Compra segura no marketplace parceiro</span>
         </div>
-        <nav className="market-nav">
-          <button><Menu size={16} /> Categorias</button>
-          {catalog.categories.slice(0, 8).map((category) => (
-            <button key={category.id} onClick={() => selectCategory(category.slug)}>{category.name}</button>
-          ))}
-        </nav>
       </header>
 
       <section className="market-hero">
