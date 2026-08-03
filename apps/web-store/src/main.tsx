@@ -76,21 +76,6 @@ const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: t
   { label: "Outros", value: "other", icon: Menu }
 ];
 
-const problemHubs = [
-  { title: "Celular descarregando", query: "carregador", categorySlug: "trabalho-e-produtividade", tone: "very-high" },
-  { title: "Celular esquentando", query: "cooler celular", categorySlug: "tecnologia-e-eletronicos", tone: "high" },
-  { title: "Suporte caindo", query: "suporte celular", categorySlug: "trabalho-e-produtividade", tone: "very-high" },
-  { title: "Carro sujo", query: "limpeza", categorySlug: "limpeza-higiene-e-estetica", tone: "very-high" },
-  { title: "Mau cheiro", query: "odores", categorySlug: "limpeza-higiene-e-estetica", tone: "very-high" },
-  { title: "Desconforto ao dirigir", query: "conforto lombar", categorySlug: "organizacao-conforto-e-saude", tone: "very-high" },
-  { title: "Falta de organizacao", query: "organizador", categorySlug: "organizacao-conforto-e-saude", tone: "high" },
-  { title: "Trabalho na chuva", query: "chuva", categorySlug: "seguranca-clima-e-emergencia", tone: "very-high" },
-  { title: "Pneu sem pressao", query: "compressor", categorySlug: "manutencao-pecas-e-pneus", tone: "very-high" },
-  { title: "Bateria descarregada", query: "bateria", categorySlug: "seguranca-clima-e-emergencia", tone: "very-high" },
-  { title: "Pedidos desorganizados", query: "delivery", categorySlug: "moto-vestimentas-e-delivery", tone: "high" },
-  { title: "Registrar o transito", query: "dashcam", categorySlug: "tecnologia-e-eletronicos", tone: "very-high" }
-];
-
 const objectiveHubs = [
   { title: "Economizar combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao-pecas-e-pneus", icon: Gauge },
   { title: "Reduzir manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao-pecas-e-pneus", icon: Wrench },
@@ -185,7 +170,6 @@ function App() {
   });
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
-  const problemHubCards = catalog.hubs.filter((hub) => hub.type === "problem");
   const objectiveHubCards = catalog.hubs.filter((hub) => hub.type === "objective");
   const workHubCards = catalog.hubs.filter((hub) => hub.type === "profession");
   const kitHubCards = catalog.hubs.filter((hub) => hub.type === "kit");
@@ -332,24 +316,6 @@ function App() {
       </section>
 
       {status === "error" && <p className="notice">Nao foi possivel carregar a API agora. Exibindo catalogo local de partida.</p>}
-
-      <section className="hub-section">
-        <div className="section-heading compact-heading">
-          <div>
-            <p className="eyebrow">O que esta acontecendo?</p>
-            <h2>Resolva pelo problema</h2>
-          </div>
-          <span>{(problemHubCards.length || problemHubs.length)} caminhos rapidos</span>
-        </div>
-        <div className="problem-grid">
-          {(problemHubCards.length ? problemHubCards : problemHubs).map((hub, index) => (
-            <button className={index < 10 ? "priority" : ""} key={hub.title} onClick={() => focusHub(hub.categorySlug ?? "all", hub.query)}>
-              <LifeBuoy size={18} />
-              <span>{hub.title}</span>
-            </button>
-          ))}
-        </div>
-      </section>
 
       <section className="content catalog-layout">
         <div className="catalog-main">

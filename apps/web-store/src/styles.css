@@ -57,7 +57,6 @@ main {
 .market-hero,
 .driver-section,
 .content,
-.hub-section,
 .strategy-section,
 .affiliate,
 .legal-section,
@@ -343,43 +342,12 @@ main {
   background: #fff8e5;
 }
 
-.hub-section,
 .strategy-section {
   margin-top: 18px;
   padding: 22px;
   border-radius: 8px;
   background: var(--card);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.problem-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.problem-grid button {
-  display: flex;
-  align-items: center;
-  min-height: 56px;
-  gap: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0 12px;
-  color: var(--text);
-  background: #f8f8f8;
-  font-weight: 800;
-  text-align: left;
-}
-
-.problem-grid button.priority {
-  border-color: rgba(0, 200, 83, 0.42);
-  background: #effff5;
-}
-
-.problem-grid svg {
-  flex: 0 0 auto;
-  color: var(--korre-primary);
 }
 
 .content {
@@ -774,7 +742,6 @@ dl {
 
   .driver-grid,
   .product-grid,
-  .problem-grid,
   .objective-grid,
   .work-grid,
   .content-hub-grid,
@@ -816,7 +783,6 @@ dl {
 
   .driver-grid,
   .product-grid,
-  .problem-grid,
   .objective-grid,
   .work-grid,
   .content-hub-grid,
