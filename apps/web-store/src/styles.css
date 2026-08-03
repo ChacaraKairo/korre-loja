@@ -83,13 +83,14 @@ main {
   grid-template-columns: auto minmax(220px, 1fr) auto;
   align-items: center;
   gap: 22px;
-  min-height: 84px;
+  min-height: 76px;
 }
 
 .brand,
 .detail-topbar button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   border: 0;
   color: #ffffff;
@@ -98,11 +99,17 @@ main {
   white-space: nowrap;
 }
 
+.brand {
+  width: 200px;
+  height: 64px;
+  overflow: hidden;
+}
+
 .brand img {
   width: 200px;
   height: auto;
-  max-height: 62px;
   object-fit: contain;
+  transform: translateY(-34px);
 }
 
 .detail-topbar img {
