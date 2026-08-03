@@ -71,7 +71,7 @@ main {
   grid-template-columns: auto minmax(220px, 1fr) auto;
   align-items: center;
   gap: 22px;
-  min-height: 116px;
+  min-height: 84px;
 }
 
 .brand,
@@ -88,8 +88,9 @@ main {
 
 .brand img {
   width: 340px;
-  height: 102px;
-  object-fit: contain;
+  height: 70px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .detail-topbar img {
