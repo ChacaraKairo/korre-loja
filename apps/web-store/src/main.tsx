@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { Product, PublicCatalog, VehicleType } from "@korre/shared";
 import { affiliateDisclosure, formatPrice } from "@korre/shared";
+import { categoryFilters } from "./category-filters";
 import "./styles.css";
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -152,7 +153,7 @@ function App() {
     return matchesVehicle && matchesCategory && matchesSubcategory && text.includes(query.toLowerCase());
   });
 
-  const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
+  const activeCategory = categoryFilters.find((category) => category.slug === categorySlug);
   const kitHubCards = catalog.hubs.filter((hub) => hub.type === "kit");
   const contentHubCards = catalog.hubs.filter((hub) => hub.type === "content");
   const seasonalHub = catalog.hubs.find((hub) => hub.type === "seasonal");
@@ -391,7 +392,7 @@ function App() {
           <button className={categorySlug === "all" ? "active" : ""} onClick={() => selectCategory("all")}>
             Todas <ChevronRight size={16} />
           </button>
-          {catalog.categories.map((category) => (
+          {categoryFilters.map((category) => (
             <div className="filter-category" key={category.id}>
               <button className={categorySlug === category.slug ? "active" : ""} onClick={() => selectCategory(category.slug)}>
                 {category.name} {categorySlug === category.slug ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
