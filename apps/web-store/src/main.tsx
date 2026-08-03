@@ -126,15 +126,22 @@ function App() {
 
   const productSlug = path.startsWith("/produto/") ? path.replace("/produto/", "") : "";
   const selectedProduct = catalog.products.find((product) => product.slug === productSlug);
+  const privacyPage = path === "/privacidade-cookies";
 
   useEffect(() => {
-    const title = selectedProduct ? `${selectedProduct.name} | Loja do Korre` : "Loja do Korre | Curadoria para quem trabalha na rua";
-    const description = selectedProduct?.shortDescription ?? "Produtos curados para motoristas, motoboys e entregadores comprarem com mais criterio.";
+    const title = privacyPage
+      ? "Privacidade e cookies | Loja do Korre"
+      : selectedProduct
+        ? `${selectedProduct.name} | Loja do Korre`
+        : "Loja do Korre | Curadoria para quem trabalha na rua";
+    const description = privacyPage
+      ? "Como a Loja do Korre trata cliques, cookies e dados tecnicos no MVP."
+      : selectedProduct?.shortDescription ?? "Produtos curados para motoristas, motoboys e entregadores comprarem com mais criterio.";
     document.title = title;
     document.querySelector("meta[name='description']")?.setAttribute("content", description);
     document.querySelector("meta[property='og:title']")?.setAttribute("content", title);
     document.querySelector("meta[property='og:description']")?.setAttribute("content", description);
-  }, [selectedProduct]);
+  }, [privacyPage, selectedProduct]);
 
   const filteredProducts = catalog.products.filter((product) => {
     const matchesVehicle = vehicle === "all" || product.vehicleType === vehicle || product.vehicleType === "both";
@@ -231,6 +238,45 @@ function App() {
             </div>
             <p className="legal-copy">{affiliateDisclosure}</p>
           </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (privacyPage) {
+    return (
+      <main>
+        <nav className="detail-topbar">
+          <button onClick={() => navigate("/")}><img src="/brand/logo-sem-escrita-sem-fundo.png" alt="" /> Loja do Korre</button>
+          <span>Privacidade e cookies</span>
+        </nav>
+
+        <section className="policy-page">
+          <p className="eyebrow">Transparencia</p>
+          <h1>Privacidade e cookies</h1>
+          <p>
+            No MVP, a Loja do Korre registra cliques de saida e dados tecnicos minimos para medir interesse nos produtos.
+            Nao processamos pagamento, entrega ou dados sensiveis de compra.
+          </p>
+          <article>
+            <h2>Dados que podemos registrar</h2>
+            <p>
+              Podemos armazenar produto clicado, categoria, origem do clique, campanha e data do evento. Esses dados ajudam
+              a entender quais recomendacoes sao uteis e quais areas da vitrine precisam melhorar.
+            </p>
+          </article>
+          <article>
+            <h2>Cookies e tecnologias similares</h2>
+            <p>
+              A loja pode usar recursos tecnicos do navegador e parametros de campanha para manter a experiencia funcionando
+              e medir desempenho. A compra acontece fora da Loja do Korre, no marketplace parceiro.
+            </p>
+          </article>
+          <article>
+            <h2>Links de afiliado</h2>
+            <p>{affiliateDisclosure}</p>
+          </article>
+          <button className="secondary-action" onClick={() => navigate("/")}>Voltar para vitrine</button>
         </section>
       </main>
     );
@@ -424,24 +470,8 @@ function App() {
       <section className="affiliate">
         <BatteryCharging size={22} />
         <p>{affiliateDisclosure}</p>
+        <button className="privacy-link" onClick={() => navigate("/privacidade-cookies")}>Privacidade e cookies</button>
         <img src="/brand/escrita-loja-do-korre-sem-fundo.png" alt="Loja do Korre" />
-      </section>
-
-      <section className="legal-section">
-        <article>
-          <h2>Privacidade e cookies</h2>
-          <p>
-            No MVP, a Loja do Korre registra cliques de saida e dados tecnicos minimos para medir interesse nos produtos.
-            Nao processamos pagamento, entrega ou dados sensiveis de compra.
-          </p>
-        </article>
-        <article>
-          <h2>Marketplace parceiro</h2>
-          <p>
-            A compra acontece fora da Loja do Korre. Preco, estoque, entrega, garantia e pos-venda sao responsabilidade
-            do marketplace e do vendedor do anuncio. Usamos botoes como conferir preco e ver oferta para evitar confusao.
-          </p>
-        </article>
       </section>
     </main>
   );

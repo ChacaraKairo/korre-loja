@@ -71,9 +71,9 @@ main {
 .content,
 .strategy-section,
 .affiliate,
-.legal-section,
 .detail-topbar,
-.product-detail {
+.product-detail,
+.policy-page {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
 }
@@ -573,8 +573,7 @@ dl {
   background: #ffffff !important;
 }
 
-.affiliate,
-.legal-section {
+.affiliate {
   margin-bottom: 42px;
 }
 
@@ -600,30 +599,53 @@ dl {
   object-fit: contain;
 }
 
-.legal-section {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.legal-section article,
 .detail-grid article {
   border-radius: 8px;
   background: var(--card);
 }
 
-.legal-section article {
-  padding: 20px;
-}
-
-.legal-section h2 {
-  font-size: 1.15rem;
-}
-
-.legal-section p,
 .legal-copy {
   color: var(--muted);
   line-height: 1.65;
+}
+
+.privacy-link {
+  min-height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #ffffff;
+  background: transparent;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.policy-page {
+  margin-bottom: 72px;
+  padding: 28px;
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.policy-page h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.policy-page > p,
+.policy-page article p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.policy-page article {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--soft-border);
+}
+
+.policy-page h2 {
+  font-size: 1.2rem;
 }
 
 .detail-topbar {
@@ -729,7 +751,6 @@ dl {
   .catalog-layout,
   .market-hero,
   .product-detail,
-  .legal-section,
   .split-section {
     grid-template-columns: 1fr;
   }
