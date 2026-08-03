@@ -186,7 +186,7 @@ function App() {
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
 
   function selectCategory(slug: string) {
-    setCategorySlug(slug);
+    setCategorySlug((current) => current === slug && slug !== "all" ? "all" : slug);
     setSelectedSubcategory("");
   }
 
