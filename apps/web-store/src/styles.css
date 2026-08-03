@@ -280,18 +280,21 @@ main {
 
 .catalog-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 288px;
+  grid-template-columns: 288px minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
 
 .catalog-main {
   min-width: 0;
+  grid-column: 2;
 }
 
 .filter-sidebar {
   position: sticky;
   top: 132px;
+  grid-column: 1;
+  grid-row: 1;
   display: grid;
   align-content: start;
   max-height: calc(100vh - 150px);
@@ -813,7 +816,6 @@ dl {
   .filter-sidebar {
     position: static;
     max-height: none;
-    order: -1;
   }
 
   .affiliate {
