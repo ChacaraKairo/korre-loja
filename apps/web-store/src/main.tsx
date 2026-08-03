@@ -159,8 +159,13 @@ function App() {
   const seasonalHub = catalog.hubs.find((hub) => hub.type === "seasonal");
 
   function selectCategory(slug: string) {
+    const scrollPosition = { left: window.scrollX, top: window.scrollY };
+
     setCategorySlug((current) => current === slug && slug !== "all" ? "all" : slug);
     setSelectedSubcategory("");
+    requestAnimationFrame(() => {
+      window.scrollTo(scrollPosition.left, scrollPosition.top);
+    });
   }
 
   function selectSubcategory(label: string) {
