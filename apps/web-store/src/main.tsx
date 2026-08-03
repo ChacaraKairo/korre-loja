@@ -1,4 +1,4 @@
-import { StrictMode, type CSSProperties, useEffect, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BatteryCharging,
@@ -184,9 +184,6 @@ function App() {
   });
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
-  const visibleSubcategories = activeCategory?.subcategories ?? [];
-  const activeCategoryIndex = Math.max(0, catalog.categories.findIndex((category) => category.slug === categorySlug));
-  const bubblePointerY = categorySlug === "all" ? 54 : Math.min(330, Math.max(64, 104 + activeCategoryIndex * 50));
 
   function selectCategory(slug: string) {
     setCategorySlug(slug);
@@ -353,101 +350,82 @@ function App() {
         </div>
       </section>
 
-      <section className="marketplace-grid">
-        <aside className="category-panel">
-          <strong>Categorias</strong>
+      <section className="content catalog-layout">
+        <div className="catalog-main">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Ofertas e recomendacoes</p>
+              <h2>{selectedSubcategory || activeCategory?.name || "Produtos para sua rotina"}</h2>
+            </div>
+            <span>{filteredProducts.length} itens ativos</span>
+          </div>
+
+          <div className="product-grid">
+            {filteredProducts.map((product) => (
+              <article className="product-card" key={product.id}>
+                <img src={product.imageUrl} alt={product.name} />
+                <div className="product-body">
+                  <div className="product-meta">
+                    <span>{product.categorySlug.replaceAll("-", " ")}</span>
+                    {product.featured && <strong>Destaque</strong>}
+                  </div>
+                  <h3>{product.name}</h3>
+                  <p>{product.recommendationReason}</p>
+                  <dl>
+                    <div>
+                      <dt>Melhor para</dt>
+                      <dd>{product.bestFor}</dd>
+                    </div>
+                    <div>
+                      <dt>Cuidados</dt>
+                      <dd>{product.avoidWhen}</dd>
+                    </div>
+                  </dl>
+                  <div className="card-footer">
+                    <strong>{formatPrice(product.referencePriceCents)}</strong>
+                    <div className="card-actions">
+                      <button className="secondary-action" onClick={() => navigate(`/produto/${product.slug}`)}>Ver detalhes</button>
+                      <button disabled={!product.offer?.active} onClick={() => openOffer(product)}>
+                        Mercado Livre <ExternalLink size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <aside className="filter-sidebar" aria-label="Filtros">
+          <div className="filter-heading">
+            <p className="eyebrow">Filtros</p>
+            <h2>Categorias</h2>
+          </div>
           <button className={categorySlug === "all" ? "active" : ""} onClick={() => selectCategory("all")}>
             Todas <ChevronRight size={16} />
           </button>
           {catalog.categories.map((category) => (
-            <div className="category-group" key={category.id}>
+            <div className="filter-category" key={category.id}>
               <button className={categorySlug === category.slug ? "active" : ""} onClick={() => selectCategory(category.slug)}>
                 {category.name} {categorySlug === category.slug ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </button>
+              {categorySlug === category.slug && category.subcategories.length > 0 && (
+                <div className="inline-subcategories">
+                  {category.subcategories.map((subcategory) => (
+                    <button
+                      className={selectedSubcategory === subcategory ? "active" : ""}
+                      key={subcategory}
+                      onClick={() => selectSubcategory(subcategory)}
+                    >
+                      {subcategory}
+                    </button>
+                  ))}
+                  {selectedSubcategory && <button className="clear-filter" onClick={() => setSelectedSubcategory("")}>Limpar subcategoria</button>}
+                </div>
+              )}
             </div>
           ))}
         </aside>
-
-        <section
-          className={`subcategory-board ${categorySlug !== "all" ? "speech-board" : ""}`}
-          style={{ "--bubble-y": `${bubblePointerY}px` } as CSSProperties}
-          aria-label="Subcategorias"
-        >
-          <div className="subcategory-heading">
-            <div>
-              <p className="eyebrow">Subcategorias</p>
-              <h2>{activeCategory ? activeCategory.name : "Escolha uma categoria"}</h2>
-            </div>
-            {selectedSubcategory && <button onClick={() => setSelectedSubcategory("")}>Limpar subcategoria</button>}
-          </div>
-          {categorySlug === "all" ? (
-            <div className="category-cards">
-              {catalog.categories.map((category) => (
-                <button key={category.id} onClick={() => selectCategory(category.slug)}>
-                  <strong>{category.name}</strong>
-                  <span>{category.description ?? "Ver subcategorias"}</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="subcategory-strip">
-              {visibleSubcategories.map((subcategory) => (
-                <button
-                  className={selectedSubcategory === subcategory ? "active" : ""}
-                  key={subcategory}
-                  onClick={() => selectSubcategory(subcategory)}
-                >
-                  {subcategory}
-                </button>
-              ))}
-            </div>
-          )}
-        </section>
-      </section>
-
-      <section className="content">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Ofertas e recomendacoes</p>
-            <h2>{selectedSubcategory || activeCategory?.name || "Produtos para sua rotina"}</h2>
-          </div>
-          <span>{filteredProducts.length} itens ativos</span>
-        </div>
-
-        <div className="product-grid">
-          {filteredProducts.map((product) => (
-            <article className="product-card" key={product.id}>
-              <img src={product.imageUrl} alt={product.name} />
-              <div className="product-body">
-                <div className="product-meta">
-                  <span>{product.categorySlug.replaceAll("-", " ")}</span>
-                  {product.featured && <strong>Destaque</strong>}
-                </div>
-                <h3>{product.name}</h3>
-                <p>{product.recommendationReason}</p>
-                <dl>
-                  <div>
-                    <dt>Melhor para</dt>
-                    <dd>{product.bestFor}</dd>
-                  </div>
-                  <div>
-                    <dt>Cuidados</dt>
-                    <dd>{product.avoidWhen}</dd>
-                  </div>
-                </dl>
-                <div className="card-footer">
-                  <strong>{formatPrice(product.referencePriceCents)}</strong>
-                  <div className="card-actions">
-                    <button className="secondary-action" onClick={() => navigate(`/produto/${product.slug}`)}>Ver detalhes</button>
-                    <button disabled={!product.offer?.active} onClick={() => openOffer(product)}>
-                      Mercado Livre <ExternalLink size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
       </section>
 
       <section className="strategy-section">
