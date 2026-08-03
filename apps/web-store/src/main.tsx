@@ -9,16 +9,10 @@ import {
   ClipboardList,
   CloudRain,
   ExternalLink,
-  Gauge,
-  LifeBuoy,
   Menu,
   PackageSearch,
-  Route,
   Search,
-  ShieldCheck,
   Smartphone,
-  Target,
-  Wrench,
   Zap
 } from "lucide-react";
 import type { Product, PublicCatalog, VehicleType } from "@korre/shared";
@@ -74,24 +68,6 @@ const driverProfiles: Array<{ label: string; value: VehicleType | "all"; icon: t
   { label: "Bicicleta", value: "bicycle", icon: Bike },
   { label: "Scooter eletrica", value: "electric_scooter", icon: Zap },
   { label: "Outros", value: "other", icon: Menu }
-];
-
-const objectiveHubs = [
-  { title: "Economizar combustivel", subtitle: "Calibragem, manutencao e controle de consumo.", categorySlug: "manutencao-pecas-e-pneus", icon: Gauge },
-  { title: "Reduzir manutencao", subtitle: "Revisao preventiva, OBD2, bateria e filtros.", categorySlug: "manutencao-pecas-e-pneus", icon: Wrench },
-  { title: "Melhorar avaliacoes", subtitle: "Limpeza, conforto e atendimento ao passageiro.", categorySlug: "organizacao-conforto-e-saude", icon: ShieldCheck },
-  { title: "Ganhar produtividade", subtitle: "Energia, suportes, organizacao e delivery.", categorySlug: "trabalho-e-produtividade", icon: Target },
-  { title: "Preparar para viagem", subtitle: "Bagagem, emergencia, alimentacao e navegacao.", categorySlug: "acessorios-viagem-e-servicos", icon: Route },
-  { title: "Trabalhar com seguranca", subtitle: "Camera, visibilidade, pneus e sinalizacao.", categorySlug: "seguranca-clima-e-emergencia", icon: LifeBuoy }
-];
-
-const workHubs = [
-  { title: "Motorista de aplicativo", items: ["Essenciais para comecar", "Celular e carregamento", "Atendimento", "Conforto", "Limpeza", "Kits completos"] },
-  { title: "Taxista", items: ["Atendimento ao passageiro", "Organizacao", "Seguranca", "Conservacao", "Tecnologia"] },
-  { title: "Motoboy", items: ["Chuva", "Baus e bags", "Suporte antivibracao", "Visibilidade", "Manutencao de corrente"] },
-  { title: "Entregador de carro", items: ["Pedidos", "Bebidas", "Porta-malas", "Limpeza rapida", "Controle de custos"] },
-  { title: "Ciclista entregador", items: ["Iluminacao", "Bolsas", "Hidratacao", "Seguranca", "Kit chuva"] },
-  { title: "Motorista profissional", items: ["Alta quilometragem", "Conforto", "Emergencia", "Tecnologia", "Viagem"] }
 ];
 
 const kitHubs = [
@@ -170,8 +146,6 @@ function App() {
   });
 
   const activeCategory = catalog.categories.find((category) => category.slug === categorySlug);
-  const objectiveHubCards = catalog.hubs.filter((hub) => hub.type === "objective");
-  const workHubCards = catalog.hubs.filter((hub) => hub.type === "profession");
   const kitHubCards = catalog.hubs.filter((hub) => hub.type === "kit");
   const contentHubCards = catalog.hubs.filter((hub) => hub.type === "content");
   const seasonalHub = catalog.hubs.find((hub) => hub.type === "seasonal");
@@ -393,47 +367,6 @@ function App() {
             </div>
           ))}
         </aside>
-      </section>
-
-      <section className="strategy-section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Por objetivo</p>
-            <h2>Compre pelo resultado esperado</h2>
-          </div>
-        </div>
-        <div className="objective-grid">
-          {(objectiveHubCards.length ? objectiveHubCards : objectiveHubs).map((hub, index) => {
-            const icons = [Gauge, Wrench, ShieldCheck, Target, Route, LifeBuoy];
-            const Icon = "icon" in hub ? hub.icon : icons[index % icons.length];
-            return (
-              <button key={hub.title} onClick={() => focusHub(hub.categorySlug ?? "all", "query" in hub ? hub.query : "")}>
-                <Icon size={22} />
-                <strong>{hub.title}</strong>
-                <span>{hub.subtitle}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="strategy-section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Para o seu trabalho</p>
-            <h2>Hubs por profissao</h2>
-          </div>
-        </div>
-        <div className="work-grid">
-          {(workHubCards.length ? workHubCards : workHubs).map((hub) => (
-            <article key={hub.title}>
-              <h3>{hub.title}</h3>
-              <div>
-                {hub.items.map((item) => <span key={item}>{item}</span>)}
-              </div>
-            </article>
-          ))}
-        </div>
       </section>
 
       <section className="strategy-section split-section">

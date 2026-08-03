@@ -106,10 +106,10 @@ main {
 }
 
 .brand img {
-  width: 269px;
+  width: 240px;
   height: auto;
   object-fit: contain;
-  transform: translate(-37px, -47px);
+  transform: translate(0px, 0px);
 }
 
 .detail-topbar img {
@@ -386,79 +386,29 @@ main {
   gap: 16px;
 }
 
-.objective-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.objective-grid button {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  min-height: 116px;
-  gap: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  color: var(--text);
-  background: #ffffff;
-  text-align: left;
-}
-
-.objective-grid svg {
-  grid-row: span 2;
-  color: var(--korre-primary);
-}
-
-.objective-grid strong,
-.work-grid h3,
 .content-hub-grid h3 {
   margin: 0;
   line-height: 1.25;
 }
 
-.objective-grid span,
 .content-hub-grid p,
 .season-card p {
   color: var(--muted);
   line-height: 1.55;
 }
 
-.work-grid,
 .content-hub-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
-.work-grid article,
 .content-hub-grid article,
 .split-section > article {
   border: 1px solid var(--soft-border);
   border-radius: 8px;
   padding: 18px;
   background: #ffffff;
-}
-
-.work-grid article {
-  display: grid;
-  gap: 14px;
-}
-
-.work-grid article > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.work-grid span {
-  border-radius: 999px;
-  padding: 7px 10px;
-  color: #1f1f1f;
-  background: #f1f1f1;
-  font-size: 0.82rem;
-  font-weight: 800;
 }
 
 .split-section {
@@ -771,8 +721,6 @@ dl {
 
   .driver-grid,
   .product-grid,
-  .objective-grid,
-  .work-grid,
   .content-hub-grid,
   .kit-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -812,8 +760,6 @@ dl {
 
   .driver-grid,
   .product-grid,
-  .objective-grid,
-  .work-grid,
   .content-hub-grid,
   .kit-list,
   .detail-grid {
