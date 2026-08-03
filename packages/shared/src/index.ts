@@ -15,11 +15,22 @@ export type Category = {
 
 export type AffiliateOffer = {
   id: string;
+  productId?: string;
+  productName?: string;
   provider: "mercado_livre" | "other";
   affiliateUrl: string;
   active: boolean;
   referencePriceCents?: number;
   updatedAt: string;
+};
+
+export type AffiliateOfferInput = {
+  productId: string;
+  provider?: "mercado_livre" | "other";
+  originalUrl?: string;
+  affiliateUrl: string;
+  active?: boolean;
+  notes?: string;
 };
 
 export type Product = {
@@ -74,6 +85,31 @@ export type StoreHubInput = {
   query?: string;
   items?: string[];
   priority?: number;
+  active?: boolean;
+};
+
+export type Campaign = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  startsAt?: string;
+  endsAt?: string;
+  active: boolean;
+};
+
+export type CampaignInput = {
+  name: string;
+  slug?: string;
+  description?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  startsAt?: string;
+  endsAt?: string;
   active?: boolean;
 };
 

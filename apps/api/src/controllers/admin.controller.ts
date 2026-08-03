@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
-import type { CategoryInput, ProductInput, StoreHubInput } from "@korre/shared";
+import type { AffiliateOfferInput, CampaignInput, CategoryInput, ProductInput, StoreHubInput } from "@korre/shared";
 import { AuthGuard } from "../common/auth.guard";
 import { CatalogService } from "../services/catalog.service";
 
@@ -35,7 +35,7 @@ export class AdminController {
 
   @Get("categories")
   categories() {
-    return this.catalog.getCategories();
+    return this.catalog.getAllCategories();
   }
 
   @Post("categories")
@@ -71,6 +71,46 @@ export class AdminController {
   @Delete("hubs/:id")
   deleteHub(@Param("id") id: string) {
     return this.catalog.disableHub(id);
+  }
+
+  @Get("offers")
+  offers() {
+    return this.catalog.getOffers();
+  }
+
+  @Post("offers")
+  createOffer(@Body() payload: AffiliateOfferInput) {
+    return this.catalog.createOffer(payload);
+  }
+
+  @Patch("offers/:id")
+  updateOffer(@Param("id") id: string, @Body() payload: Partial<AffiliateOfferInput>) {
+    return this.catalog.updateOffer(id, payload);
+  }
+
+  @Delete("offers/:id")
+  deleteOffer(@Param("id") id: string) {
+    return this.catalog.disableOffer(id);
+  }
+
+  @Get("campaigns")
+  campaigns() {
+    return this.catalog.getCampaigns();
+  }
+
+  @Post("campaigns")
+  createCampaign(@Body() payload: CampaignInput) {
+    return this.catalog.createCampaign(payload);
+  }
+
+  @Patch("campaigns/:id")
+  updateCampaign(@Param("id") id: string, @Body() payload: Partial<CampaignInput>) {
+    return this.catalog.updateCampaign(id, payload);
+  }
+
+  @Delete("campaigns/:id")
+  deleteCampaign(@Param("id") id: string) {
+    return this.catalog.disableCampaign(id);
   }
 
   @Get("clicks")

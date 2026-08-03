@@ -1,6 +1,20 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import type { AffiliateLink, Category as DbCategory, Product as DbProduct, StoreHub as DbStoreHub } from "@prisma/client";
-import type { Category, CategoryInput, ClickPayload, Product, ProductInput, ProductStatus, StoreHub, StoreHubInput, VehicleType } from "@korre/shared";
+import type { AffiliateLink, Campaign as DbCampaign, Category as DbCategory, Product as DbProduct, StoreHub as DbStoreHub } from "@prisma/client";
+import type {
+  AffiliateOffer,
+  AffiliateOfferInput,
+  Campaign,
+  CampaignInput,
+  Category,
+  CategoryInput,
+  ClickPayload,
+  Product,
+  ProductInput,
+  ProductStatus,
+  StoreHub,
+  StoreHubInput,
+  VehicleType
+} from "@korre/shared";
 import { slugify } from "@korre/shared";
 import { z } from "zod";
 import { PrismaService } from "./prisma.service";
@@ -45,6 +59,27 @@ const hubSchema = z.object({
   query: z.string().optional(),
   items: z.array(z.string()).optional(),
   priority: z.coerce.number().int().optional(),
+  active: z.coerce.boolean().optional()
+});
+
+const offerSchema = z.object({
+  productId: z.string().min(1),
+  provider: z.enum(["mercado_livre", "other"]).optional(),
+  originalUrl: z.string().url().optional().or(z.literal("")),
+  affiliateUrl: z.string().url(),
+  active: z.coerce.boolean().optional(),
+  notes: z.string().optional()
+});
+
+const campaignSchema = z.object({
+  name: z.string().min(2),
+  slug: z.string().optional(),
+  description: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional(),
+  startsAt: z.string().datetime().optional().or(z.literal("")),
+  endsAt: z.string().datetime().optional().or(z.literal("")),
   active: z.coerce.boolean().optional()
 });
 
@@ -96,6 +131,14 @@ export class CatalogService {
   async getCategories() {
     const categories = await this.prisma.category.findMany({
       where: { active: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
+    });
+
+    return categories.map((category) => this.mapCategory(category));
+  }
+
+  async getAllCategories() {
+    const categories = await this.prisma.category.findMany({
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
     });
 
@@ -293,6 +336,14 @@ export class CatalogService {
       throw new NotFoundException("Produto nao encontrado");
     }
 
+    if (payload.categoryId) {
+      const category = await this.prisma.category.findUnique({ where: { id: payload.categoryId } });
+
+      if (!category) {
+        throw new NotFoundException("Categoria nao encontrada");
+      }
+    }
+
     const product = await this.prisma.product.update({
       where: { id },
       data: {
@@ -439,6 +490,129 @@ export class CatalogService {
     return this.updateHub(id, { active: false });
   }
 
+  async getOffers() {
+    const offers = await this.prisma.affiliateLink.findMany({
+      include: { product: true },
+      orderBy: { updatedAt: "desc" }
+    });
+
+    return offers.map((offer) => this.mapOffer(offer));
+  }
+
+  async createOffer(payload: AffiliateOfferInput) {
+    const input = this.parse(offerSchema, payload);
+    const product = await this.prisma.product.findUnique({ where: { id: input.productId } });
+
+    if (!product) {
+      throw new NotFoundException("Produto nao encontrado");
+    }
+
+    const offer = await this.prisma.affiliateLink.create({
+      data: {
+        productId: product.id,
+        provider: input.provider ?? "mercado_livre",
+        originalUrl: input.originalUrl || input.affiliateUrl,
+        affiliateUrl: input.affiliateUrl,
+        active: input.active ?? true,
+        notes: input.notes
+      },
+      include: { product: true }
+    });
+
+    return this.mapOffer(offer);
+  }
+
+  async updateOffer(id: string, payload: Partial<AffiliateOfferInput>) {
+    const current = await this.prisma.affiliateLink.findUnique({ where: { id } });
+
+    if (!current) {
+      throw new NotFoundException("Oferta nao encontrada");
+    }
+
+    if (payload.productId) {
+      const product = await this.prisma.product.findUnique({ where: { id: payload.productId } });
+
+      if (!product) {
+        throw new NotFoundException("Produto nao encontrado");
+      }
+    }
+
+    const offer = await this.prisma.affiliateLink.update({
+      where: { id },
+      data: {
+        productId: payload.productId,
+        provider: payload.provider,
+        originalUrl: payload.originalUrl,
+        affiliateUrl: payload.affiliateUrl,
+        active: payload.active,
+        notes: payload.notes
+      },
+      include: { product: true }
+    });
+
+    return this.mapOffer(offer);
+  }
+
+  async disableOffer(id: string) {
+    return this.updateOffer(id, { active: false });
+  }
+
+  async getCampaigns() {
+    const campaigns = await this.prisma.campaign.findMany({
+      orderBy: [{ active: "desc" }, { updatedAt: "desc" }]
+    });
+
+    return campaigns.map((campaign) => this.mapCampaign(campaign));
+  }
+
+  async createCampaign(payload: CampaignInput) {
+    const input = this.parse(campaignSchema, payload);
+    const campaign = await this.prisma.campaign.create({
+      data: {
+        name: input.name,
+        slug: await this.uniqueCampaignSlug(input.slug ?? input.name),
+        description: input.description,
+        utmSource: input.utmSource,
+        utmMedium: input.utmMedium,
+        utmCampaign: input.utmCampaign,
+        startsAt: input.startsAt ? new Date(input.startsAt) : undefined,
+        endsAt: input.endsAt ? new Date(input.endsAt) : undefined,
+        active: input.active ?? true
+      }
+    });
+
+    return this.mapCampaign(campaign);
+  }
+
+  async updateCampaign(id: string, payload: Partial<CampaignInput>) {
+    const current = await this.prisma.campaign.findUnique({ where: { id } });
+
+    if (!current) {
+      throw new NotFoundException("Campanha nao encontrada");
+    }
+
+    const campaign = await this.prisma.campaign.update({
+      where: { id },
+      data: {
+        name: payload.name,
+        slug: payload.slug ? await this.uniqueCampaignSlug(payload.slug, id) : undefined,
+        description: payload.description,
+        utmSource: payload.utmSource,
+        utmMedium: payload.utmMedium,
+        utmCampaign: payload.utmCampaign,
+        startsAt: payload.startsAt ? new Date(payload.startsAt) : undefined,
+        endsAt: payload.endsAt ? new Date(payload.endsAt) : undefined,
+        active: payload.active
+      }
+    });
+
+    return this.mapCampaign(campaign);
+  }
+
+  async disableCampaign(id: string) {
+    return this.updateCampaign(id, { active: false });
+  }
+
   async getClicks() {
     const clicks = await this.prisma.productClick.findMany({
       include: {
@@ -529,6 +703,34 @@ export class CatalogService {
     };
   }
 
+  private mapOffer(offer: AffiliateLink & { product?: DbProduct }): AffiliateOffer {
+    return {
+      id: offer.id,
+      productId: offer.productId,
+      productName: offer.product?.name,
+      provider: offer.provider === "mercado_livre" ? "mercado_livre" : "other",
+      affiliateUrl: offer.affiliateUrl,
+      active: offer.active,
+      referencePriceCents: offer.product?.referencePriceCents ?? undefined,
+      updatedAt: offer.updatedAt.toISOString()
+    };
+  }
+
+  private mapCampaign(campaign: DbCampaign): Campaign {
+    return {
+      id: campaign.id,
+      name: campaign.name,
+      slug: campaign.slug,
+      description: campaign.description ?? undefined,
+      utmSource: campaign.utmSource ?? undefined,
+      utmMedium: campaign.utmMedium ?? undefined,
+      utmCampaign: campaign.utmCampaign ?? undefined,
+      startsAt: campaign.startsAt?.toISOString(),
+      endsAt: campaign.endsAt?.toISOString(),
+      active: campaign.active
+    };
+  }
+
   private mapProduct(
     product: DbProduct & {
       category: DbCategory;
@@ -616,6 +818,13 @@ export class CatalogService {
     return this.uniqueSlug(value, async (slug) => {
       const hub = await this.prisma.storeHub.findUnique({ where: { slug } });
       return !hub || hub.id === currentId;
+    });
+  }
+
+  private async uniqueCampaignSlug(value: string, currentId?: string) {
+    return this.uniqueSlug(value, async (slug) => {
+      const campaign = await this.prisma.campaign.findUnique({ where: { slug } });
+      return !campaign || campaign.id === currentId;
     });
   }
 
