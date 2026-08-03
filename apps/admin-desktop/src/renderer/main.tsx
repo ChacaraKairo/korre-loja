@@ -46,6 +46,10 @@ const emptyDashboard: AdminDashboard = {
   productsWithoutOffer: 0
 };
 
+function asArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem(tokenStorageKey) ?? "");
   const [login, setLogin] = useState({ email: "admin@korre.local", password: "change-me" });
@@ -146,26 +150,43 @@ function App() {
       adminFetch("/admin/clicks").then((response) => response.json())
     ])
       .then(([dashboardData, productData, categoryData, hubData, waitingRoomData, offerData, campaignData, clickData]) => {
+        const productList = asArray<Product>(productData);
+        const categoryList = asArray<Category>(categoryData);
+        const hubList = asArray<StoreHub>(hubData);
+        const waitingRoomList = asArray<WaitingRoomLink>(waitingRoomData);
+        const offerList = asArray<AffiliateOffer>(offerData);
+        const campaignList = asArray<Campaign>(campaignData);
+        const clickList = asArray<ClickEvent>(clickData);
+
         setDashboard(dashboardData);
-        setProducts(productData);
-        setCategories(categoryData);
-        setHubs(hubData);
-        setWaitingRoomLinks(waitingRoomData);
-        setOffers(offerData);
-        setCampaigns(campaignData);
-        setClicks(clickData);
+        setProducts(productList);
+        setCategories(categoryList);
+        setHubs(hubList);
+        setWaitingRoomLinks(waitingRoomList);
+        setOffers(offerList);
+        setCampaigns(campaignList);
+        setClicks(clickList);
         setFilterDrafts(
-          categoryData.map((category: Category) => ({
+          categoryList.map((category) => ({
             id: category.id,
             name: category.name,
             slug: category.slug,
             subcategories: category.subcategories
           }))
         );
-        setForm((current) => ({ ...current, categoryId: current.categoryId || categoryData[0]?.id || "" }));
-        setOfferForm((current) => ({ ...current, productId: current.productId || productData[0]?.id || "" }));
+        setForm((current) => ({ ...current, categoryId: current.categoryId || categoryList[0]?.id || "" }));
+        setOfferForm((current) => ({ ...current, productId: current.productId || productList[0]?.id || "" }));
       })
-      .catch(() => setDashboard(emptyDashboard));
+      .catch(() => {
+        setDashboard(emptyDashboard);
+        setProducts([]);
+        setCategories([]);
+        setHubs([]);
+        setWaitingRoomLinks([]);
+        setOffers([]);
+        setCampaigns([]);
+        setClicks([]);
+      });
   }
 
   useEffect(() => {
