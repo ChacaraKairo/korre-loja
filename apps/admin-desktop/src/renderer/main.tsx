@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, Clipboard, ClipboardList, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, Clipboard, ClipboardList, Download, FolderTree, Link2, LogOut, Megaphone, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
 import type {
   AdminDashboard,
   AffiliateOffer,
@@ -63,6 +63,8 @@ function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [clicks, setClicks] = useState<ClickEvent[]>([]);
   const [filterDrafts, setFilterDrafts] = useState<CategoryFilterDraft[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [productStatus, setProductStatus] = useState<Product["status"]>("active");
   const [feedback, setFeedback] = useState("");
   const [form, setForm] = useState<ProductInput>({
     categoryId: "",
@@ -71,9 +73,12 @@ function App() {
     recommendationReason: "",
     vehicleType: "both",
     audience: "general",
+    subcategory: "",
     bestFor: "",
     avoidWhen: "",
     affiliateUrl: "",
+    marketplace: "mercado_livre",
+    photos: [],
     tags: []
   });
   const [categoryForm, setCategoryForm] = useState<CategoryInput>({
@@ -118,6 +123,18 @@ function App() {
   });
 
   const activeCategories = useMemo(() => categories.filter((category) => category.active), [categories]);
+  const selectedProductCategory = useMemo(
+    () => activeCategories.find((category) => category.id === form.categoryId),
+    [activeCategories, form.categoryId]
+  );
+
+  function listToText(items?: string[]) {
+    return items?.join("\n") ?? "";
+  }
+
+  function textToList(value: string) {
+    return value.split(/\n|,/).map((item) => item.trim()).filter(Boolean);
+  }
 
   async function adminFetch(path: string, init?: RequestInit) {
     const response = await fetch(`${apiUrl}${path}`, {
@@ -230,13 +247,14 @@ function App() {
     setFilterDrafts([]);
   }
 
-  async function createProduct(event: FormEvent<HTMLFormElement>) {
+  async function saveProduct(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFeedback("Salvando produto...");
-    const response = await adminFetch("/admin/products", {
-      method: "POST",
+    const response = await adminFetch(selectedProductId ? `/admin/products/${selectedProductId}` : "/admin/products", {
+      method: selectedProductId ? "PATCH" : "POST",
       body: JSON.stringify({
         ...form,
+        status: productStatus,
         referencePriceCents: form.referencePriceCents ? Number(form.referencePriceCents) : undefined,
         tags: Array.isArray(form.tags) ? form.tags : String(form.tags).split(",").map((tag) => tag.trim()).filter(Boolean)
       })
@@ -247,9 +265,62 @@ function App() {
       return;
     }
 
-    setFeedback("Produto cadastrado.");
-    setForm((current) => ({ ...current, name: "", shortDescription: "", recommendationReason: "", bestFor: "", avoidWhen: "", affiliateUrl: "", imageUrl: "", tags: [] }));
+    setFeedback(selectedProductId ? "Produto atualizado." : "Produto cadastrado.");
+    clearProductEditor();
     await loadAdminData();
+  }
+
+  function clearProductEditor() {
+    setSelectedProductId(null);
+    setProductStatus("active");
+    setForm((current) => ({
+      ...current,
+      categoryId: activeCategories[0]?.id || current.categoryId,
+      subcategory: "",
+      name: "",
+      shortDescription: "",
+      recommendationReason: "",
+      bestFor: "",
+      avoidWhen: "",
+      affiliateUrl: "",
+      marketplace: "mercado_livre",
+      imageUrl: "",
+      referencePriceCents: undefined,
+      photos: [],
+      tags: []
+    }));
+  }
+
+  function editProduct(product: Product) {
+    setSelectedProductId(product.id);
+    setProductStatus(product.status);
+    setForm({
+      categoryId: product.categoryId,
+      subcategory: product.subcategory ?? "",
+      name: product.name,
+      shortDescription: product.shortDescription,
+      recommendationReason: product.recommendationReason,
+      vehicleType: product.vehicleType,
+      audience: product.audience,
+      imageUrl: product.imageUrl,
+      photos: product.photos?.length ? product.photos : product.imageUrl ? [product.imageUrl] : [],
+      referencePriceCents: product.referencePriceCents,
+      featured: product.featured,
+      tags: product.tags,
+      bestFor: product.bestFor,
+      avoidWhen: product.avoidWhen,
+      affiliateUrl: product.offer?.affiliateUrl ?? "",
+      marketplace: product.offer?.provider ?? "mercado_livre"
+    });
+  }
+
+  function downloadPhoto(url: string) {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = url.split("/").pop()?.split("?")[0] || "foto-produto";
+    anchor.target = "_blank";
+    anchor.rel = "noreferrer";
+    anchor.click();
   }
 
   async function updateProductStatus(product: Product, status: Product["status"]) {
@@ -641,19 +712,26 @@ function App() {
               </div>
               <table>
                 <thead>
-                  <tr><th>Produto</th><th>Categoria</th><th>Status</th><th>Oferta</th><th>Acoes</th></tr>
+                  <tr><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Status</th><th>Link</th><th>Valor</th><th>Marketplace</th><th>Fotos</th><th>Acoes</th></tr>
                 </thead>
                 <tbody>
                   {products.map((product) => (
                     <tr key={product.id}>
                       <td>{product.name}</td>
                       <td>{product.categorySlug}</td>
+                      <td>{product.subcategory ?? "-"}</td>
                       <td>{product.status}</td>
-                      <td>{product.offer?.active ? "Ativa" : "Revisar"}</td>
+                      <td>{product.offer?.affiliateUrl ? <a href={product.offer.affiliateUrl} target="_blank" rel="noreferrer">Abrir</a> : "Sem link"}</td>
+                      <td>{product.referencePriceCents ? (product.referencePriceCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "-"}</td>
+                      <td>{product.offer?.provider ?? "-"}</td>
+                      <td>{product.photos?.length || (product.imageUrl ? 1 : 0)}</td>
                       <td>
-                        <button className="table-action" type="button" onClick={() => void updateProductStatus(product, product.status === "active" ? "inactive" : "active")}>
-                          {product.status === "active" ? "Pausar" : "Ativar"}
-                        </button>
+                        <div className="panel-actions">
+                          <button className="table-action" type="button" onClick={() => editProduct(product)}>Editar</button>
+                          <button className="table-action" type="button" onClick={() => void updateProductStatus(product, product.status === "active" ? "inactive" : "active")}>
+                            {product.status === "active" ? "Pausar" : "Ativar"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -661,17 +739,32 @@ function App() {
               </table>
             </section>
 
-            <form className="panel form-panel" onSubmit={createProduct}>
-              <div className="panel-heading"><div><p>Cadastro</p><h2>Novo produto</h2></div></div>
+            <form className="panel form-panel" onSubmit={saveProduct}>
+              <div className="panel-heading">
+                <div><p>{selectedProductId ? "Edicao" : "Cadastro"}</p><h2>{selectedProductId ? "Editar produto" : "Novo produto"}</h2></div>
+                {selectedProductId && <button type="button" className="table-action" onClick={clearProductEditor}>Novo</button>}
+              </div>
               <label>Nome<input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label>
               <label>Categoria<select required value={form.categoryId} onChange={(event) => setForm({ ...form, categoryId: event.target.value })}>{activeCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+              <label>Subcategoria<select value={form.subcategory} onChange={(event) => setForm({ ...form, subcategory: event.target.value })}><option value="">Sem subcategoria</option>{selectedProductCategory?.subcategories.map((subcategory) => <option key={subcategory} value={subcategory}>{subcategory}</option>)}</select></label>
+              <label>Status<select value={productStatus} onChange={(event) => setProductStatus(event.target.value as Product["status"])}><option value="draft">Rascunho</option><option value="active">Ativo</option><option value="inactive">Inativo</option><option value="archived">Arquivado</option></select></label>
               <label>Veiculo<select value={form.vehicleType} onChange={(event) => setForm({ ...form, vehicleType: event.target.value as VehicleType })}><option value="both">Todos</option><option value="car">Carro</option><option value="motorcycle">Moto</option><option value="bicycle">Bike</option><option value="electric_scooter">Scooter eletrica</option><option value="other">Outros</option></select></label>
+              <label>Valor em centavos<input type="number" min="1" value={form.referencePriceCents ?? ""} onChange={(event) => setForm({ ...form, referencePriceCents: event.target.value ? Number(event.target.value) : undefined })} /></label>
+              <label>Marketplace<select value={form.marketplace} onChange={(event) => setForm({ ...form, marketplace: event.target.value as ProductInput["marketplace"] })}><option value="mercado_livre">Mercado Livre</option><option value="other">Outro</option></select></label>
+              <label>Link afiliado<input type="url" value={form.affiliateUrl} onChange={(event) => setForm({ ...form, affiliateUrl: event.target.value })} /></label>
+              <label>Fotos, uma URL por linha<textarea value={listToText(form.photos)} onChange={(event) => setForm({ ...form, photos: textToList(event.target.value), imageUrl: textToList(event.target.value)[0] ?? form.imageUrl })} /></label>
+              {Boolean(form.photos?.length) && (
+                <div className="photo-actions">
+                  {form.photos?.map((photo) => (
+                    <button type="button" className="table-action" key={photo} onClick={() => downloadPhoto(photo)}><Download size={14} /> Baixar</button>
+                  ))}
+                </div>
+              )}
               <label>Descricao curta<textarea required value={form.shortDescription} onChange={(event) => setForm({ ...form, shortDescription: event.target.value })} /></label>
               <label>Motivo da recomendacao<textarea required value={form.recommendationReason} onChange={(event) => setForm({ ...form, recommendationReason: event.target.value })} /></label>
               <label>Melhor para<input required value={form.bestFor} onChange={(event) => setForm({ ...form, bestFor: event.target.value })} /></label>
               <label>Quando evitar<input required value={form.avoidWhen} onChange={(event) => setForm({ ...form, avoidWhen: event.target.value })} /></label>
-              <label>Link afiliado<input value={form.affiliateUrl} onChange={(event) => setForm({ ...form, affiliateUrl: event.target.value })} /></label>
-              <button type="submit">Cadastrar produto</button>
+              <button type="submit"><Save size={16} /> Salvar produto</button>
             </form>
           </div>
         )}

@@ -229,6 +229,12 @@ button {
   gap: 8px;
 }
 
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

@@ -54,6 +54,7 @@ export async function initDatabase(prisma = new PrismaClient()) {
     CREATE TABLE IF NOT EXISTS "Product" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "categoryId" TEXT NOT NULL,
+      "subcategory" TEXT,
       "name" TEXT NOT NULL,
       "slug" TEXT NOT NULL UNIQUE,
       "shortDescription" TEXT,
@@ -62,6 +63,7 @@ export async function initDatabase(prisma = new PrismaClient()) {
       "vehicleType" TEXT NOT NULL DEFAULT 'both',
       "audience" TEXT NOT NULL DEFAULT 'general',
       "imageUrl" TEXT,
+      "photosJson" TEXT NOT NULL DEFAULT '[]',
       "referencePriceCents" INTEGER,
       "currency" TEXT NOT NULL DEFAULT 'BRL',
       "status" TEXT NOT NULL DEFAULT 'draft',
@@ -72,6 +74,9 @@ export async function initDatabase(prisma = new PrismaClient()) {
       CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
     );
   `);
+
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Product" ADD COLUMN "subcategory" TEXT;`).catch(() => undefined);
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Product" ADD COLUMN "photosJson" TEXT NOT NULL DEFAULT '[]';`).catch(() => undefined);
 
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "AffiliateLink" (

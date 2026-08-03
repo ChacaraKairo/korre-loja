@@ -30,18 +30,22 @@ const waitingRoomStatuses = ["waiting", "reviewing", "converted", "discarded"] a
 
 const productSchema = z.object({
   categoryId: z.string().min(1),
+  subcategory: z.string().optional(),
   name: z.string().min(3),
   shortDescription: z.string().min(3),
   recommendationReason: z.string().min(3),
   vehicleType: z.enum(vehicleTypes),
   audience: z.enum(audiences),
   imageUrl: z.string().url().optional().or(z.literal("")),
+  photos: z.array(z.string().url()).optional(),
   referencePriceCents: z.coerce.number().int().positive().optional(),
+  status: z.enum(productStatuses).optional(),
   featured: z.coerce.boolean().optional(),
   tags: z.array(z.string()).optional(),
   bestFor: z.string().min(3),
   avoidWhen: z.string().min(3),
-  affiliateUrl: z.string().url().optional().or(z.literal(""))
+  affiliateUrl: z.string().url().optional().or(z.literal("")),
+  marketplace: z.enum(["mercado_livre", "other"]).optional()
 });
 
 const categorySchema = z.object({
@@ -300,6 +304,7 @@ export class CatalogService {
     const product = await this.prisma.product.create({
       data: {
         categoryId: category.id,
+        subcategory: input.subcategory,
         name: input.name,
         slug: await this.uniqueProductSlug(input.name),
         shortDescription: input.shortDescription,
@@ -308,9 +313,11 @@ export class CatalogService {
         audience: input.audience,
         imageUrl:
           input.imageUrl ||
+          input.photos?.[0] ||
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
+        photosJson: JSON.stringify(input.photos ?? (input.imageUrl ? [input.imageUrl] : [])),
         referencePriceCents: input.referencePriceCents,
-        status: "active",
+        status: input.status ?? "active",
         featured: Boolean(input.featured),
         tagsJson: JSON.stringify(input.tags ?? []),
         description: JSON.stringify({
@@ -320,7 +327,7 @@ export class CatalogService {
         affiliateLinks: input.affiliateUrl
           ? {
               create: {
-                provider: "mercado_livre",
+                provider: input.marketplace ?? "mercado_livre",
                 originalUrl: input.affiliateUrl,
                 affiliateUrl: input.affiliateUrl,
                 active: true
@@ -359,6 +366,7 @@ export class CatalogService {
       where: { id },
       data: {
         categoryId: payload.categoryId,
+        subcategory: payload.subcategory,
         name: payload.name,
         slug: payload.name ? await this.uniqueProductSlug(payload.name, id) : undefined,
         shortDescription: payload.shortDescription,
@@ -366,6 +374,7 @@ export class CatalogService {
         vehicleType: payload.vehicleType,
         audience: payload.audience,
         imageUrl: payload.imageUrl,
+        photosJson: payload.photos ? JSON.stringify(payload.photos) : undefined,
         referencePriceCents: payload.referencePriceCents,
         featured: payload.featured,
         status: productStatuses.includes(payload.status as ProductStatus) ? payload.status : undefined,
@@ -384,10 +393,11 @@ export class CatalogService {
                 update: {
                   originalUrl: payload.affiliateUrl,
                   affiliateUrl: payload.affiliateUrl,
+                  provider: payload.marketplace ?? current.affiliateLinks[0]?.provider ?? "mercado_livre",
                   active: true
                 },
                 create: {
-                  provider: "mercado_livre",
+                  provider: payload.marketplace ?? "mercado_livre",
                   originalUrl: payload.affiliateUrl,
                   affiliateUrl: payload.affiliateUrl,
                   active: true
@@ -814,6 +824,7 @@ export class CatalogService {
       id: product.id,
       categoryId: product.categoryId,
       categorySlug: product.category.slug,
+      subcategory: product.subcategory ?? undefined,
       name: product.name,
       slug: product.slug,
       shortDescription: product.shortDescription ?? "",
@@ -821,6 +832,7 @@ export class CatalogService {
       vehicleType: product.vehicleType as VehicleType,
       audience: product.audience as Product["audience"],
       imageUrl: product.imageUrl ?? "",
+      photos: this.readStringList(product.photosJson),
       referencePriceCents: product.referencePriceCents ?? undefined,
       currency: "BRL",
       status: product.status as ProductStatus,

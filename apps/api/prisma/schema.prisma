@@ -53,6 +53,7 @@ model Product {
   id                   String          @id @default(uuid())
   categoryId           String
   category             Category        @relation(fields: [categoryId], references: [id])
+  subcategory          String?
   name                 String
   slug                 String          @unique
   shortDescription     String?
@@ -61,6 +62,7 @@ model Product {
   vehicleType          String          @default("both")
   audience             String          @default("general")
   imageUrl             String?
+  photosJson           String          @default("[]")
   referencePriceCents  Int?
   currency             String          @default("BRL")
   status               String          @default("draft")

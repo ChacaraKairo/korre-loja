@@ -56,6 +56,7 @@ export type Product = {
   id: string;
   categoryId: string;
   categorySlug: string;
+  subcategory?: string;
   name: string;
   slug: string;
   shortDescription: string;
@@ -63,6 +64,7 @@ export type Product = {
   vehicleType: VehicleType;
   audience: "driver" | "motoboy" | "delivery" | "general";
   imageUrl: string;
+  photos?: string[];
   referencePriceCents?: number;
   currency: "BRL";
   status: ProductStatus;
@@ -151,18 +153,22 @@ export type ClickEvent = ClickPayload & {
 
 export type ProductInput = {
   categoryId: string;
+  subcategory?: string;
   name: string;
   shortDescription: string;
   recommendationReason: string;
   vehicleType: VehicleType;
   audience: Product["audience"];
   imageUrl?: string;
+  photos?: string[];
   referencePriceCents?: number;
+  status?: ProductStatus;
   featured?: boolean;
   tags?: string[];
   bestFor: string;
   avoidWhen: string;
   affiliateUrl?: string;
+  marketplace?: AffiliateOffer["provider"];
 };
 
 export type CategoryInput = {
