@@ -1,12 +1,19 @@
 import { StrictMode, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { BarChart3, Boxes, Link2, LogOut, Settings, Tags, type LucideIcon } from "lucide-react";
+import { BarChart3, Boxes, Link2, LogOut, Plus, Save, Settings, Tags, Trash2, type LucideIcon } from "lucide-react";
 import type { AdminDashboard, Category, ClickEvent, Product, ProductInput, StoreHub, StoreHubInput, VehicleType } from "@korre/shared";
 import "./styles.css";
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 const tokenStorageKey = "korre-loja-admin-token";
+
+type CategoryFilterDraft = {
+  id: string;
+  name: string;
+  slug: string;
+  subcategories: string[];
+};
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem(tokenStorageKey) ?? "");
@@ -16,6 +23,7 @@ function App() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [hubs, setHubs] = useState<StoreHub[]>([]);
   const [clicks, setClicks] = useState<ClickEvent[]>([]);
+  const [filterDrafts, setFilterDrafts] = useState<CategoryFilterDraft[]>([]);
   const [feedback, setFeedback] = useState("");
   const [form, setForm] = useState<ProductInput>({
     categoryId: "",
@@ -73,6 +81,14 @@ function App() {
         setCategories(categoryData);
         setHubs(hubData);
         setClicks(clickData);
+        setFilterDrafts(
+          categoryData.map((category: Category) => ({
+            id: category.id,
+            name: category.name,
+            slug: category.slug,
+            subcategories: category.subcategories
+          }))
+        );
         setForm((current) => ({
           ...current,
           categoryId: current.categoryId || categoryData[0]?.id || ""
@@ -128,6 +144,7 @@ function App() {
     setCategories([]);
     setHubs([]);
     setClicks([]);
+    setFilterDrafts([]);
   }
 
   async function createProduct(event: FormEvent<HTMLFormElement>) {
@@ -204,6 +221,72 @@ function App() {
     setFeedback("Hub cadastrado.");
     setHubForm((current) => ({ ...current, title: "", subtitle: "", query: "", items: [] }));
     await loadAdminData();
+  }
+
+  function updateFilterDraft(index: number, patch: Partial<CategoryFilterDraft>) {
+    setFilterDrafts((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item));
+  }
+
+  function updateFilterSubcategory(categoryIndex: number, subcategoryIndex: number, value: string) {
+    setFilterDrafts((current) =>
+      current.map((category, itemIndex) =>
+        itemIndex === categoryIndex
+          ? {
+              ...category,
+              subcategories: category.subcategories.map((subcategory, innerIndex) => innerIndex === subcategoryIndex ? value : subcategory)
+            }
+          : category
+      )
+    );
+  }
+
+  function addFilterSubcategory(categoryIndex: number) {
+    setFilterDrafts((current) =>
+      current.map((category, itemIndex) =>
+        itemIndex === categoryIndex ? { ...category, subcategories: [...category.subcategories, "Nova subcategoria"] } : category
+      )
+    );
+  }
+
+  function removeFilterSubcategory(categoryIndex: number, subcategoryIndex: number) {
+    setFilterDrafts((current) =>
+      current.map((category, itemIndex) =>
+        itemIndex === categoryIndex
+          ? { ...category, subcategories: category.subcategories.filter((_, innerIndex) => innerIndex !== subcategoryIndex) }
+          : category
+      )
+    );
+  }
+
+  function addFilterCategory() {
+    setFilterDrafts((current) => [
+      ...current,
+      {
+        id: `cat-local-${Date.now()}`,
+        name: "Nova categoria",
+        slug: "nova-categoria",
+        subcategories: ["Nova subcategoria"]
+      }
+    ]);
+  }
+
+  function removeFilterCategory(categoryIndex: number) {
+    setFilterDrafts((current) => current.filter((_, itemIndex) => itemIndex !== categoryIndex));
+  }
+
+  async function saveCategoryFilterFile() {
+    if (!window.korre?.saveCategoryFilters) {
+      setFeedback("Gerador indisponivel neste ambiente.");
+      return;
+    }
+
+    setFeedback("Gerando arquivo category-filters.ts...");
+    const cleanFilters = filterDrafts.map((category) => ({
+      ...category,
+      subcategories: category.subcategories.map((item) => item.trim()).filter(Boolean)
+    }));
+    const result = await window.korre.saveCategoryFilters(cleanFilters);
+    setFeedback(result.ok ? `Arquivo gerado: ${result.path}` : "Nao foi possivel gerar o arquivo.");
   }
 
   const stats: Array<{ label: string; value: number; Icon: LucideIcon }> = [
@@ -305,6 +388,53 @@ function App() {
               ))}
             </tbody>
           </table>
+        </section>
+
+        <section className="panel category-builder">
+          <div className="panel-heading">
+            <div>
+              <p>Filtros do site</p>
+              <h2>Gerador de categorias e subcategorias</h2>
+            </div>
+            <div className="panel-actions">
+              <button type="button" className="table-action" onClick={addFilterCategory}><Plus size={14} /> Categoria</button>
+              <button onClick={saveCategoryFilterFile}><Save size={16} /> Gerar .ts</button>
+            </div>
+          </div>
+
+          <div className="category-builder-list">
+            {filterDrafts.map((category, categoryIndex) => (
+              <article key={category.id} className="category-builder-card">
+                <div className="category-builder-fields">
+                  <label>
+                    Categoria
+                    <input value={category.name} onChange={(event) => updateFilterDraft(categoryIndex, { name: event.target.value })} />
+                  </label>
+                  <label>
+                    Slug
+                    <input value={category.slug} onChange={(event) => updateFilterDraft(categoryIndex, { slug: event.target.value })} />
+                  </label>
+                </div>
+                <div className="subcategory-editor">
+                  <div className="subcategory-heading">
+                    <strong>Subcategorias</strong>
+                    <div className="panel-actions">
+                      <button type="button" className="table-action" onClick={() => addFilterSubcategory(categoryIndex)}><Plus size={14} /> Adicionar</button>
+                      <button type="button" className="icon-action" onClick={() => removeFilterCategory(categoryIndex)} aria-label="Remover categoria"><Trash2 size={15} /></button>
+                    </div>
+                  </div>
+                  {category.subcategories.map((subcategory, subcategoryIndex) => (
+                    <div className="subcategory-row" key={`${category.id}-${subcategoryIndex}`}>
+                      <input value={subcategory} onChange={(event) => updateFilterSubcategory(categoryIndex, subcategoryIndex, event.target.value)} />
+                      <button type="button" className="icon-action" onClick={() => removeFilterSubcategory(categoryIndex, subcategoryIndex)} aria-label="Remover subcategoria">
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="grid-panels">

@@ -191,6 +191,14 @@ button {
   color: var(--muted);
 }
 
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -220,6 +228,54 @@ th {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.7fr);
   gap: 24px;
+}
+
+.category-builder-list {
+  display: grid;
+  gap: 14px;
+}
+
+.category-builder-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.category-builder-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 12px;
+}
+
+.subcategory-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.subcategory-heading,
+.subcategory-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subcategory-heading {
+  justify-content: space-between;
+}
+
+.subcategory-row input {
+  flex: 1;
+}
+
+.icon-action {
+  min-width: 38px;
+  width: 38px;
+  padding: 0;
+  color: var(--text);
+  background: #3a1f1f;
 }
 
 .form-panel {
